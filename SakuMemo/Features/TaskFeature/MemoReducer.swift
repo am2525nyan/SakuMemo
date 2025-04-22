@@ -9,7 +9,7 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-struct TaskReducer {
+struct MemoReducer {
     
     @ObservableState
     struct State{
@@ -23,7 +23,14 @@ struct TaskReducer {
         Reduce { state, action in
             switch action {
             case .refresh:
-                state.memos = []
+                state.memos = [
+                    Memo(text: "バナナ", category: .shopping,priority: .hot),
+                    Memo(text: "Reducer書く", category: .todo, priority: .warm),
+                    Memo(text: "旅行準備したい", category: .note, priority: .cold),
+                    Memo(text: "りんご", category: .shopping,priority: .hot),
+                    Memo(text: "インターンのDM返す！", category: .todo, priority: .hot),
+                    Memo(text: "visionPro欲しい", category: .note, priority: .cold),
+                    ]
                 return .none
             }
         }
