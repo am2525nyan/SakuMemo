@@ -14,6 +14,7 @@ struct MemoView: View {
     @State private var memos: [Memo] = []
     var body: some View {
         VStack {
+        
             HStack{
                 TextField("メモを入力", text: $text)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -27,24 +28,17 @@ struct MemoView: View {
                 
             }
             .padding(.horizontal, 20)
-            .padding(.bottom, 20)
+            .padding(.vertical, 20)
             
             List {
-                ForEach(memos) { memo in
+                ForEach(store.memos) { memo in
                     MemoCellView(memo: memo)
                 }
             }
             .listStyle(PlainListStyle())
         }
         .onAppear(){
-          memos = [
-            Memo(text: "バナナ", category: .shopping,priority: .hot),
-            Memo(text: "Reducer書く", category: .todo, priority: .warm),
-            Memo(text: "旅行準備したい", category: .note, priority: .cold),
-            Memo(text: "りんご", category: .shopping,priority: .hot),
-            Memo(text: "インターンのDM返す！", category: .todo, priority: .hot),
-            Memo(text: "visionPro欲しい", category: .note, priority: .cold),
-            ]
+            store.send(.refresh)
         }
        
     }
