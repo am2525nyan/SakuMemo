@@ -17,22 +17,45 @@ struct MemoReducer {
     }
     enum Action {
         case refresh
+        case refreshSuccess([Memo])
+        case addMemo(String)
     }
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     var body: some ReducerOf <Self> {
         Reduce { state, action in
             switch action {
             case .refresh:
-                state.memos = [
-                    Memo(text: "バナナ", category: .shopping,priority: .hot),
-                    Memo(text: "Reducer書く", category: .todo, priority: .warm),
-                    Memo(text: "旅行準備したい", category: .note, priority: .cold),
-                    Memo(text: "りんご", category: .shopping,priority: .hot),
-                    Memo(text: "インターンのDM返す！", category: .todo, priority: .hot),
-                    Memo(text: "visionPro欲しい", category: .note, priority: .cold),
-                    ]
-                return .none
+                return .run { send in
+                 
+                        do{
+                         let memos =  try await swiftDataRepository.fetchMemos()
+                            await send(.refreshSuccess(memos))
+                        }
+                        catch {
+                            print(error)
+                            
+                        }
+                }
+              
+            case .addMemo(let text):
+                let memo = Memo(text: text)
+                state.memos.insert(memo, at: 0)
+                
+                return .run { send in
+                 
+                        do{
+                            try await swiftDataRepository.addMemo(newMemo: memo)
+                        }
+                        catch {
+                            print(error)
+                            
+                        }
+                    
+                }
+            case .refreshSuccess(let memos):
+                state.memos = memos
             }
+            return .none
         }
     }
 }

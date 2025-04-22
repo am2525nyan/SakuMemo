@@ -20,7 +20,7 @@ struct MemoView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                   
                 Button(action: {
-                    print("送信")
+                    store.send(.addMemo(text))
                 }, label:
                     {
                     Image(systemName: "paperplane.fill")

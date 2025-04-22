@@ -29,7 +29,7 @@ class Memo: Identifiable {
     var category: MemoCategory
     var priority: MemoPriority
     var isArchived: Bool
-    
+    var createdAt: Date
     init(text: String, category: MemoCategory = .unknown, priority: MemoPriority = .warm) {
         self.id = UUID()
         self.text = text
@@ -37,6 +37,7 @@ class Memo: Identifiable {
         self.category = category
         self.priority = priority
         self.isArchived = false
+        self.createdAt = .now
     }
 }
 
