@@ -10,19 +10,28 @@ import ComposableArchitecture
 import SwiftData
 
 
-    @MainActor
-    final class SwiftDataRepository: SwiftDataRepositoryProtocol {
-        private let container: ModelContainer
-
-        // コンストラクタで `ModelContainer` を渡す
-        init(container: ModelContainer) {
-            self.container = container
-        }
-
-        private var context: ModelContext {
-            return container.mainContext
-        }
-
+@MainActor
+final class SwiftDataRepository: SwiftDataRepositoryProtocol {
+    private let container: ModelContainer
+    
+    // コンストラクタで `ModelContainer` を渡す
+    init(container: ModelContainer) {
+        self.container = container
+    }
+    
+    private var context: ModelContext {
+        return container.mainContext
+    }
+    
+    func fetchCards() async throws -> [Memo] {
+        try context.fetch(FetchDescriptor<Memo>())
+    }
+    
+    func addCard(newCard: Memo) async throws {
+        context.insert(newCard)
+        try context.save()
+    }
+    
 }
 
 struct SwiftDataRepositoryKey: DependencyKey {
