@@ -27,8 +27,8 @@ final class SwiftDataRepository: SwiftDataRepositoryProtocol {
         try context.fetch(FetchDescriptor<Memo>())
     }
     
-    func addMemo(newCard: Memo) async throws {
-        context.insert(newCard)
+    func addMemo(newMemo: Memo) async throws {
+        context.insert(newMemo)
         try context.save()
     }
     
@@ -40,11 +40,29 @@ struct SwiftDataRepositoryKey: DependencyKey {
         let container = try! ModelContainer(for: Memo.self)
         return SwiftDataRepository(container: container)
     }()
+    static var previewValue: SwiftDataRepositoryProtocol = SwiftDataRepositoryMock()
 }
 
 extension DependencyValues {
     var swiftDataRepository: SwiftDataRepositoryProtocol {
         get { self[SwiftDataRepositoryKey.self] }
         set { self[SwiftDataRepositoryKey.self] = newValue }
+    }
+}
+
+final class SwiftDataRepositoryMock: SwiftDataRepositoryProtocol {
+    func fetchMemos() async throws -> [Memo] {
+        return [
+            Memo(text: "バナナ", category: .shopping,priority: .hot),
+            Memo(text: "Reducer書く", category: .todo, priority: .warm),
+            Memo(text: "旅行準備したい", category: .note, priority: .cold),
+            Memo(text: "りんご", category: .shopping,priority: .hot),
+            Memo(text: "インターンのDM返す！", category: .todo, priority: .hot),
+            Memo(text: "visionPro欲しい", category: .note, priority: .cold),
+            ]
+    }
+
+    func addMemo(newMemo: Memo) async throws {
+        print("📝 プレビュー: メモ追加 \(newMemo.text)")
     }
 }

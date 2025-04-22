@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
+import SwiftData
 
 @main
 struct SakuMemoApp: App {
@@ -17,6 +18,7 @@ struct SakuMemoApp: App {
                              reducer: {
                    MemoReducer()
                }))
+            .modelContainer(for: Memo.self)
         }
     }
 }

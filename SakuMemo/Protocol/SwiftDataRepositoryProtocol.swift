@@ -10,6 +10,6 @@ import SwiftData
 
 protocol SwiftDataRepositoryProtocol: Sendable {
     func fetchMemos() async throws -> [Memo]
-    func addMemo(newCard: Memo) async throws
+    func addMemo(newMemo: Memo) async throws
  
 }
