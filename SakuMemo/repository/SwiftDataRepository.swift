@@ -23,11 +23,11 @@ final class SwiftDataRepository: SwiftDataRepositoryProtocol {
         return container.mainContext
     }
     
-    func fetchCards() async throws -> [Memo] {
+    func fetchMemos() async throws -> [Memo] {
         try context.fetch(FetchDescriptor<Memo>())
     }
     
-    func addCard(newCard: Memo) async throws {
+    func addMemo(newCard: Memo) async throws {
         context.insert(newCard)
         try context.save()
     }

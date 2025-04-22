@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 protocol SwiftDataRepositoryProtocol: Sendable {
-    func fetchCards() async throws -> [Card]
-    func addCard(newCard: Card) async throws
-    func updateCard(card: Card) async throws
+    func fetchMemos() async throws -> [Memo]
+    func addMemo(newCard: Memo) async throws
+ 
 }
