@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 enum MemoCategory: String, Codable, CaseIterable {
     case todo = "ToDo"
@@ -20,8 +21,9 @@ enum MemoPriority: String, Codable, CaseIterable {
     
 }
 
-struct Memo: Identifiable, Codable {
-    let id: UUID
+@Model
+class Memo: Identifiable {
+    @Attribute(.unique) var id = UUID()
     var text: String
     var date: Date
     var category: MemoCategory
