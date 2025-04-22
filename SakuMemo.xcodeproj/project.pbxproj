@@ -8,10 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 720E90A32DB24A140072F07F /* ComposableArchitecture */; };
+		720E91E52DB7A0E20072F07F /* .env in Resources */ = {isa = PBXBuildFile; fileRef = 720E91E42DB7A0DE0072F07F /* .env */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		720E90912DB2495F0072F07F /* SakuMemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SakuMemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		720E91E42DB7A0DE0072F07F /* .env */ = {isa = PBXFileReference; lastKnownFileType = text; path = .env; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -37,6 +39,7 @@
 		720E90882DB2495F0072F07F = {
 			isa = PBXGroup;
 			children = (
+				720E91E42DB7A0DE0072F07F /* .env */,
 				720E90932DB2495F0072F07F /* SakuMemo */,
 				720E90922DB2495F0072F07F /* Products */,
 			);
@@ -118,6 +121,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				720E91E52DB7A0E20072F07F /* .env in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
