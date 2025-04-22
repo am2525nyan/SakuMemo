@@ -14,9 +14,9 @@ struct SakuMemoApp: App {
     var body: some Scene {
         WindowGroup {
             MemoView(store:
-                       .init(initialState: MemoReducer.State(),
+                       .init(initialState: MemoFeature.State(),
                              reducer: {
-                   MemoReducer()
+                   MemoFeature()
                }))
             .modelContainer(for: Memo.self)
         }

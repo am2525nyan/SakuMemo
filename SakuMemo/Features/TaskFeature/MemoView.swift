@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct MemoView: View {
-    @Bindable var store :StoreOf<MemoReducer>
+    @Bindable var store :StoreOf<MemoFeature>
     @State private var text: String = ""
     @State private var memos: [Memo] = []
     var body: some View {
@@ -46,8 +46,8 @@ struct MemoView: View {
 
 #Preview {
     MemoView(store:
-            .init(initialState: MemoReducer.State(),
+            .init(initialState: MemoFeature.State(),
                   reducer: {
-        MemoReducer()
+        MemoFeature()
     }))
 }

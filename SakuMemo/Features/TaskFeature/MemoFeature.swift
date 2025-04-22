@@ -9,7 +9,7 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-struct MemoReducer {
+struct MemoFeature {
     
     @ObservableState
     struct State{
