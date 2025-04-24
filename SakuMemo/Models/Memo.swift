@@ -26,7 +26,7 @@ class Memo: Identifiable {
     @Attribute(.unique) var id = UUID()
     var text: String
     var date: Date
-    var category: MemoCategory
+    var category: String
     var isArchived: Bool
     var createdAt: Date
     var priorityValue: Double
@@ -34,7 +34,7 @@ class Memo: Identifiable {
         MemoPriority.fromValue(priorityValue)
     }
 
-    init(text: String, category: MemoCategory = .unknown, priorityValue: Double = 0.7) {
+    init(text: String, category: String = "未分類", priorityValue: Double = 0.7) {
         self.id = UUID()
         self.text = text
         self.date = Date()

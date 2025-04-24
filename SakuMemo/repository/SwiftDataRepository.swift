@@ -75,12 +75,12 @@ final class SwiftDataRepositoryMock: SwiftDataRepositoryProtocol {
     
     func fetchMemos() async throws -> [Memo] {
         return [
-            Memo(text: "バナナ", category: .shopping, priorityValue: 0.8),
-            Memo(text: "Reducer書く", category: .todo, priorityValue: 0.6),
-            Memo(text: "旅行準備したい", category: .note, priorityValue: 0.2),
-            Memo(text: "りんご", category: .shopping, priorityValue: 0.9),
-            Memo(text: "インターンのDM返す！", category: .todo, priorityValue: 0.9),
-            Memo(text: "visionPro欲しい", category: .note, priorityValue: 0.1),
+            Memo(text: "バナナ", category: "", priorityValue: 0.8),
+            Memo(text: "Reducer書く", category: ".todo", priorityValue: 0.6),
+            Memo(text: "旅行準備したい", category: ".note", priorityValue: 0.2),
+            Memo(text: "りんご", category: ".shopping", priorityValue: 0.9),
+            Memo(text: "インターンのDM返す！", category: ".todo", priorityValue: 0.9),
+            Memo(text: "visionPro欲しい", category: ".note", priorityValue: 0.1),
         ]
     }
     

@@ -10,17 +10,15 @@ import ComposableArchitecture
 import SwiftData
 
 struct MemoView: View {
-    @Bindable var store :StoreOf<MemoFeature>
-    @State private var text: String = ""
-    @State private var memos: [Memo] = []
+    @Bindable var store: StoreOf<MemoFeature>
     var body: some View {
         VStack {
             HStack{
-                TextField("メモを入力", text: $text)
+                TextField("メモを入力", text: $store.text)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 
                 Button(action: {
-                    store.send(.addMemo(text))
+                    store.send(.addMemo)
                 }, label:
                         {
                     Image(systemName: "paperplane.fill")

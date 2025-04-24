@@ -15,7 +15,7 @@ struct MemoCellView: View {
                 
             Text(memo.text)
             Spacer()
-            Text(memo.category.rawValue)
+            Text(memo.category)
                 .foregroundColor(.gray)
                 
         }
@@ -25,5 +25,5 @@ struct MemoCellView: View {
 }
 
 #Preview {
-    MemoCellView(memo: Memo(text: "買い物", category: .shopping, priorityValue: 0.2))
+    MemoCellView(memo: Memo(text: "買い物", category: ".shopping", priorityValue: 0.2))
 }

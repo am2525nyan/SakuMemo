@@ -15,20 +15,24 @@ struct MemoFeature {
     struct State{
         var memos = [Memo]()
         var memo = Memo(text: "")
-        var geminiAnswer = ""
+        var text: String = ""
     }
-    enum Action {
+    enum Action: BindableAction {
+        case binding(BindingAction<State>)
+        
         case refresh
         case refreshSuccess([Memo])
-        case addMemo(String)
+        case addMemo
         case gemini
-        case geminiSuccess(String)
+        case geminiSuccess(MemoAnalysisResult)
         case deleteAllMemo
+        case geminiError
     }
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
     
     var body: some ReducerOf <Self> {
+        BindingReducer()
         Reduce { state, action in
             switch action {
             case .refresh:
@@ -44,8 +48,8 @@ struct MemoFeature {
                     }
                 }
                 
-            case .addMemo(let text):
-                let memo = Memo(text: text)
+            case .addMemo:
+                let memo = Memo(text: state.text)
                 state.memos.insert(memo, at: 0)
                 state.memo = memo
                 
@@ -62,17 +66,19 @@ struct MemoFeature {
             case .gemini:
                 let text = state.memo.text
                 return .run { send in
-                    do{
-                        let answer = await geminiRepository.gemini(for:text)
-                        await send(.geminiSuccess(answer))
-                        
+                    if let result = await geminiRepository.gemini(for: text) {
+                        await send(.geminiSuccess(result))
+                    } else {
+                        print("⚠️ Geminiの解析に失敗")
+                        await send(.geminiError)
                     }
                 }
                 
-            case .geminiSuccess(let text):
-                state.geminiAnswer = text
-                state.memo.priorityValue = Double(text) ?? 1
+            case .geminiSuccess(let result):
+                state.memo.priorityValue = result.importance
+                state.memo.category = result.category
                 let memo = state.memo
+                state.text = ""
                 return .run { send in
                     try await swiftDataRepository.addMemo(newMemo: memo)
                 }
@@ -82,6 +88,14 @@ struct MemoFeature {
                     try await swiftDataRepository.deleteAllMemos()
                 }
                 
+            case .binding(_):
+                return .none
+            case .geminiError:
+                let memo = state.memo
+                state.text = ""
+                return .run { send in
+                    try await swiftDataRepository.addMemo(newMemo: memo)
+                }
             }
             return .none
         }
