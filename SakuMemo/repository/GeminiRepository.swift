@@ -7,13 +7,14 @@
 
 import Foundation
 import Alamofire
+import ComposableArchitecture
 
-    struct GeminiRepository {
-        let content: String
+struct GeminiRepository: GeminiRepositoryProtocol {
         let env = try! LoadEnv()
-        func gemini() async -> String {
+        func gemini(for content: String) async -> String {
             let prompt = """
                「\(content)」を重要度に応じて0.0~1.0まで数字分けするとします。重要なものやすぐにやること、必要なものは1.0に近く、すぐに必要ではない、したいかものような願望や薄いものは0.0に近づけてください。そして数字だけを出力してください。(前後の説明は不要です)
+            
             """
 
             let url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
@@ -78,3 +79,14 @@ import Alamofire
 
     }
 
+struct GeminiRepositoryKey: DependencyKey {
+    static var liveValue: GeminiRepositoryProtocol = GeminiRepository()
+ 
+}
+
+extension DependencyValues {
+    var geminiRepository: GeminiRepositoryProtocol {
+        get { self[GeminiRepositoryKey.self] }
+        set { self[GeminiRepositoryKey.self] = newValue }
+    }
+}

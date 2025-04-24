@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
+import SwiftData
 
 struct MemoView: View {
     @Bindable var store :StoreOf<MemoFeature>
@@ -14,15 +15,14 @@ struct MemoView: View {
     @State private var memos: [Memo] = []
     var body: some View {
         VStack {
-        
             HStack{
                 TextField("メモを入力", text: $text)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                  
+                
                 Button(action: {
                     store.send(.addMemo(text))
                 }, label:
-                    {
+                        {
                     Image(systemName: "paperplane.fill")
                 })
                 
@@ -40,7 +40,7 @@ struct MemoView: View {
         .onAppear(){
             store.send(.refresh)
         }
-       
+        
     }
 }
 

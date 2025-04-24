@@ -27,19 +27,24 @@ class Memo: Identifiable {
     var text: String
     var date: Date
     var category: MemoCategory
-    var priority: MemoPriority
     var isArchived: Bool
     var createdAt: Date
-    init(text: String, category: MemoCategory = .unknown, priority: MemoPriority = .warm) {
+    var priorityValue: Double
+    var priority: MemoPriority {
+        MemoPriority.fromValue(priorityValue)
+    }
+
+    init(text: String, category: MemoCategory = .unknown, priorityValue: Double = 0.7) {
         self.id = UUID()
         self.text = text
         self.date = Date()
         self.category = category
-        self.priority = priority
         self.isArchived = false
         self.createdAt = .now
+        self.priorityValue = priorityValue
     }
 }
+
 
 extension MemoPriority {
     var emoji: String {
@@ -56,4 +61,12 @@ extension MemoPriority {
         case .cold: return 0.4
         }
     }
+    static func fromValue(_ value: Double) -> MemoPriority {
+          switch value {
+          case ..<0.3: return .cold
+          case ..<0.7: return .warm
+          default:      return .hot  
+          }
+      }
+   
 }

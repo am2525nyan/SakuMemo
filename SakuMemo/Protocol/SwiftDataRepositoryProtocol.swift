@@ -11,5 +11,6 @@ import SwiftData
 protocol SwiftDataRepositoryProtocol: Sendable {
     func fetchMemos() async throws -> [Memo]
     func addMemo(newMemo: Memo) async throws
+    func deleteAllMemos() async throws
  
 }
