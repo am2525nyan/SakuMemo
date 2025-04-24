@@ -10,7 +10,17 @@ import Alamofire
 import ComposableArchitecture
 
 struct GeminiRepository: GeminiRepositoryProtocol {
-    let env = try! LoadEnv()
+    let env: LoadEnv
+    
+    init() {
+        do {
+            self.env = try LoadEnv()
+        } catch {
+            print("🚨 Failed to load .env file: \(error)")
+            fatalError("Environment configuration is required but could not be loaded.")
+        }
+    }
+    
     func gemini(for content: String) async -> MemoAnalysisResult? {
         let prompt = """
         「\(content)」を重要度に応じて0.0~1.0まで数字分けするとします。重要なものやすぐにやること、必要なものは1.0に近く、すぐに必要ではない、〇〇したいのような願望や重要度が薄いものは0.0に近づけてください。
