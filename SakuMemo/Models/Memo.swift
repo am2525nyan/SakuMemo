@@ -33,7 +33,7 @@ class Memo: Identifiable {
     var priority: MemoPriority {
         MemoPriority.fromValue(priorityValue)
     }
-
+    
     init(text: String, category: String = "未分類", priorityValue: Double = 0.7) {
         self.id = UUID()
         self.text = text
@@ -62,11 +62,11 @@ extension MemoPriority {
         }
     }
     static func fromValue(_ value: Double) -> MemoPriority {
-          switch value {
-          case ..<0.3: return .cold
-          case ..<0.7: return .warm
-          default:      return .hot  
-          }
-      }
-   
+        switch value {
+        case ...0.3: return .cold
+        case 0.3...0.7: return .warm
+        default: return .hot
+        }
+    }
+    
 }

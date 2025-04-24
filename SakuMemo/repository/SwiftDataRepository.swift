@@ -40,7 +40,7 @@ final class SwiftDataRepository: SwiftDataRepositoryProtocol {
             for memo in allMemos {
                 context.delete(memo)
             }
-
+            
             try context.save()
             print("全件削除完了！")
             
@@ -48,8 +48,13 @@ final class SwiftDataRepository: SwiftDataRepositoryProtocol {
             print("削除に失敗しました: \(error)")
         }
     }
+    func deleteMemo(memo: Memo) async throws{
+        context.delete(memo)
+        try context.save()
+        
+    }
 }
-    
+
 
 
 struct SwiftDataRepositoryKey: DependencyKey {
@@ -69,6 +74,11 @@ extension DependencyValues {
 }
 
 final class SwiftDataRepositoryMock: SwiftDataRepositoryProtocol {
+    func deleteMemo(memo: Memo) async throws  {
+        print("削除")
+    }
+    
+    
     func deleteAllMemos() async throws {
         print("全件削除完了！")
     }

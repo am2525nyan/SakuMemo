@@ -31,8 +31,16 @@ struct MemoView: View {
             List {
                 ForEach(store.memos) { memo in
                     MemoCellView(memo: memo)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                store.send(.deleteMemo(memo))
+                            } label: {
+                                Text("削除")
+                            }
+                        }
                 }
             }
+            
             .listStyle(PlainListStyle())
         }
         .onAppear(){
