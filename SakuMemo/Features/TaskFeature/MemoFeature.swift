@@ -25,8 +25,9 @@ struct MemoFeature {
         case addMemo
         case gemini
         case geminiSuccess(MemoAnalysisResult)
-        case deleteAllMemo
+        case deleteAllMemos
         case geminiError
+        case deleteMemo(Memo)
     }
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
@@ -83,7 +84,7 @@ struct MemoFeature {
                     try await swiftDataRepository.addMemo(newMemo: memo)
                 }
                 
-            case .deleteAllMemo:
+            case .deleteAllMemos:
                 return .run { send in
                     try await swiftDataRepository.deleteAllMemos()
                 }
@@ -95,6 +96,11 @@ struct MemoFeature {
                 state.text = ""
                 return .run { send in
                     try await swiftDataRepository.addMemo(newMemo: memo)
+                }
+            case .deleteMemo(let memo):
+                return .run { send in
+                    try await swiftDataRepository.deleteMemo(memo: memo)
+                    await send(.refresh)
                 }
             }
             return .none
