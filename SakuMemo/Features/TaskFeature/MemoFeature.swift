@@ -53,7 +53,7 @@ struct MemoFeature {
                 let memo = Memo(text: state.text)
                 state.memos.insert(memo, at: 0)
                 state.memo = memo
-                
+                state.text = ""
                 return .run { send in
                     
                     do{
@@ -63,7 +63,8 @@ struct MemoFeature {
                     
                 }
             case .refreshSuccess(let memos):
-                state.memos = memos
+                let sortMemos = memos.sorted { $0.createdAt > $1.createdAt }
+                state.memos = sortMemos
             case .gemini:
                 let text = state.memo.text
                 return .run { send in
@@ -79,7 +80,7 @@ struct MemoFeature {
                 state.memo.priorityValue = result.importance
                 state.memo.category = result.category
                 let memo = state.memo
-                state.text = ""
+                
                 return .run { send in
                     try await swiftDataRepository.addMemo(newMemo: memo)
                 }
