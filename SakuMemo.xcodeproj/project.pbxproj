@@ -23,7 +23,7 @@
 			path = SakuMemo;
 			sourceTree = "<group>";
 		};
-		720E91E72DB7A16B0072F07F /* resources */ = {
+		720E93002DBA5E750072F07F /* resources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = resources;
 			sourceTree = "<group>";
@@ -46,10 +46,10 @@
 		720E90882DB2495F0072F07F = {
 			isa = PBXGroup;
 			children = (
-				720E91E72DB7A16B0072F07F /* resources */,
 				720E91E42DB7A0DE0072F07F /* .env */,
 				720E90932DB2495F0072F07F /* SakuMemo */,
 				720E90922DB2495F0072F07F /* Products */,
+				720E93002DBA5E750072F07F /* resources */,
 			);
 			sourceTree = "<group>";
 		};
@@ -78,7 +78,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				720E90932DB2495F0072F07F /* SakuMemo */,
-				720E91E72DB7A16B0072F07F /* resources */,
+				720E93002DBA5E750072F07F /* resources */,
 			);
 			name = SakuMemo;
 			packageProductDependencies = (
