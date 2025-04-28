@@ -11,6 +11,8 @@ import SwiftData
 
 struct MemoView: View {
     @Bindable var store: StoreOf<MemoFeature>
+    @Environment(\.scenePhase) var scenePhase
+    @Query(sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
     var body: some View {
         VStack {
             HStack{
@@ -29,7 +31,7 @@ struct MemoView: View {
             .padding(.vertical, 20)
             
             List {
-                ForEach(store.memos) { memo in
+                ForEach(memos) { memo in
                     MemoCellView(memo: memo)
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
@@ -39,14 +41,10 @@ struct MemoView: View {
                             }
                         }
                 }
+                
             }
-            
             .listStyle(PlainListStyle())
         }
-        .onAppear(){
-            store.send(.refresh)
-        }
-        
     }
 }
 
