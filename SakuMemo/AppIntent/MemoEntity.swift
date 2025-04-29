@@ -24,7 +24,6 @@ struct Shortcut: AppShortcutsProvider {
                 "\(.applicationName)の画面を見せて",
                 "\(.applicationName)をお願い",
                 "\(.applicationName)でメモを追加",
-             
                 "メモを追加したい",
                 "タスクを追加",
               
