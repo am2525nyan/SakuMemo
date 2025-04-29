@@ -11,19 +11,48 @@ struct MemoCellView: View {
     @State var memo: Memo
     var body: some View {
         HStack {
-            Text(memo.priority.emoji)
+          
+            Menu {
+                Button("🔥"){
+                    memo.priorityValue = 1
+                }
+                Button("⛅️"){
+                    memo.priorityValue = 0.5
+                }
                 
+                Button("🧊"){
+                    memo.priorityValue = 0
+                }
+            }
+            label: {
+                Text(memo.priority.emoji)
+            }
+            
             Text(memo.text)
             Spacer()
-            Text(memo.category)
-                .foregroundColor(.gray)
+            Menu {
+                Button("todo"){
+                    memo.category = "todo"
+                }
+                Button("買い物"){
+                    memo.category = "買い物"
+                }
                 
+                Button("やりたいこと"){
+                    memo.category = "やりたいこと"
+                }
+            }
+            label: {
+                Text(memo.category)
+                    .foregroundColor(.gray)
+            }
         }
+        
         .padding(.horizontal, 20)
         .opacity(memo.priority.opacity(for: memo.priority))
     }
 }
 
 #Preview {
-    MemoCellView(memo: Memo(text: "買い物", category: ".shopping", priorityValue: 0.2))
+    MemoCellView(memo: Memo(text: "買い物", category: "買い物", priorityValue: 1))
 }
