@@ -54,5 +54,5 @@ struct MemoCellView: View {
 }
 
 #Preview {
-    MemoCellView(memo: Memo(text: "買い物", category: "shopping", priorityValue: 1))
+    MemoCellView(memo: Memo(text: "買い物", category: "買い物", priorityValue: 1))
 }
