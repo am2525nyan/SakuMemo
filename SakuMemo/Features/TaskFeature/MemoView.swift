@@ -12,7 +12,7 @@ import SwiftData
 struct MemoView: View {
     @Bindable var store: StoreOf<MemoFeature>
     @Environment(\.scenePhase) var scenePhase
-    @Query(sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
+    @Query(filter: #Predicate<Memo>{$0.isArchived == false},sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
     var body: some View {
         VStack {
             HStack{
@@ -39,6 +39,15 @@ struct MemoView: View {
                             } label: {
                                 Text("削除")
                             }
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                store.send(.archive(memo))
+                                
+                            } label: {
+                                Text("アーカイブ")
+                            }
+                            .tint(.cyan)
                         }
                 }
                 

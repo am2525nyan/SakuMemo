@@ -24,6 +24,7 @@ struct MemoFeature {
         case geminiError
         case deleteMemo(Memo)
         case deleteAllMemos
+        case archive(Memo)
     }
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
@@ -81,6 +82,9 @@ struct MemoFeature {
                 return .run { send in
                     try await swiftDataRepository.deleteMemo(memo: memo)
                 }
+            case .archive(let memo):
+                memo.isArchived = true
+                return .none
             }
         }
     }
