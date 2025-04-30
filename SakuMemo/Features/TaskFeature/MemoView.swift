@@ -53,6 +53,9 @@ struct MemoView: View {
                 
             }
             .listStyle(PlainListStyle())
+            .onAppear(){
+                store.send(.onAppear)
+            }
         }
     }
 }
