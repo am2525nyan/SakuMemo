@@ -88,7 +88,11 @@ struct MemoFeature {
                 return .none
             case .onAppear:
                 return .run { send in
-                    try await swiftDataRepository.archiveMemos()
+                    do{
+                        try await swiftDataRepository.archiveMemos()
+                    }catch{
+                        print("アーカイブ失敗")
+                    }
                 }
             }
         }
