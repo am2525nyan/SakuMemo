@@ -13,11 +13,15 @@ import SwiftData
 struct SakuMemoApp: App {
     var body: some Scene {
         WindowGroup {
-            MemoView(store:
-                       .init(initialState: MemoFeature.State(),
-                             reducer: {
-                   MemoFeature()
-               }))
+            AppView(store:
+                    .init(
+                        initialState:
+                            AppFeature.State(),
+                        reducer: {
+                            AppFeature()
+                        }
+                    )
+            )
             .modelContainer(for: Memo.self)
         }
     }

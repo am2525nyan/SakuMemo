@@ -9,10 +9,10 @@ import SwiftUI
 import ComposableArchitecture
 import SwiftData
 
-struct MemoView: View {
-    @Bindable var store: StoreOf<MemoFeature>
+struct ArchiveMemoView: View {
+    @Bindable var store: StoreOf<ArchiveMemoFeature>
     @Environment(\.scenePhase) var scenePhase
-    @Query(filter: #Predicate<Memo>{$0.isArchived == false},sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
+    @Query(filter: #Predicate<Memo>{$0.isArchived == true},sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
     var body: some View {
         VStack {
             HStack{
