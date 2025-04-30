@@ -20,7 +20,7 @@ struct AppView: View {
             
             ArchiveMemoView(store: store.scope(state: \.archive, action: \.archive))
                 .tabItem{
-                    Image(systemName: "house.fill")
+                    Image(systemName: "archivebox.fill")
                     Text("アーカイブ")
                 }
         }
