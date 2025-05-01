@@ -25,7 +25,7 @@ enum MemoPriority: String, Codable, CaseIterable {
 class Memo: Identifiable {
     @Attribute(.unique) var id = UUID()
     var text: String
-    var date: Date
+    var date: Date?
     var category: String
     var isArchived: Bool
     var createdAt: Date
@@ -37,7 +37,6 @@ class Memo: Identifiable {
     init(text: String, category: String = "未分類", priorityValue: Double = 0.7) {
         self.id = UUID()
         self.text = text
-        self.date = Date()
         self.category = category
         self.isArchived = false
         self.createdAt = .now
