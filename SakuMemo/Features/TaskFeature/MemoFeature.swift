@@ -15,6 +15,9 @@ struct MemoFeature {
     struct State{
         var memo = Memo(text: "")
         var text: String = ""
+      
+        @Presents var detail: MemoDetailFeature.State?
+        var isShowDetails: Bool = false
     }
     enum Action: BindableAction {
         case binding(BindingAction<State>)
@@ -26,12 +29,16 @@ struct MemoFeature {
         case deleteAllMemos
         case archive(Memo)
         case onAppear
+        case presentMemoDetail(PresentationAction<MemoDetailFeature.Action>)
+        case showDetail(Memo)
+    
     }
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
     
     var body: some ReducerOf <Self> {
         BindingReducer()
+     
         Reduce { state, action in
             switch action {
             case .addMemo:
@@ -94,7 +101,20 @@ struct MemoFeature {
                         print("アーカイブ失敗")
                     }
                 }
+            case .presentMemoDetail:
+                return .none
+            case .showDetail(let memo):
+                state.isShowDetails = true
+              
+                state.detail = MemoDetailFeature.State(memo: memo)
+               
+                return .none
+                
             }
         }
+        .ifLet(\.$detail, action: \.presentMemoDetail){
+            MemoDetailFeature()
+        }
+
     }
 }
