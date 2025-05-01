@@ -33,6 +33,9 @@ struct MemoView: View {
             List {
                 ForEach(memos) { memo in
                     MemoCellView(memo: memo)
+                        .onTapGesture {
+                            store.send(.showDetail(memo))
+                        }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
                                 store.send(.deleteMemo(memo))
@@ -55,6 +58,14 @@ struct MemoView: View {
             .listStyle(PlainListStyle())
             .onAppear(){
                 store.send(.onAppear)
+            }
+            .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)){detail in
+                MemoDetailView(store: detail)
+                    .presentationDetents([ .height(250)])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(Material.thick)
+                
+                
             }
         }
     }

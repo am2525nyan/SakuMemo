@@ -12,7 +12,7 @@ import SwiftData
 
 @MainActor
 final class SwiftDataRepository: SwiftDataRepositoryProtocol {
-  
+    
     private let container: ModelContainer
     
     // コンストラクタで `ModelContainer` を渡す
@@ -54,22 +54,32 @@ final class SwiftDataRepository: SwiftDataRepositoryProtocol {
         try context.save()
         
     }
-    func archiveMemos() async throws {      
+    func archiveMemos() async throws {
         let now = Date()
         let memos = try context.fetch(FetchDescriptor<Memo>())
         
-        // 3日以上経っているメモをフィルター
         for memo in memos {
-            let createdAt = memo.createdAt
-            let daysSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0
-
-            if daysSinceCreation >= 3 {
-                memo.isArchived = true
+            if !memo.isArchived {
+                let createdAt = memo.createdAt
+                let date = memo.date
+                let daysSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0    
+                
+                if daysSinceCreation >= 3 {
+                    memo.isArchived = true
+                }
+                if let date {
+                    let daysSinceDate = Calendar.current.dateComponents([.day], from: date, to: now).day ?? 0
+                    if daysSinceDate >= 0 {
+                        memo.isArchived = true
+                    }
+                }
+                
             }
+            
         }
         try context.save()
     }
-
+    
 }
 
 
