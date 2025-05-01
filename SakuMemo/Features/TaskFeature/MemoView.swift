@@ -61,8 +61,11 @@ struct MemoView: View {
             }
             .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)){detail in
                 MemoDetailView(store: detail)
-                    .presentationDetents([.medium])
-                   
+                    .presentationDetents([ .height(250)])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(Material.thick)
+                
+                
             }
         }
     }
