@@ -59,7 +59,7 @@ final class SwiftDataRepository: SwiftDataRepositoryProtocol {
         let memos = try context.fetch(FetchDescriptor<Memo>())
         
         for memo in memos {
-            if memo.isArchived != true{
+            if !memo.isArchived {
                 let createdAt = memo.createdAt
                 let date = memo.date
                 let daysSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0    
