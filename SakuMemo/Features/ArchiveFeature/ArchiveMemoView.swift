@@ -41,13 +41,13 @@ struct ArchiveMemoView: View {
                             }
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                store.send(.archive(memo))
+                            Button {
+                                store.send(.archiveMain(memo))
                                 
                             } label: {
-                                Text("アーカイブ")
+                                Text("戻す")
                             }
-                            .tint(.cyan)
+                            .tint(.orange)
                         }
                 }
                 
