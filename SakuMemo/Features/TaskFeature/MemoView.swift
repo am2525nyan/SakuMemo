@@ -32,26 +32,30 @@ struct MemoView: View {
             
             List {
                 ForEach(memos) { memo in
-                    MemoCellView(memo: memo)
-                        .onTapGesture {
-                            store.send(.showDetail(memo))
+                    HStack{
+                        MemoCellView(memo: memo)
+                        Spacer()
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        store.send(.showDetail(memo))
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            store.send(.deleteMemo(memo))
+                        } label: {
+                            Text("削除")
                         }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                store.send(.deleteMemo(memo))
-                            } label: {
-                                Text("削除")
-                            }
+                    }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            store.send(.archive(memo))
+                            
+                        } label: {
+                            Text("アーカイブ")
                         }
-                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                store.send(.archive(memo))
-                                
-                            } label: {
-                                Text("アーカイブ")
-                            }
-                            .tint(.cyan)
-                        }
+                        .tint(.cyan)
+                    }
                 }
                 
             }
