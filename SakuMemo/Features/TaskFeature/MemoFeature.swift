@@ -15,7 +15,7 @@ struct MemoFeature {
     struct State{
         var memo = Memo(text: "")
         var text: String = ""
-      
+        
         @Presents var detail: MemoDetailFeature.State?
         var isShowDetails: Bool = false
     }
@@ -31,14 +31,15 @@ struct MemoFeature {
         case onAppear
         case presentMemoDetail(PresentationAction<MemoDetailFeature.Action>)
         case showDetail(Memo)
-    
+        
     }
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
+    @Dependency(\.notificationManager) var notificationManager
     
     var body: some ReducerOf <Self> {
         BindingReducer()
-     
+        
         Reduce { state, action in
             switch action {
             case .addMemo:
@@ -49,6 +50,7 @@ struct MemoFeature {
                     
                     do{
                         await send(.gemini)
+                        
                     }
                     
                     
@@ -105,16 +107,15 @@ struct MemoFeature {
                 return .none
             case .showDetail(let memo):
                 state.isShowDetails = true
-              
-                state.detail = MemoDetailFeature.State(memo: memo)
-               
-                return .none
                 
+                state.detail = MemoDetailFeature.State(memo: memo)
+                
+                return .none
             }
         }
         .ifLet(\.$detail, action: \.presentMemoDetail){
             MemoDetailFeature()
         }
-
+        
     }
 }

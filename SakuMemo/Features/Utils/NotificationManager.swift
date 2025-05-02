@@ -7,6 +7,7 @@
 
 import Foundation
 import UserNotifications
+import ComposableArchitecture
 
 final class NotificationManager {
     static let shared = NotificationManager()
@@ -25,13 +26,36 @@ final class NotificationManager {
         }
     }
     
-    func sendNotification(title: String, body: String) {
+    func sendNotification(title: String, body: String, date: Date) async {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-        let request = UNNotificationRequest(identifier: "notification", content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+        let calendar = Calendar(identifier: .gregorian)
+        let timeZone = TimeZone.current
+        
+        let components = calendar.dateComponents(in: timeZone, from: date)
+        
+        let trigger = UNCalendarNotificationTrigger(
+            dateMatching: components, repeats: false)
+        
+        let uuidString = UUID().uuidString
+        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
+        print("リクエスト完了")
+        print(request)
+        do{
+            try await  UNUserNotificationCenter.current().add(request)
+        } catch{
+            print(error)
+        }
+    }
+}
+struct NotificationManagerKey: DependencyKey {
+    static let liveValue = NotificationManager()
+}
+extension DependencyValues {
+    var notificationManager: NotificationManager {
+        get { self[NotificationManagerKey.self] }
+        set { self[NotificationManagerKey.self] = newValue }
     }
 }
