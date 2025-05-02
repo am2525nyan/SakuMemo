@@ -26,7 +26,7 @@ final class NotificationManager {
         }
     }
     
-    func sendNotification(title: String, body: String, date: Date) async {
+    func sendNotification(title: String, body: String, date: Date, id: String) async {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
@@ -39,8 +39,7 @@ final class NotificationManager {
         let trigger = UNCalendarNotificationTrigger(
             dateMatching: components, repeats: false)
         
-        let uuidString = UUID().uuidString
-        let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
         print("リクエスト完了")
         print(request)
         do{
@@ -49,7 +48,14 @@ final class NotificationManager {
             print(error)
         }
     }
+    
+    func removeNotification(id: String) {
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers:[id])
+    }
+    
 }
+
 struct NotificationManagerKey: DependencyKey {
     static let liveValue = NotificationManager()
 }

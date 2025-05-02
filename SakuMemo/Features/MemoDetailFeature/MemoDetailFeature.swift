@@ -20,6 +20,7 @@ struct MemoDetailFeature{
         case binding(BindingAction<State>)
         case onAppear
         case setNotification
+        case removeNotification
     }
     
     @Dependency(\.notificationManager) var notificationManager
@@ -37,13 +38,18 @@ struct MemoDetailFeature{
                 if let date =  date{
                     print("通知を設定しました！")
                     let text = state.memo.text
+                    let id = state.memo.id.uuidString
                     return .run { send in
-                        await notificationManager.sendNotification(title: "忘れてませんか？", body: text, date: date)
+                        await notificationManager.sendNotification(title: "忘れてませんか？", body: text, date: date, id: id)
                     }
                     
                 }
                 return .none
                 
+            case .removeNotification:
+                let id = state.memo.id.uuidString
+                notificationManager.removeNotification(id: id)
+                return .none
             }
             
         }
