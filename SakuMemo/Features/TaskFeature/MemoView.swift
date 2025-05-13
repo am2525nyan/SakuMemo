@@ -15,7 +15,7 @@ struct MemoView: View {
     @Query(filter: #Predicate<Memo>{$0.isArchived == false},sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
     var body: some View {
         ZStack{
-           
+            
             VStack {
                 HStack{
                     TextField("メモを入力", text: $store.text)
@@ -76,7 +76,7 @@ struct MemoView: View {
             }
             .sheet(item: $store.scope(state: \.add, action: \.presentAddMemo)){add in
                 AddMemoView(store: add)
-                    .presentationDetents([.height(300),.medium])
+                    .presentationDetents([.height(250)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(Material.thick)
                 

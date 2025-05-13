@@ -59,6 +59,18 @@ struct AddMemoView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
+                        .swipeActions(content: {
+                            Button(role: .destructive) {
+                                
+                                store.send(.addMemo(memo))
+                                
+                            }label: {
+                                Image(systemName: "plus")
+                                    .foregroundStyle(.cyan)
+                            }
+                            .tint(.cyan)
+                            
+                        })
                         .padding(.horizontal, 20)
                         
                         
@@ -80,7 +92,7 @@ struct AddMemoView: View {
         memoList: [
             "シュー生地を作る",
             "カスタードクリームを作る",
-            "生クリームを泡立てる(必要な場合)",
+            "生クリームを泡立てる",
             "シュー生地を焼く",
             "カスタードクリームを冷ます",
             "シュー生地にクリームを詰める",
