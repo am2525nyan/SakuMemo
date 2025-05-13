@@ -7,5 +7,6 @@
 
 import Foundation
 protocol GeminiRepositoryProtocol: Sendable {
-    func gemini(for content: String) async -> MemoAnalysisResult? 
+    func gemini(for content: String) async -> MemoAnalysisResult?
+    func geminiText(for content: String) async -> [String]?
 }
