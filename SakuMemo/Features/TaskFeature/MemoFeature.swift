@@ -17,7 +17,9 @@ struct MemoFeature {
         var text: String = ""
         
         @Presents var detail: MemoDetailFeature.State?
+        @Presents var add: AddMemoFeature.State?
         var isShowDetails: Bool = false
+        var isShowAdd: Bool = false
     }
     enum Action: BindableAction {
         case binding(BindingAction<State>)
@@ -30,7 +32,9 @@ struct MemoFeature {
         case archive(Memo)
         case onAppear
         case presentMemoDetail(PresentationAction<MemoDetailFeature.Action>)
+        case presentAddMemo(PresentationAction<AddMemoFeature.Action>)
         case showDetail(Memo)
+        case showAddMemo
         
     }
     @Dependency(\.swiftDataRepository) var swiftDataRepository
@@ -111,10 +115,19 @@ struct MemoFeature {
                 state.detail = MemoDetailFeature.State(memo: memo)
                 
                 return .none
+            case .presentAddMemo:
+                return .none
+            case .showAddMemo:
+                state.isShowAdd = true
+                state.add = AddMemoFeature.State()
+                return .none
             }
         }
         .ifLet(\.$detail, action: \.presentMemoDetail){
             MemoDetailFeature()
+        }
+        .ifLet(\.$add, action: \.presentAddMemo){
+            AddMemoFeature()
         }
         
     }

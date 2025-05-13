@@ -110,6 +110,65 @@ struct GeminiRepository: GeminiRepositoryProtocol {
         return try? JSONDecoder().decode(MemoAnalysisResult.self, from: data)
     }
     
+    
+    func geminiText(for content: String) async -> [String]? {
+        let prompt = """
+        「\(content)」から、タスクを抽出してください。幾つになっても大丈夫です。
+        例えば以下のような文章があった時にはこのように出力してください。
+        例　明日友達が家に来てご飯を作るから、部屋の掃除をしてから、買い物に行く
+        → 部屋の掃除機をかける、キッチンをきれいにする、買い物リストを作る、買い物に行く
+        のようにタスクを抽出してください。
+        そして、以下のフォーマットに沿って、一つだけ出力してください。**前後に説明文は不要です**：
+        [部屋の掃除機をかける,キッチンをきれいにする,買い物リストを作る,買い物に行く]
+        """
+        
+        let url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+        let params: Parameters = [
+            "contents":[
+                [
+                    "parts": [
+                        ["text": prompt]
+                    ]
+                ]
+            ]
+        ]
+        let headers: HTTPHeaders = [
+            "Content-Type":"application/json",
+        ]
+        
+        do {
+            let data = try await AF.request("\(url)?key=\(env.value("APIKEY") ?? "")",
+                                            method: .post,
+                                            parameters: params,
+                                            encoding: JSONEncoding.default,
+                                            headers: headers)
+                .serializingDecodable(GeminiResponse.self).value
+            if let text = data.candidates.first?.content.parts.first?.text{
+                print(text)
+                let textArray = text
+                    .split(separator: ",")
+                    .map { substring in
+                        let cleaned = substring
+                            .replacingOccurrences(of: "[", with: "")
+                            .replacingOccurrences(of: "]", with: "")
+                        return String(cleaned).trimmingCharacters(in: .whitespacesAndNewlines)
+                    }
+                return textArray
+            }
+            else{
+                print("失敗！")
+            }
+            
+        } catch {
+            print("🚨 エラー:", error)
+            
+        }
+        return nil
+        
+    }
+    
+    
+    
 }
 
 struct GeminiRepositoryKey: DependencyKey {
@@ -128,3 +187,4 @@ struct MemoAnalysisResult: Decodable {
     let importance: Double
     let category: String
 }
+
