@@ -14,6 +14,9 @@ struct AddMemoFeature {
     struct State {
         var text: String = ""
         var isSending: Bool = false
+        var isTextField: Bool = true
+        var memoList: [String] = []
+        var memo = Memo(text: "")
     }
     
     enum Action: BindableAction {
@@ -21,8 +24,14 @@ struct AddMemoFeature {
         case save
         case geminiSuccess([String])
         case geminiFailure
+        case showTextField
+        case addMemo(String)
+        case gemini
+        case geminiError
+        case geminiSuccessText(MemoAnalysisResult)
     }
     @Dependency(\.geminiRepository) var geminiRepository
+    @Dependency(\.swiftDataRepository) var swiftDataRepository
     var body: some ReducerOf<Self> {
         BindingReducer()
         Reduce { state, action in
@@ -41,12 +50,60 @@ struct AddMemoFeature {
                 return .none
             case .geminiSuccess(let result):
                 state.isSending = false
-                print("Gemini Success: \(result)")
+                state.isTextField = false
+                state.memoList = result
+                
                 return .none
             case .geminiFailure:
                 state.isSending = false
-                print("Gemini Failure")
+                state.isTextField = false
+                
                 return .none
+            case .showTextField:
+                state.isTextField = true
+                return .none
+            case .addMemo(let text):
+                let memo = Memo(text: text)
+                state.memo = memo
+                state.memoList.removeAll(where:{
+                    (value) in
+                    value == text
+                })
+                return .run { send in
+                    
+                    do{
+                        await send(.gemini)
+                        
+                    }
+                    
+                    
+                }
+            case .gemini:
+                let text = state.memo.text
+                return .run { send in
+                    if let result = await geminiRepository.gemini(for: text) {
+                        await send(.geminiSuccessText(result))
+                    } else {
+                        print("⚠️ Geminiの解析に失敗")
+                        await send(.geminiError)
+                    }
+                }
+                
+            case .geminiSuccessText(let result):
+                state.memo.priorityValue = result.importance
+                state.memo.category = result.category
+                let memo = state.memo
+                
+                return .run { send in
+                    try await swiftDataRepository.addMemo(newMemo: memo)
+                }
+                
+            case .geminiError:
+                let memo = state.memo
+                state.text = ""
+                return .run { send in
+                    try await swiftDataRepository.addMemo(newMemo: memo)
+                }
             }
         }
     }

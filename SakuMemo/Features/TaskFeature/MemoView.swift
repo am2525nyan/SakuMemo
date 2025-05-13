@@ -65,11 +65,6 @@ struct MemoView: View {
             .listStyle(PlainListStyle())
             .onAppear(){
                 store.send(.onAppear)
-                Task{
-                    do{
-                      //  await GeminiRepository().geminiText(for: "シュークリームを作る")
-                    }
-                }
             }
             .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)){detail in
                 MemoDetailView(store: detail)
@@ -81,14 +76,13 @@ struct MemoView: View {
             }
             .sheet(item: $store.scope(state: \.add, action: \.presentAddMemo)){add in
                 AddMemoView(store: add)
-                    .presentationDetents([.medium])
+                    .presentationDetents([.height(300),.medium])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(Material.thick)
                 
                 
             }
             FloatingButton(showAddMemo: {
-                print("呼ばれた")
                 store.send(.showAddMemo)
             })
         }
@@ -101,7 +95,6 @@ struct MemoView: View {
                 HStack{
                     Spacer()
                     Button(action: {
-                        print("add")
                         showAddMemo()
                     }) {
                         Image(systemName: "plus")

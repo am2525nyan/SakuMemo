@@ -16,27 +16,78 @@ struct AddMemoView: View {
             HStack{
                 Spacer()
                 Button{
+                    store.send(.showTextField)
+                    
+                }label: {
+                    Image(systemName: "text.justifyright")
+                }
+                .padding(.leading, 20)
+                .disabled(store.memoList.isEmpty)
+                
+                Button{
                     store.send(.save)
                 }label: {
                     Image(systemName: "paperplane.fill")
                 }
-                .disabled(store.text.isEmpty && !store.isSending)
+                .disabled(store.text.isEmpty && !store.isSending || !store.isTextField)
                 .padding(.leading, 20)
-                .padding(.bottom,20)
-              
+                
             }
-            TextField("メモを入力",text: $store.text,axis: .vertical)
-                .textFieldStyle(.customTextField(isFocused: _isFocused))
+            .padding(.bottom,20)
+            if store.isTextField{
+                TextField("メモを入力",text: $store.text,axis: .vertical)
+                    .textFieldStyle(.customTextField(isFocused: _isFocused))
+                
+                    .lineLimit(5...300)
+                    .focused($isFocused)
+                    .padding(.top, 20)
+            }
+            
+            if !store.isTextField || !store.memoList.isEmpty{
+                List{
+                    
+                    ForEach(store.memoList, id: \.self) { memo in
+                        HStack{
+                            Text(memo)
+                            Spacer()
+                            Button{
+                                store.send(.addMemo(memo))
+                                
+                            }label: {
+                                Image(systemName: "plus")
+                                    .foregroundStyle(.cyan)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        .padding(.horizontal, 20)
+                        
+                        
+                    }
+                    
+                }
+                .listStyle(.plain)
+                
+            }
+            
         }
+        .padding(.top,20)
         .padding(.horizontal, 20)
-        .lineLimit(5...300)
-        .focused($isFocused)
-        .padding(.top, 20)
     }
 }
 
 #Preview {
-    AddMemoView(store: .init(initialState: AddMemoFeature.State(), reducer: {
+    AddMemoView(store: .init(initialState: AddMemoFeature.State(
+        memoList: [
+            "シュー生地を作る",
+            "カスタードクリームを作る",
+            "生クリームを泡立てる(必要な場合)",
+            "シュー生地を焼く",
+            "カスタードクリームを冷ます",
+            "シュー生地にクリームを詰める",
+            "粉砂糖をかける",
+            "冷蔵庫で冷やす"
+        ]
+    ), reducer: {
         AddMemoFeature()
     }))
 }
