@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 protocol SwiftDataRepositoryProtocol: Sendable {
-    func fetchMemos() async throws -> [Memo]
+    func fetchMemos() async throws -> [MemoSendable]
     func addMemo(newMemo: Memo) async throws
     func deleteAllMemos() async throws
     func deleteMemo(memo: Memo) async throws

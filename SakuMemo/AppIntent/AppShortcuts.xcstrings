@@ -1,10 +1,10 @@
 {
-  "sourceLanguage" : "en",
+  "sourceLanguage" : "ja",
   "strings" : {
     "${applicationName}の画面を開いて" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
+        "ja" : {
           "stringSet" : {
             "state" : "new",
             "values" : [

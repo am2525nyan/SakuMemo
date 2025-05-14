@@ -118,7 +118,7 @@
 				};
 			};
 			buildConfigurationList = 720E908C2DB2495F0072F07F /* Build configuration list for PBXProject "SakuMemo" */;
-			developmentRegion = en;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,

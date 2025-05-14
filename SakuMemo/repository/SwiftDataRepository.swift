@@ -24,8 +24,18 @@ final class SwiftDataRepository: SwiftDataRepositoryProtocol {
         return container.mainContext
     }
     
-    func fetchMemos() async throws -> [Memo] {
+    func fetchMemos() async throws -> [MemoSendable] {
         try context.fetch(FetchDescriptor<Memo>())
+            .map { memo in
+                MemoSendable(
+                    text: memo.text,
+                    category: memo.category,
+                    priorityValue: memo.priorityValue,
+                    isArchived: memo.isArchived,
+                    createdAt: memo.createdAt,
+                    date: memo.date
+                )
+            }
     }
     
     func addMemo(newMemo: Memo) async throws {
@@ -114,14 +124,9 @@ final class SwiftDataRepositoryMock: SwiftDataRepositoryProtocol {
         print("全件削除完了！")
     }
     
-    func fetchMemos() async throws -> [Memo] {
+    func fetchMemos() async throws -> [MemoSendable] {
         return [
-            Memo(text: "バナナ", category: "", priorityValue: 0.8),
-            Memo(text: "Reducer書く", category: ".todo", priorityValue: 0.6),
-            Memo(text: "旅行準備したい", category: ".note", priorityValue: 0.2),
-            Memo(text: "りんご", category: ".shopping", priorityValue: 0.9),
-            Memo(text: "インターンのDM返す！", category: ".todo", priorityValue: 0.9),
-            Memo(text: "visionPro欲しい", category: ".note", priorityValue: 0.1),
+         
         ]
     }
     
@@ -130,3 +135,27 @@ final class SwiftDataRepositoryMock: SwiftDataRepositoryProtocol {
     }
     
 }
+
+final class MemoSendable: Sendable {
+    let id:UUID
+    let text: String
+    let date: Date?
+    let category: String
+    let isArchived: Bool
+    let createdAt: Date
+    let priorityValue: Double
+    var priority: MemoPriority {
+        MemoPriority.fromValue(priorityValue)
+    }
+    
+    init(text: String, category: String, priorityValue: Double, isArchived: Bool, createdAt: Date, date: Date?) {
+        self.id = UUID()
+        self.text = text
+        self.category = category
+        self.isArchived = isArchived
+        self.createdAt = createdAt
+        self.priorityValue = priorityValue
+        self.date = date
+    }
+}
+    

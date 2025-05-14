@@ -22,7 +22,7 @@ enum MemoPriority: String, Codable, CaseIterable {
 }
 
 @Model
-class Memo: Identifiable {
+final class Memo: Identifiable {
     @Attribute(.unique) var id = UUID()
     var text: String
     var date: Date?
