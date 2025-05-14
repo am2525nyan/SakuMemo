@@ -30,8 +30,8 @@ final class NotificationManager {
         let content = UNMutableNotificationContent()
         
         let image = try await ImageCreatorRepository.shared.generateImage(text: body)
-        if image != nil{
-            let fileURL = try ImageCreatorRepository.shared.saveCGImageToTemporaryFile(image!)
+        if let image = image {
+            let fileURL = try ImageCreatorRepository.shared.saveCGImageToTemporaryFile(image)
             let attachment = try UNNotificationAttachment(identifier: "generatedImage", url: fileURL, options: nil)
             content.attachments = [attachment]
         }
