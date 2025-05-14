@@ -40,7 +40,7 @@ struct MemoDetailFeature{
                     let text = state.memo.text
                     let id = state.memo.id.uuidString
                     return .run { send in
-                        await notificationManager.sendNotification(title: "忘れてませんか？", body: text, date: date, id: id)
+                        try await notificationManager.sendNotification(title: "忘れてませんか？", body: text, date: date, id: id)
                     }
                     
                 }

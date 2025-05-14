@@ -11,28 +11,27 @@ import Dependencies
 import ComposableArchitecture
 
 
-
-
 struct Shortcut: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
             intent: AddMemoIntent(),
             phrases: [
-                "サクメモでメモを追加",
-                "サクッとメモする",
                 "\(.applicationName)の画面を開いて",
                 "\(.applicationName)の画面を見せて",
                 "\(.applicationName)をお願い",
                 "\(.applicationName)でメモを追加",
-                "メモを追加したい",
-                "タスクを追加",
               
-                
+//                "サクメモでメモを追加",
+//                "サクッとメモする",
+//                "メモを追加したい",
+//                "タスクを追加",
+              
             ],
             shortTitle: "メモを追加する",
             systemImageName: "pencil")
     }
 }
+
 
 
 struct AddMemoIntent: AppIntent {

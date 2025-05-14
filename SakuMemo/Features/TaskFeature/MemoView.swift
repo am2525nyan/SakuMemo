@@ -15,7 +15,6 @@ struct MemoView: View {
     @Query(filter: #Predicate<Memo>{$0.isArchived == false},sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
     var body: some View {
         ZStack{
-            
             VStack {
                 HStack{
                     TextField("メモを入力", text: $store.text)
@@ -65,6 +64,7 @@ struct MemoView: View {
             .listStyle(PlainListStyle())
             .onAppear(){
                 store.send(.onAppear)
+               
             }
             .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)){detail in
                 MemoDetailView(store: detail)

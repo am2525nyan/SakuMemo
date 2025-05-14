@@ -41,7 +41,7 @@ struct ArchiveMemoView: View {
                             }
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button {
+                            Button(role: .destructive) {
                                 store.send(.archiveMain(memo))
                                 
                             } label: {
