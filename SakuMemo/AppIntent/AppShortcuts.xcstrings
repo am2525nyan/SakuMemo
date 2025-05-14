@@ -1,0 +1,22 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "${applicationName}の画面を開いて" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "${applicationName}の画面を開いて",
+              "${applicationName}の画面を見せて",
+              "${applicationName}をお願い",
+              "${applicationName}でメモを追加"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
