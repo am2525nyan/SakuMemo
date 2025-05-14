@@ -14,7 +14,6 @@ import Dependencies
 final class ImageCreatorRepository {
     
     static var shared = ImageCreatorRepository()
-    
     func generateImage(text: String)async throws -> CGImage? {
         do {
             let creator = try await ImageCreator()
@@ -30,10 +29,6 @@ final class ImageCreatorRepository {
                 let anImage = image.cgImage
                 return anImage
             }
-            
-            
-            
-            // Receive the images.
             
         }
         catch ImageCreator.Error.notSupported {
