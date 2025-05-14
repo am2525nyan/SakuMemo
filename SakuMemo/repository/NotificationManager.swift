@@ -26,10 +26,19 @@ final class NotificationManager {
         }
     }
     
-    func sendNotification(title: String, body: String, date: Date, id: String) async {
+    func sendNotification(title: String, body: String, date: Date, id: String) async throws {
         let content = UNMutableNotificationContent()
+        
+        let image = try await ImageCreatorRepository.shared.generateImage(text: body)
+        if image != nil{
+            let fileURL = try ImageCreatorRepository.shared.saveCGImageToTemporaryFile(image!)
+            let attachment = try UNNotificationAttachment(identifier: "generatedImage", url: fileURL, options: nil)
+            content.attachments = [attachment]
+        }
+        
         content.title = title
         content.body = body
+        
         
         let calendar = Calendar(identifier: .gregorian)
         let timeZone = TimeZone.current
@@ -41,7 +50,6 @@ final class NotificationManager {
         
         let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
         print("リクエスト完了")
-        print(request)
         do{
             try await  UNUserNotificationCenter.current().add(request)
         } catch{

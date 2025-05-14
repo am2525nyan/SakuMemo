@@ -9,7 +9,8 @@ import Foundation
 import ImagePlayground
 import CoreGraphics
 import Dependencies
-
+import ImageIO
+import MobileCoreServices
 
 final class ImageCreatorRepository {
     
@@ -40,6 +41,22 @@ final class ImageCreatorRepository {
         }
         return nil
     }
+    func saveCGImageToTemporaryFile(_ image: CGImage, fileName: String = "\(UUID().uuidString).jpg") throws -> URL {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+        
+        guard let destination = CGImageDestinationCreateWithURL(url as CFURL, kUTTypeJPEG, 1, nil) else {
+            throw NSError(domain: "SaveImageError", code: 0, userInfo: [NSLocalizedDescriptionKey: "画像保存に失敗しました"])
+        }
+        
+        CGImageDestinationAddImage(destination, image, nil)
+        
+        if CGImageDestinationFinalize(destination) {
+            return url
+        } else {
+            throw NSError(domain: "SaveImageError", code: 1, userInfo: [NSLocalizedDescriptionKey: "画像ファイルの最終化に失敗しました"])
+        }
+    }
+    
 }
 struct ImageCreatorRepositoryKey: DependencyKey{
     static var liveValue = ImageCreatorRepository()
