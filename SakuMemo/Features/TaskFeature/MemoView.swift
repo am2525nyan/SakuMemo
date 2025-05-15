@@ -85,6 +85,8 @@ struct MemoView: View {
             FloatingButton(showAddMemo: {
                 store.send(.showAddMemo)
             })
+            .padding(.bottom, 20)
+            .padding(.trailing,20)
         }
     }
     struct FloatingButton: View {
@@ -97,12 +99,17 @@ struct MemoView: View {
                     Button(action: {
                         showAddMemo()
                     }) {
-                        Image(systemName: "plus")
+                      Text("+")
+                           
+                            .font(.system(size: 30))
+                            .frame(width: 30, height: 30)
                             .padding()
                             .background(.cyan)
                             .foregroundColor(.white)
                             .clipShape(Circle())
-                            .shadow(radius: 10)
+                           
+                            .shadow(radius: 5)
+                           
                     }
                     .padding()
                 }
