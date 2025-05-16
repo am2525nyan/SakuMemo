@@ -23,7 +23,7 @@ struct MemoView: View {
                         store.send(.addMemo)
                     },
                     isFocused: _isFocused,
-                    text:.constant("")
+                    text:$store.text
                 )
                 ListComponent(memos: .constant(memos), tapAction: {memo in
                     store.send(.showDetail(memo))
