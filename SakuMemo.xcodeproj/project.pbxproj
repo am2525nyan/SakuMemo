@@ -10,6 +10,8 @@
 		720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 720E90A32DB24A140072F07F /* ComposableArchitecture */; };
 		720E91E52DB7A0E20072F07F /* .env in Resources */ = {isa = PBXBuildFile; fileRef = 720E91E42DB7A0DE0072F07F /* .env */; };
 		720E92C32DB7C8030072F07F /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 720E92C22DB7C8030072F07F /* Alamofire */; };
+		729E52392DD706D70026BFB9 /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = 729E52382DD706D70026BFB9 /* PopupView */; };
+		729E523E2DD7106A0026BFB9 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 729E523D2DD7106A0026BFB9 /* AsyncAlgorithms */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,8 +50,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				729E52392DD706D70026BFB9 /* PopupView in Frameworks */,
 				720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */,
 				720E92C32DB7C8030072F07F /* Alamofire in Frameworks */,
+				729E523E2DD7106A0026BFB9 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +67,7 @@
 				720E90932DB2495F0072F07F /* SakuMemo */,
 				720E90922DB2495F0072F07F /* Products */,
 				720E93002DBA5E750072F07F /* resources */,
+				729E51E42DD704F00026BFB9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -72,6 +77,13 @@
 				720E90912DB2495F0072F07F /* SakuMemo.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		729E51E42DD704F00026BFB9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -97,6 +109,8 @@
 			packageProductDependencies = (
 				720E90A32DB24A140072F07F /* ComposableArchitecture */,
 				720E92C22DB7C8030072F07F /* Alamofire */,
+				729E52382DD706D70026BFB9 /* PopupView */,
+				729E523D2DD7106A0026BFB9 /* AsyncAlgorithms */,
 			);
 			productName = SakuMemo;
 			productReference = 720E90912DB2495F0072F07F /* SakuMemo.app */;
@@ -131,6 +145,8 @@
 			packageReferences = (
 				720E90A22DB24A140072F07F /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				720E92C12DB7C8030072F07F /* XCRemoteSwiftPackageReference "Alamofire" */,
+				729E52372DD706D70026BFB9 /* XCRemoteSwiftPackageReference "PopupView" */,
+				729E523C2DD7106A0026BFB9 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 720E90922DB2495F0072F07F /* Products */;
@@ -395,6 +411,22 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		729E52372DD706D70026BFB9 /* XCRemoteSwiftPackageReference "PopupView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exyte/PopupView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.1.7;
+			};
+		};
+		729E523C2DD7106A0026BFB9 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -407,6 +439,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 720E92C12DB7C8030072F07F /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		729E52382DD706D70026BFB9 /* PopupView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 729E52372DD706D70026BFB9 /* XCRemoteSwiftPackageReference "PopupView" */;
+			productName = PopupView;
+		};
+		729E523D2DD7106A0026BFB9 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 729E523C2DD7106A0026BFB9 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

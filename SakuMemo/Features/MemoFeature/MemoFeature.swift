@@ -7,6 +7,7 @@
 
 import Foundation
 import ComposableArchitecture
+import AsyncAlgorithms
 
 @Reducer
 struct MemoFeature {
@@ -20,6 +21,7 @@ struct MemoFeature {
         @Presents var add: AddMemoFeature.State?
         var isShowDetails: Bool = false
         var isShowAdd: Bool = false
+        var isShowPopup: Bool = false
     }
     enum Action: BindableAction {
         case binding(BindingAction<State>)
@@ -35,11 +37,14 @@ struct MemoFeature {
         case presentAddMemo(PresentationAction<AddMemoFeature.Action>)
         case showDetail(Memo)
         case showAddMemo
+        case showPopup
+        case closePopup
         
     }
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
     @Dependency(\.notificationManager) var notificationManager
+    @Dependency(\.continuousClock) var clock
     
     var body: some ReducerOf <Self> {
         BindingReducer()
@@ -77,6 +82,7 @@ struct MemoFeature {
                 
                 return .run { send in
                     try await swiftDataRepository.addMemo(newMemo: memo)
+                    await send(.showPopup)
                 }
                 
             case .deleteAllMemos:
@@ -121,6 +127,17 @@ struct MemoFeature {
                 state.isShowAdd = true
                 state.add = AddMemoFeature.State()
                 return .none
+            case .showPopup:
+                state.isShowPopup = true
+                return .run { send in
+                    try await self.clock.sleep(for: .seconds(2))
+                        await send(.closePopup)
+                    }
+                   
+                case .closePopup:
+                    state.isShowPopup = false
+                    return .none
+              
             }
         }
         .ifLet(\.$detail, action: \.presentMemoDetail){
