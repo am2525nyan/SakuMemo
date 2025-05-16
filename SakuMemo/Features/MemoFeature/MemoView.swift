@@ -8,6 +8,7 @@
 import SwiftUI
 import ComposableArchitecture
 import SwiftData
+import PopupView
 
 struct MemoView: View {
     @Bindable var store: StoreOf<MemoFeature>
@@ -64,7 +65,7 @@ struct MemoView: View {
             .listStyle(PlainListStyle())
             .onAppear(){
                 store.send(.onAppear)
-               
+                
             }
             .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)){detail in
                 MemoDetailView(store: detail)
@@ -87,6 +88,16 @@ struct MemoView: View {
             })
             .padding(.bottom, 20)
             .padding(.trailing,20)
+        }
+        .popup(isPresented: $store.isShowPopup) {
+            FloaterTop()
+        } customize: {
+            $0
+                .type(.floater())
+                .position(.top)
+                .animation(.spring())
+                .displayMode(.window)
+                .disappearTo(.topSlide)
         }
     }
     struct FloatingButton: View {
@@ -118,9 +129,12 @@ struct MemoView: View {
     }
 }
 
+
 #Preview {
     MemoView(store:
-            .init(initialState: MemoFeature.State(),
+            .init(initialState: MemoFeature.State(
+                isShowPopup: true
+            ),
                   reducer: {
         MemoFeature()
     }))
