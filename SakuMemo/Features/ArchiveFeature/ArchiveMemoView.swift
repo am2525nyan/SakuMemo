@@ -13,22 +13,16 @@ struct ArchiveMemoView: View {
     @Bindable var store: StoreOf<ArchiveMemoFeature>
     @Environment(\.scenePhase) var scenePhase
     @Query(filter: #Predicate<Memo>{$0.isArchived == true},sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
+    @FocusState var isFocused: Bool
     var body: some View {
         VStack {
-            HStack{
-                TextField("メモを入力", text: $store.text)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                Button(action: {
+            AddMemoComponent(
+                tapped: {
                     store.send(.addMemo)
-                }, label:
-                        {
-                    Image(systemName: "paperplane.fill")
-                })
-                
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 20)
+                },
+                isFocused: _isFocused,
+                text:.constant("")
+            )
             
             List {
                 ForEach(memos) { memo in
