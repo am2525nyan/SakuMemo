@@ -12,57 +12,29 @@ import PopupView
 
 struct MemoView: View {
     @Bindable var store: StoreOf<MemoFeature>
+    @FocusState var isFocused: Bool
     @Environment(\.scenePhase) var scenePhase
     @Query(filter: #Predicate<Memo>{$0.isArchived == false},sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
     var body: some View {
         ZStack{
             VStack {
-                HStack{
-                    TextField("メモを入力", text: $store.text)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    
-                    Button(action: {
+                AddMemoComponent(
+                    tapped: {
                         store.send(.addMemo)
-                    }, label:
-                            {
-                        Image(systemName: "paperplane.fill")
-                    })
-                    
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 20)
-                
-                List {
-                    ForEach(memos) { memo in
-                        HStack{
-                            MemoCellView(memo: memo)
-                            Spacer()
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            store.send(.showDetail(memo))
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                store.send(.deleteMemo(memo))
-                            } label: {
-                                Text("削除")
-                            }
-                        }
-                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                store.send(.archive(memo))
-                                
-                            } label: {
-                                Text("アーカイブ")
-                            }
-                            .tint(.cyan)
-                        }
-                    }
-                    
-                }
+                    },
+                    isFocused: _isFocused,
+                    text:$store.text
+                )
+                ListComponent(memos: .constant(memos), tapAction: {memo in
+                    store.send(.showDetail(memo))
+                }, swipeTrailingAction: { memo in
+                    store.send(.deleteMemo(memo))
+                }, swipeLeadingAction: { memo in
+                    store.send(.archive(memo))
+                }, trailingText: "削除", leadingText: "アーカイブ")
+              
             }
-            .listStyle(PlainListStyle())
+         
             .onAppear(){
                 store.send(.onAppear)
                 
@@ -110,17 +82,17 @@ struct MemoView: View {
                     Button(action: {
                         showAddMemo()
                     }) {
-                      Text("+")
-                           
+                        Text("+")
+                        
                             .font(.system(size: 30))
                             .frame(width: 30, height: 30)
                             .padding()
                             .background(.cyan)
                             .foregroundColor(.white)
                             .clipShape(Circle())
-                           
+                        
                             .shadow(radius: 5)
-                           
+                        
                     }
                     .padding()
                 }
@@ -133,10 +105,11 @@ struct MemoView: View {
 #Preview {
     MemoView(store:
             .init(initialState: MemoFeature.State(
-                isShowPopup: true
+                isShowPopup: false
             ),
                   reducer: {
         MemoFeature()
-    }))
+    })  )
+    
 }
 
