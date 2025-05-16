@@ -25,37 +25,16 @@ struct MemoView: View {
                     isFocused: _isFocused,
                     text:.constant("")
                 )
-                List {
-                    ForEach(memos) { memo in
-                        HStack{
-                            MemoCellView(memo: memo)
-                            Spacer()
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            store.send(.showDetail(memo))
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                store.send(.deleteMemo(memo))
-                            } label: {
-                                Text("削除")
-                            }
-                        }
-                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                store.send(.archive(memo))
-                                
-                            } label: {
-                                Text("アーカイブ")
-                            }
-                            .tint(.cyan)
-                        }
-                    }
-                    
-                }
+                ListComponent(memos: .constant(memos), tapAction: {memo in
+                    store.send(.showDetail(memo))
+                }, swipeTrailingAction: { memo in
+                    store.send(.deleteMemo(memo))
+                }, swipeLeadingAction: { memo in
+                    store.send(.archive(memo))
+                }, trailingText: "削除", leadingText: "アーカイブ")
+              
             }
-            .listStyle(PlainListStyle())
+         
             .onAppear(){
                 store.send(.onAppear)
                 

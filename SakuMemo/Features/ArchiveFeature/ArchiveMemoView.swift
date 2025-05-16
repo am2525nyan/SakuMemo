@@ -23,30 +23,14 @@ struct ArchiveMemoView: View {
                 isFocused: _isFocused,
                 text:.constant("")
             )
+            ListComponent(memos: .constant(memos),
+                          tapAction: {memo in
+            }, swipeTrailingAction: { memo in
+                store.send(.deleteMemo(memo))
+            }, swipeLeadingAction: { memo in
+                store.send(.archiveMain(memo))
+            }, trailingText: "削除", leadingText: "戻す")
             
-            List {
-                ForEach(memos) { memo in
-                    MemoCellView(memo: memo)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                store.send(.deleteMemo(memo))
-                            } label: {
-                                Text("削除")
-                            }
-                        }
-                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                store.send(.archiveMain(memo))
-                                
-                            } label: {
-                                Text("戻す")
-                            }
-                            .tint(.orange)
-                        }
-                }
-                
-            }
-            .listStyle(PlainListStyle())
         }
     }
 }
