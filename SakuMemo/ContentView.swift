@@ -6,16 +6,21 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
+import AppFeature
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        AppView(store:
+                .init(
+                    initialState:
+                        AppFeature.State(),
+                    reducer: {
+                        AppFeature()
+                    }
+                )
+        )
+
     }
 }
 

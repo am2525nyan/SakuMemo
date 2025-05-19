@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
-import ComposableArchitecture
 import SwiftData
+import Repository
+import SharedModel
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
@@ -27,16 +28,9 @@ struct SakuMemoApp: App {
     
     var body: some Scene {
         WindowGroup {
-            AppView(store:
-                    .init(
-                        initialState:
-                            AppFeature.State(),
-                        reducer: {
-                            AppFeature()
-                        }
-                    )
-            )
+        ContentView()
             .modelContainer(for: Memo.self)
+          
         }
     }
 }
