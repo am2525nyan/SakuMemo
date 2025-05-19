@@ -1,0 +1,45 @@
+
+//  TabView.swift
+//  SakuMemo
+//
+//  Created by saki on 2025/04/29.
+//
+
+import SwiftUI
+import ComposableArchitecture
+import MemoFeature
+import ArchiveFeature
+
+public struct AppView: View {
+    public init(store: StoreOf<AppFeature>) {
+        self.store = store
+    }
+    public let store: StoreOf<AppFeature>
+    
+    public var body: some View {
+        TabView{
+            MemoView(store: store.scope(state: \.memo, action: \.memo))
+                .tabItem{
+                    Image(systemName: "house.fill")
+                    Text("ホーム")
+                }
+            
+            ArchiveMemoView(store: store.scope(state: \.archive, action: \.archive))
+                .tabItem{
+                    Image(systemName: "archivebox.fill")
+                    Text("アーカイブ")
+                }
+        }
+    }
+}
+
+#Preview {
+    AppView(store:
+            .init(
+                initialState: AppFeature.State(),
+                reducer: {
+                    AppFeature()
+                }
+            )
+    )
+}

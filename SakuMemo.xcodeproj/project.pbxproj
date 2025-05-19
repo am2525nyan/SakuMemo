@@ -9,18 +9,17 @@
 /* Begin PBXBuildFile section */
 		720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 720E90A32DB24A140072F07F /* ComposableArchitecture */; };
 		720E91E52DB7A0E20072F07F /* .env in Resources */ = {isa = PBXBuildFile; fileRef = 720E91E42DB7A0DE0072F07F /* .env */; };
-		720E92C32DB7C8030072F07F /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 720E92C22DB7C8030072F07F /* Alamofire */; };
-		729E52392DD706D70026BFB9 /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = 729E52382DD706D70026BFB9 /* PopupView */; };
-		729E523E2DD7106A0026BFB9 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 729E523D2DD7106A0026BFB9 /* AsyncAlgorithms */; };
+		729E53F72DD75E7E0026BFB9 /* SakuMemoPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		720E90912DB2495F0072F07F /* SakuMemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SakuMemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		720E91E42DB7A0DE0072F07F /* .env */ = {isa = PBXFileReference; lastKnownFileType = text; path = .env; sourceTree = "<group>"; };
+		729E53F52DD75AD60026BFB9 /* SakuMemoPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SakuMemoPackage; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		7230B1562DD4177200AA1216 /* Exceptions for "SakuMemo" folder in "SakuMemo" target */ = {
+		729E54292DD76D030026BFB9 /* Exceptions for "SakuMemo" folder in "SakuMemo" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -33,7 +32,7 @@
 		720E90932DB2495F0072F07F /* SakuMemo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				7230B1562DD4177200AA1216 /* Exceptions for "SakuMemo" folder in "SakuMemo" target */,
+				729E54292DD76D030026BFB9 /* Exceptions for "SakuMemo" folder in "SakuMemo" target */,
 			);
 			path = SakuMemo;
 			sourceTree = "<group>";
@@ -50,10 +49,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				729E52392DD706D70026BFB9 /* PopupView in Frameworks */,
 				720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */,
-				720E92C32DB7C8030072F07F /* Alamofire in Frameworks */,
-				729E523E2DD7106A0026BFB9 /* AsyncAlgorithms in Frameworks */,
+				729E53F72DD75E7E0026BFB9 /* SakuMemoPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +60,7 @@
 		720E90882DB2495F0072F07F = {
 			isa = PBXGroup;
 			children = (
+				729E53F52DD75AD60026BFB9 /* SakuMemoPackage */,
 				720E91E42DB7A0DE0072F07F /* .env */,
 				720E90932DB2495F0072F07F /* SakuMemo */,
 				720E90922DB2495F0072F07F /* Products */,
@@ -108,9 +106,7 @@
 			name = SakuMemo;
 			packageProductDependencies = (
 				720E90A32DB24A140072F07F /* ComposableArchitecture */,
-				720E92C22DB7C8030072F07F /* Alamofire */,
-				729E52382DD706D70026BFB9 /* PopupView */,
-				729E523D2DD7106A0026BFB9 /* AsyncAlgorithms */,
+				729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */,
 			);
 			productName = SakuMemo;
 			productReference = 720E90912DB2495F0072F07F /* SakuMemo.app */;
@@ -144,9 +140,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				720E90A22DB24A140072F07F /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
-				720E92C12DB7C8030072F07F /* XCRemoteSwiftPackageReference "Alamofire" */,
-				729E52372DD706D70026BFB9 /* XCRemoteSwiftPackageReference "PopupView" */,
-				729E523C2DD7106A0026BFB9 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 720E90922DB2495F0072F07F /* Products */;
@@ -403,30 +396,6 @@
 				minimumVersion = 1.19.1;
 			};
 		};
-		720E92C12DB7C8030072F07F /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.10.2;
-			};
-		};
-		729E52372DD706D70026BFB9 /* XCRemoteSwiftPackageReference "PopupView" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/exyte/PopupView";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.1.7;
-			};
-		};
-		729E523C2DD7106A0026BFB9 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.4;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -435,20 +404,9 @@
 			package = 720E90A22DB24A140072F07F /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
 		};
-		720E92C22DB7C8030072F07F /* Alamofire */ = {
+		729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 720E92C12DB7C8030072F07F /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
-		};
-		729E52382DD706D70026BFB9 /* PopupView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 729E52372DD706D70026BFB9 /* XCRemoteSwiftPackageReference "PopupView" */;
-			productName = PopupView;
-		};
-		729E523D2DD7106A0026BFB9 /* AsyncAlgorithms */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 729E523C2DD7106A0026BFB9 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
-			productName = AsyncAlgorithms;
+			productName = SakuMemoPackage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
