@@ -37,7 +37,7 @@ public struct MemoView: View {
                 HStack{
                     ZStack{
                         RoundedRectangle(cornerRadius:10)
-                            .fill(.cyan)
+                            .fill(Color.mainColor)
                           
                           
                         VStack(alignment:.center){
