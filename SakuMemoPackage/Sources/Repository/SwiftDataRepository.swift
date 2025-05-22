@@ -114,7 +114,7 @@ public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
                     let date = memo.date
                     let daysSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0
                     
-                    if daysSinceCreation >= 3 {
+                    if daysSinceCreation >= 7 {
                         memo.isArchived = true
                     }
                     if let date {
@@ -130,11 +130,34 @@ public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
         }
     }
     
+    public func automaticPriorityValues() async throws{
+        try await MainActor.run {
+            let context = container.mainContext
+            let now = Date()
+            let memos = try context.fetch(FetchDescriptor<Memo>())
+            
+            for memo in memos {
+                let createdAt = memo.createdAt
+                let dateSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0
+                
+                if dateSinceCreation >= 3 {
+                    memo.priorityValue = memo.priorityValue - 0.4
+                    
+                }
+                
+            }
+            try context.save()
+        }
+    }
     
 }
 
 
 final class SwiftDataRepositoryMock: SwiftDataRepositoryProtocol {
+    func automaticPriorityValues() async throws {
+        print("優先度変更")
+    }
+    
     
     public func archiveMemos() async throws {
         print("アーカイブ")
