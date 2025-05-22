@@ -50,6 +50,47 @@ public final class Memo: Identifiable {
         self.priorityValue = priorityValue
         self.date = date
     }
+    
+    public static func makeSampleMemos() -> [Memo] {
+        return [
+            Memo(
+                text: "牛乳を買う",
+                category: MemoCategory.shopping.rawValue,
+                priorityValue: 0.8,
+                isArchived: false,
+                createdAt: Date()
+            ),
+            Memo(
+                text: "寝たい",
+                category: MemoCategory.note.rawValue,
+                priorityValue: 0.5,
+                isArchived: false,
+                createdAt: Date(),
+                date: Date().addingTimeInterval(3600 * 24 * 2)
+            ),
+            Memo(
+                text: "シュークリームを作る",
+                category: MemoCategory.todo.rawValue,
+                priorityValue: 0.9,
+                isArchived: false,
+                createdAt: Date()
+            ),
+            Memo(
+                text: "部屋の掃除したい",
+                category: MemoCategory.note.rawValue,
+                priorityValue: 0.3,
+                isArchived: false,
+                createdAt: Date()
+            ),
+            Memo(
+                text: "airpodsケース",
+                category: MemoCategory.unknown.rawValue,
+                priorityValue: 0.2,
+                isArchived: true,
+                createdAt: Date()
+            )
+        ]
+    }
 
 }
 

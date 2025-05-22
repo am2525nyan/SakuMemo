@@ -110,10 +110,10 @@ public struct MemoView: View {
 }
 
 
-#Preview {
+#Preview (traits: .sampleMemos) {
     MemoView(store:
             .init(initialState: MemoFeature.State(
-//                isShowPopup: false
+               
             ),
                   reducer: {
         MemoFeature()
