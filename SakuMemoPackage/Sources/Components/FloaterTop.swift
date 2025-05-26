@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SharedModel
 
 public struct FloaterTop: View {
     public init() {}
@@ -13,7 +14,7 @@ public struct FloaterTop: View {
     public var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.cyan)
+                .fill(Color.mainColor)
                 .frame(maxWidth: .infinity,maxHeight: 60)
                 
             HStack{

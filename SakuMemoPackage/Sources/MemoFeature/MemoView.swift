@@ -66,7 +66,7 @@ public struct MemoView: View {
                     .padding(.trailing,20)
                     ZStack{
                         RoundedRectangle(cornerRadius:10)
-                            .fill(.orange)
+                            .fill(Color.customPinkColor)
                           
                           
                         VStack(alignment:.center){
@@ -158,7 +158,7 @@ public struct MemoView: View {
                             .font(.system(size: 30))
                             .frame(width: 30, height: 30)
                             .padding()
-                            .background(.cyan)
+                            .background(Color.mainColor)
                             .foregroundColor(.white)
                             .clipShape(Circle())
                         
@@ -174,6 +174,7 @@ public struct MemoView: View {
 
 
 #Preview (traits: .sampleMemos) {
+    
     MemoView(store:
             .init(initialState: MemoFeature.State(
                 
@@ -182,5 +183,7 @@ public struct MemoView: View {
         MemoFeature()
     })  )
     
+   
+
 }
 
