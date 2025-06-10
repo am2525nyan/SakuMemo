@@ -22,6 +22,8 @@ public struct MemoView: View {
     @FocusState var isFocused: Bool
     @Environment(\.scenePhase) var scenePhase
     @Query(filter: #Predicate<Memo>{$0.isArchived == false},sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
+    @Query(filter: #Predicate<Memo>{$0.isArchived == true},sort: \Memo.createdAt, order: .reverse) var archiveMemos: [Memo]
+
     
     public var body: some View {
         ZStack{
@@ -32,6 +34,21 @@ public struct MemoView: View {
                     },
                     text:$store.text, isFocused: _isFocused
                 )
+                HStack{
+                    MemoCountCard(
+                        label: "残りのメモ",
+                        count: memos.count,
+                        backgroundColor: Color.mainColor
+                    )
+                    .frame(width: 150, height: 100)
+                    .padding(.trailing, 20)
+                    MemoCountCard(
+                        label: "アーカイブ数",
+                        count: archiveMemos.count,
+                        backgroundColor: Color.customPinkColor
+                    )
+                    .frame(width: 150, height: 100)
+                }
                 ListComponent(memos: .constant(memos), tapAction: {memo in
                     store.send(.showDetail(memo))
                 }, swipeTrailingAction: { memo in
@@ -80,9 +97,9 @@ public struct MemoView: View {
         }
     }
     
- struct FloatingButton: View {
+    struct FloatingButton: View {
         var showAddMemo: ()->Void
-      public  var body: some View {
+        public  var body: some View {
             VStack{
                 Spacer()
                 HStack{
@@ -95,7 +112,7 @@ public struct MemoView: View {
                             .font(.system(size: 30))
                             .frame(width: 30, height: 30)
                             .padding()
-                            .background(.cyan)
+                            .background(Color.mainColor)
                             .foregroundColor(.white)
                             .clipShape(Circle())
                         
@@ -111,13 +128,16 @@ public struct MemoView: View {
 
 
 #Preview (traits: .sampleMemos) {
+    
     MemoView(store:
             .init(initialState: MemoFeature.State(
-               
+                
             ),
                   reducer: {
         MemoFeature()
     })  )
     
+   
+
 }
 

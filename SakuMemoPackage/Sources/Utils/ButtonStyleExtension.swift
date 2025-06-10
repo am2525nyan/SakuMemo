@@ -5,8 +5,8 @@
 //  Created by saki on 2025/05/01.
 //
 
-import Foundation
 import SwiftUI
+import SharedModel
 
 public struct CustomButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) var isEnabled: Bool
@@ -15,7 +15,7 @@ public struct CustomButtonStyle: ButtonStyle {
             .foregroundColor(isEnabled ? .white : Color(.placeholderText))
             .padding(.horizontal, 20)
             .padding(.vertical, 8)
-            .background(isEnabled ? .cyan : Color(.secondarySystemFill))
+            .background(isEnabled ? Color.mainColor : Color(.secondarySystemFill))
                        .opacity(configuration.isPressed ? 0.2 : 1.0)
                        .clipShape(RoundedRectangle(cornerRadius: 8))
                        .hoverEffect()

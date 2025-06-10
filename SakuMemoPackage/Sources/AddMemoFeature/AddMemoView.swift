@@ -8,6 +8,7 @@
 import SwiftUI
 import ComposableArchitecture
 import Utils
+import SharedModel
 
 public struct AddMemoView: View {
     public init(store: StoreOf<AddMemoFeature>) {
@@ -59,7 +60,7 @@ public struct AddMemoView: View {
                                 
                             }label: {
                                 Image(systemName: "plus")
-                                    .foregroundStyle(.cyan)
+                                    .foregroundStyle(Color.mainColor)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -70,9 +71,9 @@ public struct AddMemoView: View {
                                 
                             }label: {
                                 Image(systemName: "plus")
-                                    .foregroundStyle(.cyan)
+                                    .foregroundStyle(Color.mainColor)
                             }
-                            .tint(.cyan)
+                            .tint(Color.mainColor)
                             
                         })
                         .padding(.horizontal, 20)

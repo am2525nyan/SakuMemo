@@ -46,9 +46,11 @@ let package = Package(
             name: "Repository",
             dependencies: [.composableArchitecture,.alamofire,"SharedModel","RepositoryProtocol"]),
         .target(
-            name: "SharedModel"),
+            name: "SharedModel",
+        ),
         .target(
-            name: "Utils"),
+            name: "Utils",
+            dependencies: ["SharedModel"]),
        
        
 

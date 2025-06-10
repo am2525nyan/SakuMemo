@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Utils
+import SharedModel
 
 public struct AddMemoComponent: View {
     public init(tapped: @escaping ()->Void, text: Binding<String>,isFocused: FocusState<Bool>? = nil) {
@@ -31,7 +32,7 @@ public struct AddMemoComponent: View {
                     {
                 ZStack{
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.cyan)
+                        .fill(Color.mainColor)
                         .frame(width: 50, height: 50)
                     Image(systemName: "paperplane.fill")
                         .resizable()

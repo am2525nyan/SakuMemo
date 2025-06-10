@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SharedModel
 
 public struct CustomTextFieldStyle: TextFieldStyle {
     @FocusState private var isFocused: Bool
@@ -20,7 +21,7 @@ public struct CustomTextFieldStyle: TextFieldStyle {
             .padding()
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(isFocused ? .cyan : .gray, lineWidth: 1)
+                    .stroke(isFocused ? Color.mainColor : .gray, lineWidth: 1)
             )
     }
 }

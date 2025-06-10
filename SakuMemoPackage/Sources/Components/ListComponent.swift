@@ -49,7 +49,7 @@ public struct ListComponent: View {
                     } label: {
                         Text(leadingText)
                     }
-                    .tint(.cyan)
+                    .tint(Color.mainColor)
                 }
             }
             
