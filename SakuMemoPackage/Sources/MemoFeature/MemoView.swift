@@ -35,65 +35,19 @@ public struct MemoView: View {
                     text:$store.text, isFocused: _isFocused
                 )
                 HStack{
-                    ZStack{
-                        RoundedRectangle(cornerRadius:10)
-                            .fill(Color.mainColor)
-                          
-                          
-                        VStack(alignment:.center){
-                            Text("残りのメモ")
-                                .padding(.top,10)
-                                .foregroundColor(.white)
-                            Spacer()
-                            HStack{
-                                Spacer()
-                                Text(String(memos.count))
-                                    .font(.system(size: 40))
-                                    .bold()
-                                    .foregroundColor(.white)
-                                    .padding(.bottom,10)
-                                    .padding(.trailing,-5)
-                                Text("こ")
-                                    .foregroundColor(.white)
-                                
-                                   
-                            }
-                            .padding(.trailing,10)
-                          
-                        }
-                    }
-                    .frame(width: 150,height: 100)
-                    .padding(.trailing,20)
-                    ZStack{
-                        RoundedRectangle(cornerRadius:10)
-                            .fill(Color.customPinkColor)
-                          
-                          
-                        VStack(alignment:.center){
-                            Text("アーカイブ数")
-                                .padding(.top,10)
-                                .foregroundColor(.white)
-                            Spacer()
-                            HStack{
-                                Spacer()
-                                Text(String(archiveMemos.count))
-                                    .font(.system(size: 40))
-                                    .bold()
-                                    .foregroundColor(.white)
-                                    .padding(.bottom,10)
-                                    .padding(.trailing,-5)
-                                Text("こ")
-                                    .foregroundColor(.white)
-                                
-                                   
-                            }
-                            .padding(.trailing,10)
-                          
-                        }
-                    }
-                    .frame(width: 150,height: 100)
-                   
-                    
+                    MemoCountCard(
+                        label: "残りのメモ",
+                        count: memos.count,
+                        backgroundColor: Color.mainColor
+                    )
+                    .frame(width: 150, height: 100)
+                    .padding(.trailing, 20)
+                    MemoCountCard(
+                        label: "アーカイブ数",
+                        count: archiveMemos.count,
+                        backgroundColor: Color.customPinkColor
+                    )
+                    .frame(width: 150, height: 100)
                 }
                 ListComponent(memos: .constant(memos), tapAction: {memo in
                     store.send(.showDetail(memo))
