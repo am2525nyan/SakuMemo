@@ -30,8 +30,17 @@ public final class Memo: Identifiable {
     public  var isArchived: Bool
     public  var createdAt: Date
     public var priorityValue: Double
+    public var currentPriorityValue: Double {
+        if isArchived {
+            return priorityValue
+        }
+        let daysPassed = Calendar.current.dateComponents([.day], from: createdAt, to: Date()).day ?? 0
+        let decay = Double(daysPassed) * 0.05
+        let newPriority = priorityValue - decay
+        return max(0, newPriority)
+    }
     public var priority: MemoPriority {
-        MemoPriority.fromValue(priorityValue)
+        MemoPriority.fromValue(currentPriorityValue)
     }
     
     public init(
