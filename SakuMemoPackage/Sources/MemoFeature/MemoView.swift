@@ -22,8 +22,7 @@ public struct MemoView: View {
     @FocusState var isFocused: Bool
     @Environment(\.scenePhase) var scenePhase
     @Query(filter: #Predicate<Memo>{$0.isArchived == false},sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
-    @Query(filter: #Predicate<Memo>{$0.isArchived == true},sort: \Memo.createdAt, order: .reverse) var archiveMemos: [Memo]
-
+    @Query(filter: #Predicate<Memo>{$0.isArchived == true},sort: \Memo.createdAt, order: .reverse) var archiveMemos: [Memo]    
     
     public var body: some View {
         ZStack{
@@ -124,8 +123,45 @@ public struct MemoView: View {
             }
         }
     }
+    
 }
+struct MemoCountCard: View {
+    let label: String
+    let count: Int
+    let backgroundColor: Color
+    public var body: some View {
+        ZStack{
+            RoundedRectangle(cornerRadius:10)
+                .fill(backgroundColor)
+            
+            
+            VStack(alignment:.center){
+                Text(label)
+                    .padding(.top,10)
+                    .foregroundColor(.white)
+                Spacer()
+                HStack{
+                    Spacer()
+                    Text(String(count))
+                        .font(.system(size: 40))
+                        .bold()
+                        .foregroundColor(.white)
+                        .padding(.bottom,10)
+                        .padding(.trailing,-5)
+                    Text("こ")
+                        .foregroundColor(.white)
+                    
+                    
+                }
+                .padding(.trailing,10)
+                
+            }
+        }
+        .frame(width: 150,height: 100)
+        .padding(.trailing,20)
 
+    }
+}
 
 #Preview (traits: .sampleMemos) {
     
@@ -137,7 +173,7 @@ public struct MemoView: View {
         MemoFeature()
     })  )
     
-   
-
+    
+    
 }
 
