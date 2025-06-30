@@ -147,7 +147,7 @@ struct MemoCountCard: View {
                         .bold()
                         .foregroundColor(.white)
                         .padding(.bottom,10)
-                        .padding(.trailing,-5)
+                        .offset(x: -5)
                     Text("こ")
                         .foregroundColor(.white)
                     
