@@ -31,8 +31,8 @@ public struct MemoFeature : Sendable{
         case binding(BindingAction<State>)
         case addMemo
         case gemini
-        case success(MemoAnalysisResult)
-        case error
+        case geminiSuccess(MemoAnalysisResult)
+        case geminiError
         case deleteMemo(Memo)
         case deleteAllMemos
         case archive(Memo)
@@ -44,15 +44,11 @@ public struct MemoFeature : Sendable{
         case showPopup
         case closePopup
         
-        case foundationModels
-        
     }
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
     @Dependency(\.notificationManager) var notificationManager
     @Dependency(\.continuousClock) var clock
-    @Dependency(\.foundationModelsRepository) var foundationModelsRepository
-    
     
     public var body: some ReducerOf <Self> {
         BindingReducer()
@@ -76,14 +72,14 @@ public struct MemoFeature : Sendable{
                 let text = state.memo.text
                 return .run { send in
                     if let result = await geminiRepository.gemini(for: text) {
-                        await send(.success(result))
+                        await send(.geminiSuccess(result))
                     } else {
                         print("⚠️ Geminiの解析に失敗")
-                        await send(.error)
+                        await send(.geminiError)
                     }
                 }
                 
-            case .success(let result):
+            case .geminiSuccess(let result):
                 state.memo.priorityValue = result.importance
                 state.memo.category = result.category
                 let memo = state.memo
@@ -107,7 +103,7 @@ public struct MemoFeature : Sendable{
                 
             case .binding(_):
                 return .none
-            case .error:
+            case .geminiError:
                 let memo = state.memo
                 state.text = ""
                 let new = MemoSendable(
@@ -162,29 +158,13 @@ public struct MemoFeature : Sendable{
                 state.isShowPopup = true
                 return .run { send in
                     try await self.clock.sleep(for: .seconds(2))
-                    await send(.closePopup)
-                }
-                
-            case .closePopup:
-                state.isShowPopup = false
-                return .none
-                
-            case .foundationModels:
-                if #available(iOS 26.0, *) {
-                    return .run { send in
-                        do{
-                            let result = try await foundationModelsRepository.respond(userInput: "課題をやる")
-                            await send(.success(result))
-                            
-                        }catch{
-                            print(error)
-                            await send(.error)
-                        }
+                        await send(.closePopup)
                     }
-                } else {
+                   
+                case .closePopup:
+                    state.isShowPopup = false
                     return .none
-                }
-                
+              
             }
         }
         .ifLet(\.$detail, action: \.presentMemoDetail){

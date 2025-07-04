@@ -60,7 +60,6 @@ public struct MemoView: View {
             
             .onAppear(){
                 store.send(.onAppear)
-                store.send(.foundationModels)
                 
             }
             .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)){detail in
