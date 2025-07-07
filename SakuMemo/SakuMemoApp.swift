@@ -28,7 +28,7 @@ struct SakuMemoApp: App {
     
     var body: some Scene {
         WindowGroup {
-        ContentView()
+            ContentView()
             .modelContainer(for: Memo.self)
           
         }

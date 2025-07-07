@@ -32,5 +32,9 @@ public final class MemoSendable: Sendable {
 public final class MemoAnalysisResult: Decodable {
     public let importance: Double
     public let category: String
-}
 
+    public init(importance: Double, category: String) {
+        self.importance = importance
+        self.category = category
+    }
+}

@@ -32,7 +32,7 @@ let package = Package(
             dependencies: [.composableArchitecture,"AddMemoFeature","SharedModel","Repository","Components"]),
         .target(
             name: "Components",
-            dependencies: ["SharedModel"]),
+            dependencies: ["SharedModel","Utils"]),
         .target(
             name: "MemoDetailFeature",
             dependencies: [.composableArchitecture,"SharedModel","Repository"]),
