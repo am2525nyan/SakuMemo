@@ -59,6 +59,7 @@ public struct MemoView: View {
             }
             
             .onAppear(){
+              
                 store.send(.onAppear)
                 
             }
