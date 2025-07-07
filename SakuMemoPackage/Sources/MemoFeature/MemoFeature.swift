@@ -91,7 +91,7 @@ public struct MemoFeature : Sendable{
                             await send(.success(result))
                         }catch{
                             print("⚠️Foundation Modelsの解析に失敗: \(error)")
-                            await send(.error)
+                            await send(.gemini)
                         }
                         
                     } else {

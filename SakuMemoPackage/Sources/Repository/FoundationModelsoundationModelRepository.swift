@@ -9,20 +9,52 @@ import FoundationModels
 import ComposableArchitecture
 import SharedModel
 
+enum FoundationModelRepositoryError: Error, LocalizedError {
+    case deviceNotEligible
+    case appleIntelligenceNotEnabled
+    case modelNotReady
+    case other(String)
 
+    var errorDescription: String? {
+        switch self {
+        case .deviceNotEligible:
+            return "このデバイスでは利用できません。"
+        case .appleIntelligenceNotEnabled:
+            return "Apple Intelligenceが有効化されていません。"
+        case .modelNotReady:
+            return "モデルの準備ができていません。"
+        case .other(let str):
+            return "不明な理由で利用できません: \(str)"
+        }
+    }
+}
 
 public struct FoundationModelRepository : Sendable{
     public init() {}
     @available(iOS 26.0, *)
+
     public func respond(userInput: String) async throws -> MemoAnalysisResult {
-        let prompt = """
+        let model = SystemLanguageModel.default
+        switch model.availability {
+        case .available:
+            let prompt = """
 「ユーザーから与えられた 「\(userInput)」を重要度に応じて0.0~1.0まで数字分けするとします。下記例を参考に、重要なものやすぐにやること、必要なものは1.0に近く、すぐに必要ではない、〇〇したいのような願望や希望、重要度、緊急度、すぐじゃなくてもいいものは0.0に近づけてください。語尾などにも注目してください
 例　りんご =0.9, メモアプリ作りたい = 0.2 ,課題やる = 1.0, appleについて調べる = 0.8,  appleについて調べたい = 0.5, ゴミを捨てたい = 0.4, ゴミを捨てる = 0.8, 寝たい = 0.1
 """
-        let session = LanguageModelSession(instructions: prompt)
-        let response = try await session.respond(to: userInput,generating:MemoResponse.self)
-        print("Response: \(response)")
-        return MemoAnalysisResult(importance: response.content.importance, category: response.content.category)
+            let session = LanguageModelSession(instructions: prompt)
+            let response = try await session.respond(to: userInput,generating:MemoResponse.self)
+            print("Response: \(response)")
+            return MemoAnalysisResult(importance: response.content.importance, category: response.content.category)
+            // Show your intelligence UI.
+        case .unavailable(.deviceNotEligible):
+            throw FoundationModelRepositoryError.deviceNotEligible
+        case .unavailable(.appleIntelligenceNotEnabled):
+            throw FoundationModelRepositoryError.appleIntelligenceNotEnabled
+        case .unavailable(.modelNotReady):
+            throw FoundationModelRepositoryError.modelNotReady
+        case .unavailable(let other):
+            throw FoundationModelRepositoryError.other("\(other)")
+        }
     }
 }
 
