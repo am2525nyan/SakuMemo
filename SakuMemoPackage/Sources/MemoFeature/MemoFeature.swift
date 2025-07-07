@@ -31,8 +31,8 @@ public struct MemoFeature : Sendable{
         case binding(BindingAction<State>)
         case addMemo
         case gemini
-        case geminiSuccess(MemoAnalysisResult)
-        case geminiError
+        case success(MemoAnalysisResult)
+        case error
         case deleteMemo(Memo)
         case deleteAllMemos
         case archive(Memo)
@@ -43,12 +43,16 @@ public struct MemoFeature : Sendable{
         case showAddMemo
         case showPopup
         case closePopup
+        case foundationModels
+        case switchAi
+        
         
     }
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
     @Dependency(\.notificationManager) var notificationManager
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.foundationModelsRepository) var foundationModelsRepository
     
     public var body: some ReducerOf <Self> {
         BindingReducer()
@@ -62,7 +66,7 @@ public struct MemoFeature : Sendable{
                 return .run { send in
                     
                     do{
-                        await send(.gemini)
+                        await send(.switchAi)
                         
                     }
                     
@@ -72,14 +76,31 @@ public struct MemoFeature : Sendable{
                 let text = state.memo.text
                 return .run { send in
                     if let result = await geminiRepository.gemini(for: text) {
-                        await send(.geminiSuccess(result))
+                        await send(.success(result))
                     } else {
                         print("⚠️ Geminiの解析に失敗")
-                        await send(.geminiError)
+                        await send(.error)
+                    }
+                }
+            case .foundationModels:
+                let text = state.memo.text
+                return .run { send in
+                    if #available(iOS 26.0, *) {
+                        do{
+                            let result = try await foundationModelsRepository.respond(userInput: text)
+                            await send(.success(result))
+                        }catch{
+                            print("⚠️Foundation Modelsの解析に失敗: \(error)")
+                            await send(.error)
+                        }
+                        
+                    } else {
+                        // Fallback on earlier versions
                     }
                 }
                 
-            case .geminiSuccess(let result):
+                
+            case .success(let result):
                 state.memo.priorityValue = result.importance
                 state.memo.category = result.category
                 let memo = state.memo
@@ -103,7 +124,7 @@ public struct MemoFeature : Sendable{
                 
             case .binding(_):
                 return .none
-            case .geminiError:
+            case .error:
                 let memo = state.memo
                 state.text = ""
                 let new = MemoSendable(
@@ -165,6 +186,16 @@ public struct MemoFeature : Sendable{
                     state.isShowPopup = false
                     return .none
               
+            case .switchAi:
+         if #available(iOS 26.0, *) {
+             return .run { send in
+                 await send(.foundationModels)
+             }
+                } else {
+                    return .run { send in
+                        await send(.gemini)
+                    }
+                }
             }
         }
         .ifLet(\.$detail, action: \.presentMemoDetail){
