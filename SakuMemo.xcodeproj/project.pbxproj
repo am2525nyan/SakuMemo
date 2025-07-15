@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 720E90A32DB24A140072F07F /* ComposableArchitecture */; };
-		720E91E52DB7A0E20072F07F /* .env in Resources */ = {isa = PBXBuildFile; fileRef = 720E91E42DB7A0DE0072F07F /* .env */; };
+		72F72A752E26430200703E8E /* SakuMemoPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */; };
+		72F72A892E26432D00703E8E /* .env in Resources */ = {isa = PBXBuildFile; fileRef = 72F72A882E26432D00703E8E /* .env */; };
 		72FEE5A22DF84B0500005059 /* AppKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 72FEE5A12DF84B0500005059 /* AppKitNavigation */; };
 		72FEE5A42DF84B0500005059 /* SwiftNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 72FEE5A32DF84B0500005059 /* SwiftNavigation */; };
 		72FEE5A62DF84B0500005059 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 72FEE5A52DF84B0500005059 /* SwiftUINavigation */; };
@@ -17,8 +18,8 @@
 
 /* Begin PBXFileReference section */
 		720E90912DB2495F0072F07F /* SakuMemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SakuMemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		720E91E42DB7A0DE0072F07F /* .env */ = {isa = PBXFileReference; lastKnownFileType = text; path = .env; sourceTree = "<group>"; };
 		729E53F52DD75AD60026BFB9 /* SakuMemoPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SakuMemoPackage; sourceTree = "<group>"; };
+		72F72A882E26432D00703E8E /* .env */ = {isa = PBXFileReference; lastKnownFileType = text; path = .env; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -52,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72F72A752E26430200703E8E /* SakuMemoPackage in Frameworks */,
 				72FEE5A42DF84B0500005059 /* SwiftNavigation in Frameworks */,
 				720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */,
 				72FEE5A82DF84B0500005059 /* UIKitNavigation in Frameworks */,
@@ -67,11 +69,11 @@
 			isa = PBXGroup;
 			children = (
 				729E53F52DD75AD60026BFB9 /* SakuMemoPackage */,
-				720E91E42DB7A0DE0072F07F /* .env */,
 				720E90932DB2495F0072F07F /* SakuMemo */,
 				720E90922DB2495F0072F07F /* Products */,
 				720E93002DBA5E750072F07F /* resources */,
 				729E51E42DD704F00026BFB9 /* Frameworks */,
+				72F72A882E26432D00703E8E /* .env */,
 			);
 			sourceTree = "<group>";
 		};
@@ -166,7 +168,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				720E91E52DB7A0E20072F07F /* .env in Resources */,
+				72F72A892E26432D00703E8E /* .env in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
