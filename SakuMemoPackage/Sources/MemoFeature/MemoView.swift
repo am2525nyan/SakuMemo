@@ -13,6 +13,7 @@ import Components
 import SharedModel
 import MemoDetailFeature
 import AddMemoFeature
+import SubscriptionFeature
 
 public struct MemoView: View {
     public init(store: StoreOf<MemoFeature>) {
@@ -25,8 +26,9 @@ public struct MemoView: View {
     @Query(filter: #Predicate<Memo>{$0.isArchived == true},sort: \Memo.createdAt, order: .reverse) var archiveMemos: [Memo]    
     
     public var body: some View {
-        ZStack{
-            VStack {
+        NavigationView {
+            ZStack{
+                VStack {
                 AddMemoComponent(
                     tapped: {
                         store.send(.addMemo)
@@ -79,6 +81,12 @@ public struct MemoView: View {
                 
                 
             }
+            .sheet(item: $store.scope(state: \.subscription, action: \.presentSubscription)){subscription in
+                SubscriptionView(store: subscription)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(Material.thick)
+            }
             FloatingButton(showAddMemo: {
                 store.send(.showAddMemo)
             })
@@ -95,6 +103,33 @@ public struct MemoView: View {
                 .displayMode(.window)
                 .disappearTo(.topSlide)
         }
+        .navigationTitle("SakuMemo")
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: {
+                    store.send(.showSubscription)
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "crown.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(.yellow)
+                        Text("Pro")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.orange)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.yellow.opacity(0.2))
+                    )
+                }
+            }
+        }
+        }
     }
     
     struct FloatingButton: View {
@@ -108,16 +143,13 @@ public struct MemoView: View {
                         showAddMemo()
                     }) {
                         Text("+")
-                        
                             .font(.system(size: 30))
                             .frame(width: 30, height: 30)
                             .padding()
                             .background(Color.mainColor)
                             .foregroundColor(.white)
                             .clipShape(Circle())
-                        
                             .shadow(radius: 5)
-                        
                     }
                     .padding()
                 }

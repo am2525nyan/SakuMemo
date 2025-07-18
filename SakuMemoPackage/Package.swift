@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "SakuMemoPackage",
-    platforms: [.iOS(.v18)],
+    platforms: [.iOS(.v18), .macOS(.v15)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -20,13 +20,13 @@ let package = Package(
     targets: [
         .target(
             name: "AddMemoFeature",
-            dependencies: [.composableArchitecture,"SharedModel","Repository","Utils"]),
+            dependencies: [.composableArchitecture,"SharedModel","Repository","RepositoryProtocol","Utils"]),
         .target(
             name: "AppFeature",
             dependencies: [.composableArchitecture,"MemoFeature","ArchiveFeature"]),
         .target(
             name: "AppIntent",
-            dependencies: [.composableArchitecture,"SharedModel"]),
+            dependencies: [.composableArchitecture,"SharedModel","Repository","RepositoryProtocol"]),
         .target(
             name: "ArchiveFeature",
             dependencies: [.composableArchitecture,"AddMemoFeature","SharedModel","Repository","Components"]),
@@ -38,7 +38,7 @@ let package = Package(
             dependencies: [.composableArchitecture,"SharedModel","Repository"]),
         .target(
             name: "MemoFeature",
-            dependencies: [.composableArchitecture,.popupView,"AddMemoFeature","SharedModel","Repository","Components","MemoDetailFeature"]),
+            dependencies: [.composableArchitecture,.popupView,"AddMemoFeature","SharedModel","Repository","Components","MemoDetailFeature","SubscriptionFeature"]),
         .target(
             name: "RepositoryProtocol",
         dependencies: ["SharedModel"]),
@@ -48,6 +48,9 @@ let package = Package(
         .target(
             name: "SharedModel",
         ),
+        .target(
+            name: "SubscriptionFeature",
+            dependencies: [.composableArchitecture,"SharedModel","Repository","RepositoryProtocol"]),
         .target(
             name: "Utils",
             dependencies: ["SharedModel"]),

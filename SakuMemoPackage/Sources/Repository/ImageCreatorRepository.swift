@@ -13,6 +13,7 @@ import Dependencies
 import ImagePlayground
 
 
+@available(iOS 18.4, macOS 15.4, *)
 public final class ImageCreatorRepository: @unchecked Sendable {
     
     public init() {}
@@ -64,12 +65,14 @@ public final class ImageCreatorRepository: @unchecked Sendable {
     }
 }
 
+@available(iOS 18.4, macOS 15.4, *)
 struct ImageCreatorRepositoryKey: DependencyKey {
     static var liveValue: ImageCreatorRepository {
         ImageCreatorRepository()
     }
 }
 
+@available(iOS 18.4, macOS 15.4, *)
 extension DependencyValues {
     var imageCreatorRepository: ImageCreatorRepository {
         get { self[ImageCreatorRepositoryKey.self] }

@@ -17,7 +17,7 @@ public struct CustomTextFieldStyle: TextFieldStyle {
     
     public func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, minHeight: 44)
             .padding()
             .overlay(
                 RoundedRectangle(cornerRadius: 16)

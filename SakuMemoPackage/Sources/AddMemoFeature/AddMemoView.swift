@@ -42,10 +42,11 @@ public struct AddMemoView: View {
             if store.isTextField{
                 TextField("メモを入力",text: $store.text,axis: .vertical)
                     .textFieldStyle(.customTextField(isFocused: _isFocused))
-                
                     .lineLimit(5...300)
                     .focused($isFocused)
                     .padding(.top, 20)
+                    .frame(minHeight: 100)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             
             if !store.isTextField || !store.memoList.isEmpty{
@@ -89,6 +90,26 @@ public struct AddMemoView: View {
         }
         .padding(.top,20)
         .padding(.horizontal, 20)
+        .onAppear {
+            store.send(.checkSubscriptionStatus)
+        }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .alert("使用制限に達しました", isPresented: $store.showLimitAlert) {
+            Button("OK") {
+                store.send(.dismissLimitAlert)
+            }
+        } message: {
+            Text("無料ユーザーは1日3回までメモを作成できます。\n無制限に使用するには課金してください。")
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                if !store.isSubscribed {
+                    Text("残り: \(store.remainingFreeMemos)回")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
     }
 }
 
