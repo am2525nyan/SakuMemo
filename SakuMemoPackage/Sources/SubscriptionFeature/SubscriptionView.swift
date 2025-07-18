@@ -95,7 +95,7 @@ public struct SubscriptionView: View {
             .cornerRadius(12)
         }
         .padding()
-        .background(Color.white)
+        .background(Color(.systemBackground))
         .cornerRadius(16)
         .shadow(radius: 2)
     }
@@ -143,7 +143,7 @@ public struct SubscriptionView: View {
             .cornerRadius(12)
         }
         .padding()
-        .background(Color.white)
+        .background(Color(.systemBackground))
         .cornerRadius(16)
         .shadow(radius: 2)
     }
@@ -177,7 +177,7 @@ public struct SubscriptionView: View {
                             .foregroundColor(.blue)
                     }
                     .padding()
-                    .background(Color.white)
+                    .background(Color(.systemBackground))
                     .cornerRadius(12)
                 }
                 .disabled(store.isLoading || store.isSubscribed)
