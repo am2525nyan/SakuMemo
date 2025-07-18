@@ -30,7 +30,7 @@ public struct MemoPreviewData: PreviewModifier {
         content.modelContainer(context)
     }
 }
- 
+
 extension PreviewTrait where T == Preview.ViewTraits {
     @MainActor public static var sampleMemos: Self = .modifier(MemoPreviewData())
 }

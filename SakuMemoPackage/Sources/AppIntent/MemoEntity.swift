@@ -24,12 +24,12 @@ struct Shortcut: AppShortcutsProvider {
                 "\(.applicationName)の画面を見せて",
                 "\(.applicationName)をお願い",
                 "\(.applicationName)でメモを追加",
-              
-//                "サクメモでメモを追加",
-//                "サクッとメモする",
-//                "メモを追加したい",
-//                "タスクを追加",
-              
+                
+                //                "サクメモでメモを追加",
+                //                "サクッとメモする",
+                //                "メモを追加したい",
+                //                "タスクを追加",
+                
             ],
             shortTitle: "メモを追加する",
             systemImageName: "pencil")

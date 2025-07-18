@@ -15,6 +15,6 @@ public protocol SwiftDataRepositoryProtocol:Sendable {
     func deleteAllMemos() async throws
     func deleteMemo(memo: MemoSendable) async throws
     func archiveMemos() async throws
-   func automaticPriorityValues() async throws
+    func automaticPriorityValues() async throws
     
 }

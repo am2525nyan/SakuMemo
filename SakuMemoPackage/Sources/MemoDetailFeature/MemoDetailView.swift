@@ -74,7 +74,7 @@ public struct MemoDetailView: View {
             }else{
                 Button(action: {
                     store.memo.date = Date()
-                   
+                    
                 }, label: {
                     Text("日付を追加")
                 })

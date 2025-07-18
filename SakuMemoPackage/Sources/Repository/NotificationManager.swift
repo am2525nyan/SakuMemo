@@ -10,7 +10,7 @@ import UserNotifications
 import ComposableArchitecture
 
 public final class NotificationManager:Sendable {
-   public static let shared = NotificationManager()
+    public static let shared = NotificationManager()
     public init() {}
     public func requestPermission() {
         let center = UNUserNotificationCenter.current()

@@ -14,7 +14,7 @@ enum FoundationModelRepositoryError: Error, LocalizedError {
     case appleIntelligenceNotEnabled
     case modelNotReady
     case other(String)
-
+    
     var errorDescription: String? {
         switch self {
         case .deviceNotEligible:
@@ -32,7 +32,7 @@ enum FoundationModelRepositoryError: Error, LocalizedError {
 @available(iOS 26.0, macOS 26.0, *)
 public struct FoundationModelRepository : Sendable{
     public init() {}
-
+    
     public func respond(userInput: String) async throws -> MemoAnalysisResult {
         let model = SystemLanguageModel.default
         switch model.availability {
@@ -70,14 +70,14 @@ struct MemoResponse {
 }
 @available(iOS 26.0, macOS 26.0, *)
 public struct FoundationModelsRepositoryKey:DependencyKey {
-   
+    
     public static let liveValue = FoundationModelRepository()
     
 }
 
 @available(iOS 26.0, macOS 26.0, *)
 public extension DependencyValues {
- 
+    
     var foundationModelsRepository: FoundationModelRepository {
         get { self[FoundationModelsRepositoryKey.self] }
         set { self[FoundationModelsRepositoryKey.self] = newValue }

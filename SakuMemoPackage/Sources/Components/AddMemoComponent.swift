@@ -47,6 +47,7 @@ public struct AddMemoComponent: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 20)
         
+        
     }
 }
 

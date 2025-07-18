@@ -11,7 +11,7 @@ public struct MemoCellView: View {
     @State var memo: Memo
     public var body: some View {
         HStack {
-          
+            
             Menu {
                 Button("🔥"){
                     memo.priorityValue = 1

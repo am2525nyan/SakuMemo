@@ -13,7 +13,7 @@ import SharedModel
 
 
 public struct GeminiRepository: GeminiRepositoryProtocol {
-   
+    
     let env: LoadEnv
     
     init() {

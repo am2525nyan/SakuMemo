@@ -9,29 +9,29 @@ import SwiftUI
 
 extension Color {
     public static let mainColor: Color = {
-        #if DEBUG
+#if DEBUG
         if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
             return Color.cyan // プレビュー時の色
         }
-        #endif
+#endif
         return Color("MainColor") // 実機や本番の色
     }()
     
     public static let customPinkColor: Color = {
-        #if DEBUG
+#if DEBUG
         if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
             return Color.pink
         }
-        #endif
+#endif
         return Color("CustomPink")
     }()
     
     public static let customTextColor: Color = {
-        #if DEBUG
+#if DEBUG
         if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
             return Color.gray
         }
-        #endif
+#endif
         return Color("TextColor")
     }()
 }

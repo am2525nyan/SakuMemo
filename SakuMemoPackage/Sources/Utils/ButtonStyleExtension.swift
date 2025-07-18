@@ -16,8 +16,8 @@ public struct CustomButtonStyle: ButtonStyle {
             .padding(.horizontal, 20)
             .padding(.vertical, 8)
             .background(isEnabled ? Color.mainColor : Color(.secondarySystemFill))
-                       .opacity(configuration.isPressed ? 0.2 : 1.0)
-                       .clipShape(RoundedRectangle(cornerRadius: 8))
+            .opacity(configuration.isPressed ? 0.2 : 1.0)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
         
     }
 }

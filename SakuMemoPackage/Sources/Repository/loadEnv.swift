@@ -27,10 +27,10 @@ public struct LoadEnv: Sendable {
                     .map(String.init)
                 setenv(parts[0], parts[1], 1)
             }
-
+        
     }
-
-  public func value(_ key: String, _ default: String? = nil) -> String? {
+    
+    public func value(_ key: String, _ default: String? = nil) -> String? {
         guard let value = getenv(key) else { return nil }
         return String(validatingCString: value)
     }

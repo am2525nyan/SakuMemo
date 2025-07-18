@@ -186,26 +186,26 @@ public struct MemoFeature : Sendable{
                 state.isShowPopup = true
                 return .run { send in
                     try await self.clock.sleep(for: .seconds(2))
-                        await send(.closePopup)
-                    }
-                   
-                case .closePopup:
-                    state.isShowPopup = false
-                    return .none
-                    
-                case .showSubscription:
-                    state.isShowSubscription = true
-                    state.subscription = SubscriptionFeature.State()
-                    return .none
-                    
-                case .presentSubscription:
-                    return .none
-              
+                    await send(.closePopup)
+                }
+                
+            case .closePopup:
+                state.isShowPopup = false
+                return .none
+                
+            case .showSubscription:
+                state.isShowSubscription = true
+                state.subscription = SubscriptionFeature.State()
+                return .none
+                
+            case .presentSubscription:
+                return .none
+                
             case .switchAi:
-         if #available(iOS 26.0, macOS 26.0, *) {
-             return .run { send in
-                 await send(.foundationModels)
-             }
+                if #available(iOS 26.0, macOS 26.0, *) {
+                    return .run { send in
+                        await send(.foundationModels)
+                    }
                 } else {
                     return .run { send in
                         await send(.gemini)

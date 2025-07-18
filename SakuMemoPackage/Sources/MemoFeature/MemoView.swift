@@ -29,106 +29,107 @@ public struct MemoView: View {
         NavigationView {
             ZStack{
                 VStack {
-                AddMemoComponent(
-                    tapped: {
-                        store.send(.addMemo)
-                    },
-                    text:$store.text, isFocused: _isFocused
-                )
-                HStack{
-                    MemoCountCard(
-                        label: "残りのメモ",
-                        count: memos.count,
-                        backgroundColor: Color.mainColor
+                    AddMemoComponent(
+                        tapped: {
+                            store.send(.addMemo)
+                        },
+                        text:$store.text, isFocused: _isFocused
                     )
-                    .frame(width: 150, height: 100)
-                    .padding(.trailing, 20)
-                    MemoCountCard(
-                        label: "アーカイブ数",
-                        count: archiveMemos.count,
-                        backgroundColor: Color.customPinkColor
-                    )
-                    .frame(width: 150, height: 100)
+                    HStack{
+                        MemoCountCard(
+                            label: "残りのメモ",
+                            count: memos.count,
+                            backgroundColor: Color.mainColor
+                        )
+                        .frame(width: 150, height: 100)
+                        .padding(.trailing, 20)
+                        MemoCountCard(
+                            label: "アーカイブ数",
+                            count: archiveMemos.count,
+                            backgroundColor: Color.customPinkColor
+                        )
+                        .frame(width: 150, height: 100)
+                    }
+                    ListComponent(memos: .constant(memos), tapAction: {memo in
+                        store.send(.showDetail(memo))
+                    }, swipeTrailingAction: { memo in
+                        store.send(.deleteMemo(memo))
+                    }, swipeLeadingAction: { memo in
+                        store.send(.archive(memo))
+                    }, trailingText: "削除", leadingText: "アーカイブ")
+                    
                 }
-                ListComponent(memos: .constant(memos), tapAction: {memo in
-                    store.send(.showDetail(memo))
-                }, swipeTrailingAction: { memo in
-                    store.send(.deleteMemo(memo))
-                }, swipeLeadingAction: { memo in
-                    store.send(.archive(memo))
-                }, trailingText: "削除", leadingText: "アーカイブ")
                 
+                .onAppear(){
+                    
+                    store.send(.onAppear)
+                    
+                }
+                .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)){detail in
+                    MemoDetailView(store: detail)
+                        .presentationDetents([ .height(250)])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackground(Material.thick)
+                    
+                    
+                }
+                .sheet(item: $store.scope(state: \.add, action: \.presentAddMemo)){add in
+                    AddMemoView(store: add)
+                        .presentationDetents([.height(250)])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackground(Material.thick)
+                    
+                    
+                }
+                .sheet(item: $store.scope(state: \.subscription, action: \.presentSubscription)){subscription in
+                    SubscriptionView(store: subscription)
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackground(Material.thick)
+                }
+                FloatingButton(showAddMemo: {
+                    store.send(.showAddMemo)
+                })
+                .padding(.bottom, 20)
+                .padding(.trailing,20)
             }
             
-            .onAppear(){
-              
-                store.send(.onAppear)
-                
+            .popup(isPresented: $store.isShowPopup) {
+                FloaterTop()
+            } customize: {
+                $0
+                    .type(.floater())
+                    .position(.top)
+                    .animation(.spring())
+                    .displayMode(.window)
+                    .disappearTo(.topSlide)
             }
-            .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)){detail in
-                MemoDetailView(store: detail)
-                    .presentationDetents([ .height(250)])
-                    .presentationDragIndicator(.visible)
-                    .presentationBackground(Material.thick)
-                
-                
-            }
-            .sheet(item: $store.scope(state: \.add, action: \.presentAddMemo)){add in
-                AddMemoView(store: add)
-                    .presentationDetents([.height(250)])
-                    .presentationDragIndicator(.visible)
-                    .presentationBackground(Material.thick)
-                
-                
-            }
-            .sheet(item: $store.scope(state: \.subscription, action: \.presentSubscription)){subscription in
-                SubscriptionView(store: subscription)
-                    .presentationDetents([.medium, .large])
-                    .presentationDragIndicator(.visible)
-                    .presentationBackground(Material.thick)
-            }
-            FloatingButton(showAddMemo: {
-                store.send(.showAddMemo)
-            })
-            .padding(.bottom, 20)
-            .padding(.trailing,20)
-        }
-        .popup(isPresented: $store.isShowPopup) {
-            FloaterTop()
-        } customize: {
-            $0
-                .type(.floater())
-                .position(.top)
-                .animation(.spring())
-                .displayMode(.window)
-                .disappearTo(.topSlide)
-        }
-        .navigationTitle("SakuMemo")
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: {
-                    store.send(.showSubscription)
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "crown.fill")
-                            .font(.system(size: 16))
-                            .foregroundColor(.yellow)
-                        Text("Pro")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.orange)
+            .navigationTitle("SakuMemo")
+#if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+#endif
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {
+                        store.send(.showSubscription)
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "crown.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(.yellow)
+                            Text("Pro")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(.orange)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.yellow.opacity(0.2))
+                        )
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.yellow.opacity(0.2))
-                    )
                 }
             }
-        }
         }
     }
     
@@ -192,7 +193,7 @@ struct MemoCountCard: View {
         }
         .frame(width: 150,height: 100)
         .padding(.trailing,20)
-
+        
     }
 }
 

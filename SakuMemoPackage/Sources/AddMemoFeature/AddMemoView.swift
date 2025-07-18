@@ -16,7 +16,7 @@ public struct AddMemoView: View {
     }
     @Bindable var store: StoreOf<AddMemoFeature>
     @FocusState private var isFocused: Bool
-   public var body: some View {
+    public var body: some View {
         VStack{
             HStack{
                 Spacer()
@@ -115,16 +115,16 @@ public struct AddMemoView: View {
 
 #Preview {
     AddMemoView(store: .init(initialState: AddMemoFeature.State(
-//        memoList: [
-//            "シュー生地を作る",
-//            "カスタードクリームを作る",
-//            "生クリームを泡立てる",
-//            "シュー生地を焼く",
-//            "カスタードクリームを冷ます",
-//            "シュー生地にクリームを詰める",
-//            "粉砂糖をかける",
-//            "冷蔵庫で冷やす"
-//        ]
+        //        memoList: [
+        //            "シュー生地を作る",
+        //            "カスタードクリームを作る",
+        //            "生クリームを泡立てる",
+        //            "シュー生地を焼く",
+        //            "カスタードクリームを冷ます",
+        //            "シュー生地にクリームを詰める",
+        //            "粉砂糖をかける",
+        //            "冷蔵庫で冷やす"
+        //        ]
     ), reducer: {
         AddMemoFeature()
     }))
