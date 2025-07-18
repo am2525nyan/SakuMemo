@@ -23,7 +23,7 @@ public struct StoreProduct: Identifiable, Sendable {
     public let description: String
     public let price: String
     public let priceValue: Decimal
-    
+
     public init(id: String, displayName: String, description: String, price: String, priceValue: Decimal) {
         self.id = id
         self.displayName = displayName

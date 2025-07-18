@@ -1,14 +1,14 @@
 //
-//  TabFeature.swift
+//  AppFeature.swift
 //  SakuMemo
 //
 //  Created by saki on 2025/04/29.
 //
 
-import Foundation
-import ComposableArchitecture
-import MemoFeature
 import ArchiveFeature
+import ComposableArchitecture
+import Foundation
+import MemoFeature
 
 @Reducer
 public struct AppFeature {
@@ -16,28 +16,31 @@ public struct AppFeature {
     @ObservableState
     public struct State {
         public init() {}
+
         var memo = MemoFeature.State()
         var archive = ArchiveMemoFeature.State()
     }
-    public enum Action{
+
+    public enum Action {
         case memo(MemoFeature.Action)
         case archive(ArchiveMemoFeature.Action)
     }
-    public var body: some ReducerOf<Self>{
-        Scope(state: \.memo, action: \.memo){
+
+    public var body: some ReducerOf<Self> {
+        Scope(state: \.memo, action: \.memo) {
             MemoFeature()
         }
-        Scope(state: \.archive, action: \.archive){
+        Scope(state: \.archive, action: \.archive) {
             ArchiveMemoFeature()
         }
-        Reduce { state, action in
+        Reduce { _, action in
             switch action {
             case .memo:
                 return .none
+
             case .archive:
                 return .none
             }
         }
     }
-    
 }

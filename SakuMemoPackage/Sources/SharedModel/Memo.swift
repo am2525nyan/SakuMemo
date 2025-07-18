@@ -14,11 +14,11 @@ public enum MemoCategory: String, Codable, CaseIterable {
     case note = "メモ"
     case unknown = "未分類"
 }
+
 public enum MemoPriority: String, Codable, CaseIterable {
     case hot = "🔥"
     case cold = "❄️"
     case warm = "🌤"
-    
 }
 
 @Model
@@ -27,8 +27,8 @@ public final class Memo: Identifiable {
     public var text: String
     public var date: Date?
     public var category: String
-    public  var isArchived: Bool
-    public  var createdAt: Date
+    public var isArchived: Bool
+    public var createdAt: Date
     public var priorityValue: Double
     public var currentPriorityValue: Double {
         if isArchived {
@@ -39,10 +39,11 @@ public final class Memo: Identifiable {
         let newPriority = priorityValue - decay
         return max(0, newPriority)
     }
+
     public var priority: MemoPriority {
         MemoPriority.fromValue(currentPriorityValue)
     }
-    
+
     public init(
         text: String,
         category: String = "未分類",
@@ -59,9 +60,9 @@ public final class Memo: Identifiable {
         self.priorityValue = priorityValue
         self.date = date
     }
-    
+
     public static func makeSampleMemos() -> [Memo] {
-        return [
+        [
             Memo(
                 text: "牛乳を買う",
                 category: MemoCategory.shopping.rawValue,
@@ -100,31 +101,45 @@ public final class Memo: Identifiable {
             )
         ]
     }
-    
 }
-
 
 public extension MemoPriority {
     var emoji: String {
         switch self {
-        case .hot: return "🔥"
-        case .warm: return "🌤"
-        case .cold: return "🧊"
+        case .hot:
+            return "🔥"
+
+        case .warm:
+            return "🌤"
+
+        case .cold:
+            return "🧊"
         }
     }
+
     func opacity(for priority: MemoPriority) -> Double {
         switch priority {
-        case .hot: return 1.0
-        case .warm: return 0.7
-        case .cold: return 0.4
+        case .hot:
+            return 1.0
+
+        case .warm:
+            return 0.7
+
+        case .cold:
+            return 0.4
         }
     }
+
     static func fromValue(_ value: Double) -> MemoPriority {
         switch value {
-        case ...0.3: return .cold
-        case 0.3...0.7: return .warm
-        default: return .hot
+        case ...0.3:
+            return .cold
+
+        case 0.3...0.7:
+            return .warm
+
+        default:
+            return .hot
         }
     }
-    
 }

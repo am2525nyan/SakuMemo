@@ -1,23 +1,24 @@
 //
-//  TaskView.swift
+//  ArchiveMemoView.swift
 //  SakuMemo
 //
 //  Created by saki on 2025/04/18.
 //
 
-import SwiftUI
-import ComposableArchitecture
-import SwiftData
-import SharedModel
 import Components
+import ComposableArchitecture
+import SharedModel
+import SwiftData
+import SwiftUI
 
 public struct ArchiveMemoView: View {
     public init(store: StoreOf<ArchiveMemoFeature>) {
         self.store = store
     }
+
     @Bindable var store: StoreOf<ArchiveMemoFeature>
     @Environment(\.scenePhase) var scenePhase
-    @Query(filter: #Predicate<Memo>{$0.isArchived == true},sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
+    @Query(filter: #Predicate<Memo> { $0.isArchived == true }, sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
     @FocusState var isFocused: Bool
     public var body: some View {
         VStack {
@@ -25,24 +26,35 @@ public struct ArchiveMemoView: View {
                 tapped: {
                     store.send(.addMemo)
                 },
-                text:$store.text, isFocused: _isFocused
+                text: $store.text,
+                isFocused: _isFocused
             )
-            ListComponent(memos: .constant(memos),
-                          tapAction: {memo in
-            }, swipeTrailingAction: { memo in
-                store.send(.deleteMemo(memo))
-            }, swipeLeadingAction: { memo in
-                store.send(.archiveMain(memo))
-            }, trailingText: "削除", leadingText: "戻す")
-            
+            ListComponent(
+                memos: .constant(memos),
+                tapAction: { _ in
+                },
+                swipeTrailingAction: { memo in
+                    store.send(.deleteMemo(memo))
+                },
+                swipeLeadingAction: { memo in
+                    store.send(.archiveMain(memo))
+                },
+                trailingText: "削除",
+                leadingText: "戻す"
+            )
         }
     }
 }
 
 #Preview {
-    ArchiveMemoView(store:
-            .init(initialState: ArchiveMemoFeature.State(),
-                  reducer: {
-        ArchiveMemoFeature()
-    }))
+    ArchiveMemoView(
+        store:
+        .init(
+            initialState:
+            ArchiveMemoFeature.State(),
+            reducer: {
+                ArchiveMemoFeature()
+            }
+        )
+    )
 }

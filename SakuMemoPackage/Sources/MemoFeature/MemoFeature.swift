@@ -1,28 +1,29 @@
 //
-//  TaskReducer.swift
+//  MemoFeature.swift
 //  SakuMemo
 //
 //  Created by saki on 2025/04/18.
 //
 
-import Foundation
-import ComposableArchitecture
-import SharedModel
 import AddMemoFeature
+import ComposableArchitecture
+import Foundation
 import MemoDetailFeature
-import SubscriptionFeature
 import Repository
+import SharedModel
+import SubscriptionFeature
 
 @Reducer
-public struct MemoFeature : Sendable{
+public struct MemoFeature: Sendable {
     public init() {}
-    
+
     @ObservableState
-    public struct State{
+    public struct State {
         public init() {}
+
         var memo = Memo(text: "")
         var text: String = ""
-        
+
         @Presents var detail: MemoDetailFeature.State?
         @Presents var add: AddMemoFeature.State?
         @Presents var subscription: SubscriptionFeature.State?
@@ -31,6 +32,7 @@ public struct MemoFeature : Sendable{
         var isShowPopup: Bool = false
         var isShowSubscription: Bool = false
     }
+
     public enum Action: BindableAction {
         case binding(BindingAction<State>)
         case addMemo
@@ -51,17 +53,16 @@ public struct MemoFeature : Sendable{
         case closePopup
         case foundationModels
         case switchAi
-        
-        
     }
+
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
     @Dependency(\.notificationManager) var notificationManager
     @Dependency(\.continuousClock) var clock
-    
-    public var body: some ReducerOf <Self> {
+
+    public var body: some ReducerOf<Self> {
         BindingReducer()
-        
+
         Reduce { state, action in
             switch action {
             case .addMemo:
@@ -69,14 +70,11 @@ public struct MemoFeature : Sendable{
                 state.memo = memo
                 state.text = ""
                 return .run { send in
-                    
-                    do{
+                    do {
                         await send(.switchAi)
-                        
                     }
-                    
-                    
                 }
+
             case .gemini:
                 let text = state.memo.text
                 return .run { send in
@@ -87,32 +85,32 @@ public struct MemoFeature : Sendable{
                         await send(.error)
                     }
                 }
+
             case .foundationModels:
                 let text = state.memo.text
                 return .run { send in
                     if #available(iOS 26.0, macOS 26.0, *) {
-                        do{
+                        do {
                             let repo = FoundationModelRepository()
                             let result = try await repo.respond(userInput: text)
                             await send(.success(result))
-                        }catch{
+                        } catch {
                             print("⚠️Foundation Modelsの解析に失敗: \(error)")
                             await send(.gemini)
                         }
-                        
                     } else {
                         // Fallback on earlier versions
                         await send(.gemini)
                     }
                 }
-                
-                
-            case .success(let result):
+
+            case let .success(result):
                 state.memo.priorityValue = result.importance
                 state.memo.category = result.category
                 let memo = state.memo
                 let new = MemoSendable(
-                    id: memo.id, text: memo.text,
+                    id: memo.id,
+                    text: memo.text,
                     category: memo.category,
                     priorityValue: memo.priorityValue,
                     isArchived: memo.isArchived,
@@ -123,84 +121,95 @@ public struct MemoFeature : Sendable{
                     try await swiftDataRepository.addMemo(newMemo: new)
                     await send(.showPopup)
                 }
-                
+
             case .deleteAllMemos:
-                return .run { send in
+                return .run { _ in
                     try await swiftDataRepository.deleteAllMemos()
                 }
-                
-            case .binding(_):
+
+            case .binding:
                 return .none
+
             case .error:
                 let memo = state.memo
                 state.text = ""
                 let new = MemoSendable(
-                    id: memo.id, text: memo.text,
+                    id: memo.id,
+                    text: memo.text,
                     category: memo.category,
                     priorityValue: memo.priorityValue,
                     isArchived: memo.isArchived,
                     createdAt: memo.createdAt,
                     date: memo.date
                 )
-                return .run { send in
+                return .run { _ in
                     try await swiftDataRepository.addMemo(newMemo: new)
                 }
-            case .deleteMemo(let memo):
+
+            case let .deleteMemo(memo):
                 let new = MemoSendable(
-                    id: memo.id, text: memo.text,
+                    id: memo.id,
+                    text: memo.text,
                     category: memo.category,
                     priorityValue: memo.priorityValue,
                     isArchived: memo.isArchived,
                     createdAt: memo.createdAt,
                     date: memo.date
                 )
-                return .run { send in
+                return .run { _ in
                     try await swiftDataRepository.deleteMemo(memo: new)
                 }
-            case .archive(let memo):
+
+            case let .archive(memo):
                 memo.isArchived = true
                 return .none
+
             case .onAppear:
-                return .run { send in
-                    do{
+                return .run { _ in
+                    do {
                         try await swiftDataRepository.archiveMemos()
-                    }catch{
+                    } catch {
                         print("アーカイブ失敗")
                     }
                 }
+
             case .presentMemoDetail:
                 return .none
-            case .showDetail(let memo):
+
+            case let .showDetail(memo):
                 state.isShowDetails = true
-                
+
                 state.detail = MemoDetailFeature.State(memo: memo)
-                
+
                 return .none
+
             case .presentAddMemo:
                 return .none
+
             case .showAddMemo:
                 state.isShowAdd = true
                 state.add = AddMemoFeature.State()
                 return .none
+
             case .showPopup:
                 state.isShowPopup = true
                 return .run { send in
-                    try await self.clock.sleep(for: .seconds(2))
+                    try await clock.sleep(for: .seconds(2))
                     await send(.closePopup)
                 }
-                
+
             case .closePopup:
                 state.isShowPopup = false
                 return .none
-                
+
             case .showSubscription:
                 state.isShowSubscription = true
                 state.subscription = SubscriptionFeature.State()
                 return .none
-                
+
             case .presentSubscription:
                 return .none
-                
+
             case .switchAi:
                 if #available(iOS 26.0, macOS 26.0, *) {
                     return .run { send in
@@ -213,15 +222,14 @@ public struct MemoFeature : Sendable{
                 }
             }
         }
-        .ifLet(\.$detail, action: \.presentMemoDetail){
+        .ifLet(\.$detail, action: \.presentMemoDetail) {
             MemoDetailFeature()
         }
-        .ifLet(\.$add, action: \.presentAddMemo){
+        .ifLet(\.$add, action: \.presentAddMemo) {
             AddMemoFeature()
         }
-        .ifLet(\.$subscription, action: \.presentSubscription){
+        .ifLet(\.$subscription, action: \.presentSubscription) {
             SubscriptionFeature()
         }
-        
     }
 }

@@ -10,7 +10,8 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "SakuMemoPackage",
-            targets: ["AppFeature"]),
+            targets: ["AppFeature"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.19.1"),
@@ -20,43 +21,51 @@ let package = Package(
     targets: [
         .target(
             name: "AddMemoFeature",
-            dependencies: [.composableArchitecture,"SharedModel","Repository","RepositoryProtocol","Utils"]),
+            dependencies: [.composableArchitecture, "SharedModel", "Repository", "RepositoryProtocol", "Utils"]
+        ),
         .target(
             name: "AppFeature",
-            dependencies: [.composableArchitecture,"MemoFeature","ArchiveFeature"]),
+            dependencies: [.composableArchitecture, "MemoFeature", "ArchiveFeature"]
+        ),
         .target(
             name: "AppIntent",
-            dependencies: [.composableArchitecture,"SharedModel","Repository","RepositoryProtocol"]),
+            dependencies: [.composableArchitecture, "SharedModel", "Repository", "RepositoryProtocol"]
+        ),
         .target(
             name: "ArchiveFeature",
-            dependencies: [.composableArchitecture,"AddMemoFeature","SharedModel","Repository","Components"]),
+            dependencies: [.composableArchitecture, "AddMemoFeature", "SharedModel", "Repository", "Components"]
+        ),
         .target(
             name: "Components",
-            dependencies: ["SharedModel","Utils"]),
+            dependencies: ["SharedModel", "Utils"]
+        ),
         .target(
             name: "MemoDetailFeature",
-            dependencies: [.composableArchitecture,"SharedModel","Repository"]),
+            dependencies: [.composableArchitecture, "SharedModel", "Repository"]
+        ),
         .target(
             name: "MemoFeature",
-            dependencies: [.composableArchitecture,.popupView,"AddMemoFeature","SharedModel","Repository","Components","MemoDetailFeature","SubscriptionFeature"]),
+            dependencies: [.composableArchitecture, .popupView, "AddMemoFeature", "SharedModel", "Repository", "Components", "MemoDetailFeature", "SubscriptionFeature"]
+        ),
         .target(
             name: "RepositoryProtocol",
-        dependencies: ["SharedModel"]),
+            dependencies: ["SharedModel"]
+        ),
         .target(
             name: "Repository",
-            dependencies: [.composableArchitecture,.alamofire,"SharedModel","RepositoryProtocol"]),
+            dependencies: [.composableArchitecture, .alamofire, "SharedModel", "RepositoryProtocol"]
+        ),
         .target(
-            name: "SharedModel",
+            name: "SharedModel"
         ),
         .target(
             name: "SubscriptionFeature",
-            dependencies: [.composableArchitecture,"SharedModel","Repository","RepositoryProtocol"]),
+            dependencies: [.composableArchitecture, "SharedModel", "Repository", "RepositoryProtocol"]
+        ),
         .target(
             name: "Utils",
-            dependencies: ["SharedModel"]),
-       
-       
-
+            dependencies: ["SharedModel"]
+        )
     ]
 )
 extension Target.Dependency {

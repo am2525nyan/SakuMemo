@@ -5,18 +5,19 @@
 //  Created by saki on 2025/05/03.
 //
 
-import Foundation
 import ComposableArchitecture
-import SharedModel
+import Foundation
 import Repository
 import RepositoryProtocol
+import SharedModel
 
 @Reducer
-public struct AddMemoFeature: Sendable{
+public struct AddMemoFeature: Sendable {
     public init() {}
     @ObservableState
     public struct State {
         public init() {}
+
         var text: String = ""
         var isSending: Bool = false
         var isTextField: Bool = true
@@ -26,7 +27,7 @@ public struct AddMemoFeature: Sendable{
         var isSubscribed: Bool = false
         var showLimitAlert: Bool = false
     }
-    
+
     public enum Action: BindableAction {
         case binding(BindingAction<State>)
         case save
@@ -42,6 +43,7 @@ public struct AddMemoFeature: Sendable{
         case showLimitAlert
         case dismissLimitAlert
     }
+
     @Dependency(\.geminiRepository) var geminiRepository
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.subscriptionRepository) var subscriptionRepository
@@ -60,9 +62,9 @@ public struct AddMemoFeature: Sendable{
                         try await subscriptionRepository.incrementMemoCount()
                         print("✅ incrementMemoCount 完了")
                         await send(.checkSubscriptionStatus)
-                        if let answer = await geminiRepository.geminiText(for: text){
+                        if let answer = await geminiRepository.geminiText(for: text) {
                             await send(.geminiSuccess(answer))
-                        }else{
+                        } else {
                             await send(.geminiFailure)
                         }
                     } else {
@@ -70,27 +72,31 @@ public struct AddMemoFeature: Sendable{
                         await send(.showLimitAlert)
                     }
                 }
-            case .binding(_):
+
+            case .binding:
                 return .none
-            case .geminiSuccess(let result):
+
+            case let .geminiSuccess(result):
                 state.isSending = false
                 state.isTextField = false
                 state.memoList = result
-                
+
                 return .none
+
             case .geminiFailure:
                 state.isSending = false
                 state.isTextField = false
-                
+
                 return .none
+
             case .showTextField:
                 state.isTextField = true
                 return .none
-            case .addMemo(let text):
+
+            case let .addMemo(text):
                 let memo = Memo(text: text)
                 state.memo = memo
-                state.memoList.removeAll(where:{
-                    (value) in
+                state.memoList.removeAll(where: { value in
                     value == text
                 })
                 return .run { send in
@@ -98,6 +104,7 @@ public struct AddMemoFeature: Sendable{
                     // 単純にGemini解析のみ実行
                     await send(.gemini)
                 }
+
             case .gemini:
                 let text = state.memo.text
                 return .run { send in
@@ -108,53 +115,53 @@ public struct AddMemoFeature: Sendable{
                         await send(.geminiError)
                     }
                 }
-                
-            case .geminiSuccessText(let result):
+
+            case let .geminiSuccessText(result):
                 state.memo.priorityValue = result.importance
                 state.memo.category = result.category
                 let memo = state.memo
                 let newMemo = MemoSendable(
-                    id: memo.id, text: memo.text,
+                    id: memo.id,
+                    text: memo.text,
                     category: memo.category,
                     priorityValue: memo.priorityValue,
                     isArchived: memo.isArchived,
                     createdAt: memo.createdAt,
                     date: memo.date
                 )
-                return .run { send in
-                    
+                return .run { _ in
                     try await swiftDataRepository.addMemo(newMemo: newMemo)
                 }
-                
+
             case .geminiError:
                 let memo = state.memo
                 state.text = ""
                 let delete = MemoSendable(
-                    id: memo.id, text: memo.text,
+                    id: memo.id,
+                    text: memo.text,
                     category: memo.category,
                     priorityValue: memo.priorityValue,
                     isArchived: memo.isArchived,
                     createdAt: memo.createdAt,
                     date: memo.date
                 )
-                return .run { send in
-                    
+                return .run { _ in
                     try await swiftDataRepository.addMemo(newMemo: delete)
                 }
-                
+
             case .checkSubscriptionStatus:
                 return .run { send in
                     // まずStoreKitで最新の課金状態を確認
                     @Dependency(\.storeKitRepository) var storeKitRepository
                     let storeKitSubscribed = try await storeKitRepository.checkSubscriptionStatus()
-                    
+
                     // ローカルデータベースと同期
                     let subscriptionData = try await subscriptionRepository.getUserSubscriptionData()
                     if subscriptionData.isSubscribed != storeKitSubscribed {
                         print("🔄 課金状態の同期: \(subscriptionData.isSubscribed) -> \(storeKitSubscribed)")
                         try await subscriptionRepository.updateSubscriptionStatus(isSubscribed: storeKitSubscribed)
                     }
-                    
+
                     // 最新の状態を取得
                     let updatedSubscriptionData = try await subscriptionRepository.getUserSubscriptionData()
                     let remainingMemos = try await subscriptionRepository.getRemainingFreeMemos()
@@ -163,16 +170,16 @@ public struct AddMemoFeature: Sendable{
                         remainingMemos: remainingMemos
                     ))
                 }
-                
-            case .subscriptionStatusUpdated(let isSubscribed, let remainingMemos):
+
+            case let .subscriptionStatusUpdated(isSubscribed, remainingMemos):
                 state.isSubscribed = isSubscribed
                 state.remainingFreeMemos = remainingMemos
                 return .none
-                
+
             case .showLimitAlert:
                 state.showLimitAlert = true
                 return .none
-                
+
             case .dismissLimitAlert:
                 state.showLimitAlert = false
                 return .none

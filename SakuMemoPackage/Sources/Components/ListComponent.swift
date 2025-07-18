@@ -5,12 +5,11 @@
 //  Created by saki on 2025/05/16.
 //
 
-import SwiftUI
 import SharedModel
+import SwiftUI
 
 public struct ListComponent: View {
-    public init( memos: Binding<[Memo]>, tapAction: @escaping (Memo) -> Void, swipeTrailingAction: @escaping (Memo) -> Void, swipeLeadingAction: @escaping (Memo) -> Void, trailingText: String, leadingText: String) {
-        
+    public init(memos: Binding<[Memo]>, tapAction: @escaping (Memo) -> Void, swipeTrailingAction: @escaping (Memo) -> Void, swipeLeadingAction: @escaping (Memo) -> Void, trailingText: String, leadingText: String) {
         self._memos = memos
         self.tapAction = tapAction
         self.swipeTrailingAction = swipeTrailingAction
@@ -18,16 +17,17 @@ public struct ListComponent: View {
         self.trailingText = trailingText
         self.leadingText = leadingText
     }
+
     @Binding var memos: [Memo]
     public let tapAction: (Memo) -> Void
     public let swipeTrailingAction: (Memo) -> Void
     public let swipeLeadingAction: (Memo) -> Void
     public var trailingText: String
     public var leadingText: String
-    public  var body: some View {
+    public var body: some View {
         List {
             ForEach(memos) { memo in
-                HStack{
+                HStack {
                     MemoCellView(memo: memo)
                     Spacer()
                 }
@@ -45,14 +45,12 @@ public struct ListComponent: View {
                 .swipeActions(edge: .leading, allowsFullSwipe: true) {
                     Button(role: .destructive) {
                         swipeLeadingAction(memo)
-                        
                     } label: {
                         Text(leadingText)
                     }
                     .tint(Color.mainColor)
                 }
             }
-            
         }
         .listStyle(PlainListStyle())
     }
@@ -61,12 +59,16 @@ public struct ListComponent: View {
 #Preview {
     ListComponent(
         memos: .constant([Memo(text: "")]),
-        tapAction: {_ in
+        tapAction: { _ in
             print("")
-        }, swipeTrailingAction:{ _ in
+        },
+        swipeTrailingAction: { _ in
             print("")
-        }, swipeLeadingAction: {_ in
+        },
+        swipeLeadingAction: { _ in
             print("")
-        }, trailingText: "アーカイブ",
-        leadingText: "削除")
+        },
+        trailingText: "アーカイブ",
+        leadingText: "削除"
+    )
 }

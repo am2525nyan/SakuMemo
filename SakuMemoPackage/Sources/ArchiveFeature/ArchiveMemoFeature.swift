@@ -1,26 +1,28 @@
 //
-//  TaskReducer.swift
+//  ArchiveMemoFeature.swift
 //  SakuMemo
 //
 //  Created by saki on 2025/04/18.
 //
 
-import Foundation
 import ComposableArchitecture
-import SharedModel
+import Foundation
 import Repository
+import SharedModel
 
 @Reducer
-public struct ArchiveMemoFeature : Sendable{
+public struct ArchiveMemoFeature: Sendable {
     public init() {}
-    
+
     @ObservableState
-    public  struct State{
+    public struct State {
         public init() {}
+
         var memo = Memo(text: "")
         var text: String = ""
     }
-    public  enum Action: BindableAction {
+
+    public enum Action: BindableAction {
         case binding(BindingAction<State>)
         case addMemo
         case gemini
@@ -30,10 +32,11 @@ public struct ArchiveMemoFeature : Sendable{
         case deleteAllMemos
         case archiveMain(Memo)
     }
+
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
-    
-    public  var body: some ReducerOf <Self> {
+
+    public var body: some ReducerOf<Self> {
         BindingReducer()
         Reduce { state, action in
             switch action {
@@ -42,13 +45,11 @@ public struct ArchiveMemoFeature : Sendable{
                 state.memo = memo
                 state.text = ""
                 return .run { send in
-                    
-                    do{
+                    do {
                         await send(.gemini)
                     }
-                    
-                    
                 }
+
             case .gemini:
                 let text = state.memo.text
                 return .run { send in
@@ -59,57 +60,63 @@ public struct ArchiveMemoFeature : Sendable{
                         await send(.geminiError)
                     }
                 }
-                
-            case .geminiSuccess(let result):
+
+            case let .geminiSuccess(result):
                 state.memo.priorityValue = result.importance
                 state.memo.category = result.category
                 let memo = state.memo
                 let newMemo = MemoSendable(
-                    id: memo.id, text: memo.text,
+                    id: memo.id,
+                    text: memo.text,
                     category: memo.category,
                     priorityValue: memo.priorityValue,
                     isArchived: memo.isArchived,
                     createdAt: memo.createdAt,
                     date: memo.date
                 )
-                return .run { send in
+                return .run { _ in
                     try await swiftDataRepository.addMemo(newMemo: newMemo)
                 }
-                
+
             case .deleteAllMemos:
-                return .run { send in
+                return .run { _ in
                     try await swiftDataRepository.deleteAllMemos()
                 }
-                
-            case .binding(_):
+
+            case .binding:
                 return .none
+
             case .geminiError:
                 let memo = state.memo
                 state.text = ""
                 let newMemo = MemoSendable(
-                    id: memo.id, text: memo.text,
+                    id: memo.id,
+                    text: memo.text,
                     category: memo.category,
                     priorityValue: memo.priorityValue,
                     isArchived: memo.isArchived,
                     createdAt: memo.createdAt,
                     date: memo.date
                 )
-                return .run { send in
+                return .run { _ in
                     try await swiftDataRepository.addMemo(newMemo: newMemo)
                 }
-            case .deleteMemo(let memo):
+
+            case let .deleteMemo(memo):
                 let deleteMemo = MemoSendable(
-                    id: memo.id, text: memo.text,
+                    id: memo.id,
+                    text: memo.text,
                     category: memo.category,
                     priorityValue: memo.priorityValue,
                     isArchived: memo.isArchived,
                     createdAt: memo.createdAt,
                     date: memo.date
                 )
-                return .run { send in
+                return .run { _ in
                     try await swiftDataRepository.deleteMemo(memo: deleteMemo)
                 }
-            case .archiveMain(let memo):
+
+            case let .archiveMain(memo):
                 memo.isArchived = false
                 memo.date = nil
                 return .none

@@ -1,20 +1,20 @@
 //
-//  TextFieldStyleExtension.swift
+//  CustomTextFieldStyle.swift
 //  SakuMemo
 //
 //  Created by saki on 2025/04/30.
 //
 
-import SwiftUI
 import SharedModel
+import SwiftUI
 
 public struct CustomTextFieldStyle: TextFieldStyle {
     @FocusState private var isFocused: Bool
-    
+
     public init(isFocused: FocusState<Bool>) {
         self._isFocused = isFocused
     }
-    
+
     public func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
             .frame(maxWidth: .infinity, minHeight: 20)
@@ -26,8 +26,8 @@ public struct CustomTextFieldStyle: TextFieldStyle {
     }
 }
 
-extension TextFieldStyle where Self == CustomTextFieldStyle {
-    public static func customTextField(isFocused: FocusState<Bool>) -> CustomTextFieldStyle {
+public extension TextFieldStyle where Self == CustomTextFieldStyle {
+    static func customTextField(isFocused: FocusState<Bool>) -> CustomTextFieldStyle {
         CustomTextFieldStyle(isFocused: isFocused)
     }
 }
