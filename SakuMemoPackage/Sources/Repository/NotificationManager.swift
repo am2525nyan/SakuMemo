@@ -29,11 +29,13 @@ public final class NotificationManager:Sendable {
     public func sendNotification(title: String, body: String, date: Date, id: String) async throws {
         let content = UNMutableNotificationContent()
         
-        let image = try await ImageCreatorRepository.shared.generateImage(text: body)
-        if let image = image {
-            let fileURL = try ImageCreatorRepository.shared.saveCGImageToTemporaryFile(image)
-            let attachment = try UNNotificationAttachment(identifier: "generatedImage", url: fileURL, options: nil)
-            content.attachments = [attachment]
+        if #available(iOS 18.4, macOS 15.4, *) {
+            let image = try await ImageCreatorRepository.shared.generateImage(text: body)
+            if let image = image {
+                let fileURL = try ImageCreatorRepository.shared.saveCGImageToTemporaryFile(image)
+                let attachment = try UNNotificationAttachment(identifier: "generatedImage", url: fileURL, options: nil)
+                content.attachments = [attachment]
+            }
         }
         
         content.title = title

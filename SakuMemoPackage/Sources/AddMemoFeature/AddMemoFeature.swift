@@ -9,6 +9,7 @@ import Foundation
 import ComposableArchitecture
 import SharedModel
 import Repository
+import RepositoryProtocol
 
 @Reducer
 public struct AddMemoFeature: Sendable{
@@ -21,6 +22,9 @@ public struct AddMemoFeature: Sendable{
         var isTextField: Bool = true
         var memoList: [String] = []
         var memo = Memo(text: "")
+        var remainingFreeMemos: Int = 3
+        var isSubscribed: Bool = false
+        var showLimitAlert: Bool = false
     }
     
     public enum Action: BindableAction {
@@ -33,9 +37,14 @@ public struct AddMemoFeature: Sendable{
         case gemini
         case geminiError
         case geminiSuccessText(MemoAnalysisResult)
+        case checkSubscriptionStatus
+        case subscriptionStatusUpdated(isSubscribed: Bool, remainingMemos: Int)
+        case showLimitAlert
+        case dismissLimitAlert
     }
     @Dependency(\.geminiRepository) var geminiRepository
     @Dependency(\.swiftDataRepository) var swiftDataRepository
+    @Dependency(\.subscriptionRepository) var subscriptionRepository
     public var body: some ReducerOf<Self> {
         BindingReducer()
         Reduce { state, action in
@@ -44,10 +53,21 @@ public struct AddMemoFeature: Sendable{
                 state.isSending = true
                 let text = state.text
                 return .run { send in
-                    if let answer = await geminiRepository.geminiText(for: text){
-                        await send(.geminiSuccess(answer))
-                    }else{
-                        await send(.geminiFailure)
+                    let canAdd = try await subscriptionRepository.canAddMemo()
+                    print("🎯 AddMemoFeature.save: canAdd = \(canAdd)")
+                    if canAdd {
+                        print("🔄 incrementMemoCount を呼び出します")
+                        try await subscriptionRepository.incrementMemoCount()
+                        print("✅ incrementMemoCount 完了")
+                        await send(.checkSubscriptionStatus)
+                        if let answer = await geminiRepository.geminiText(for: text){
+                            await send(.geminiSuccess(answer))
+                        }else{
+                            await send(.geminiFailure)
+                        }
+                    } else {
+                        print("❌ 制限に達しました - アラートを表示")
+                        await send(.showLimitAlert)
                     }
                 }
             case .binding(_):
@@ -74,13 +94,9 @@ public struct AddMemoFeature: Sendable{
                     value == text
                 })
                 return .run { send in
-                    
-                    do{
-                        await send(.gemini)
-                        
-                    }
-                    
-                    
+                    // プラスボタンでメモを追加する際は制限チェックもカウント増加も行わない
+                    // 単純にGemini解析のみ実行
+                    await send(.gemini)
                 }
             case .gemini:
                 let text = state.memo.text
@@ -125,6 +141,41 @@ public struct AddMemoFeature: Sendable{
                     
                     try await swiftDataRepository.addMemo(newMemo: delete)
                 }
+                
+            case .checkSubscriptionStatus:
+                return .run { send in
+                    // まずStoreKitで最新の課金状態を確認
+                    @Dependency(\.storeKitRepository) var storeKitRepository
+                    let storeKitSubscribed = try await storeKitRepository.checkSubscriptionStatus()
+                    
+                    // ローカルデータベースと同期
+                    let subscriptionData = try await subscriptionRepository.getUserSubscriptionData()
+                    if subscriptionData.isSubscribed != storeKitSubscribed {
+                        print("🔄 課金状態の同期: \(subscriptionData.isSubscribed) -> \(storeKitSubscribed)")
+                        try await subscriptionRepository.updateSubscriptionStatus(isSubscribed: storeKitSubscribed)
+                    }
+                    
+                    // 最新の状態を取得
+                    let updatedSubscriptionData = try await subscriptionRepository.getUserSubscriptionData()
+                    let remainingMemos = try await subscriptionRepository.getRemainingFreeMemos()
+                    await send(.subscriptionStatusUpdated(
+                        isSubscribed: updatedSubscriptionData.isSubscribed,
+                        remainingMemos: remainingMemos
+                    ))
+                }
+                
+            case .subscriptionStatusUpdated(let isSubscribed, let remainingMemos):
+                state.isSubscribed = isSubscribed
+                state.remainingFreeMemos = remainingMemos
+                return .none
+                
+            case .showLimitAlert:
+                state.showLimitAlert = true
+                return .none
+                
+            case .dismissLimitAlert:
+                state.showLimitAlert = false
+                return .none
             }
         }
     }

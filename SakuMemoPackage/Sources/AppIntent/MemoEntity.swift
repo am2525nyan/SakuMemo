@@ -9,6 +9,10 @@ import AppIntents
 import SwiftUI
 import Dependencies
 import ComposableArchitecture
+import SharedModel
+import Repository
+import RepositoryProtocol
+import SwiftData
 
 
 struct Shortcut: AppShortcutsProvider {
@@ -38,24 +42,32 @@ struct AddMemoIntent: AppIntent {
     
     static let title: LocalizedStringResource = "メモを追加"
     
-    static var openAppWhenRun: Bool = true
+    static let openAppWhenRun: Bool = true
     
     @Parameter(title: "メモの内容")
     var content: String
-    @Dependencies.Dependency(\.swiftDataRepository) var swiftDataRepository
-    @Dependencies.Dependency(\.geminiRepository) var geminiRepository
-    
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog{
-        let memo = Memo(text: content)
         print("入力されたメモ：\(content)")
         
-        if let result = await geminiRepository.gemini(for: content) {
-            memo.category = result.category
-            memo.priorityValue = result.importance
-            try await swiftDataRepository.addMemo(newMemo: memo)
-            
-        }
+        // 簡単なバージョン - とりあえずメモを作成
+        let memo = Memo(text: content)
+        
+        // SwiftDataRepositoryを直接取得
+        let container = try ModelContainer(for: Memo.self, UserSubscription.self)
+        let context = container.mainContext
+        
+        let newMemo = Memo(
+            text: memo.text,
+            category: memo.category,
+            priorityValue: memo.priorityValue,
+            isArchived: memo.isArchived,
+            createdAt: memo.createdAt,
+            date: memo.date
+        )
+        
+        context.insert(newMemo)
+        try context.save()
         
         return .result( dialog: IntentDialog("メモを追加しました！"))
     }

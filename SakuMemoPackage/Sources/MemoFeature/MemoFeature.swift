@@ -10,6 +10,8 @@ import ComposableArchitecture
 import SharedModel
 import AddMemoFeature
 import MemoDetailFeature
+import SubscriptionFeature
+import Repository
 
 @Reducer
 public struct MemoFeature : Sendable{
@@ -23,9 +25,11 @@ public struct MemoFeature : Sendable{
         
         @Presents var detail: MemoDetailFeature.State?
         @Presents var add: AddMemoFeature.State?
+        @Presents var subscription: SubscriptionFeature.State?
         var isShowDetails: Bool = false
         var isShowAdd: Bool = false
         var isShowPopup: Bool = false
+        var isShowSubscription: Bool = false
     }
     public enum Action: BindableAction {
         case binding(BindingAction<State>)
@@ -39,8 +43,10 @@ public struct MemoFeature : Sendable{
         case onAppear
         case presentMemoDetail(PresentationAction<MemoDetailFeature.Action>)
         case presentAddMemo(PresentationAction<AddMemoFeature.Action>)
+        case presentSubscription(PresentationAction<SubscriptionFeature.Action>)
         case showDetail(Memo)
         case showAddMemo
+        case showSubscription
         case showPopup
         case closePopup
         case foundationModels
@@ -52,7 +58,6 @@ public struct MemoFeature : Sendable{
     @Dependency(\.geminiRepository) var geminiRepository
     @Dependency(\.notificationManager) var notificationManager
     @Dependency(\.continuousClock) var clock
-    @Dependency(\.foundationModelsRepository) var foundationModelsRepository
     
     public var body: some ReducerOf <Self> {
         BindingReducer()
@@ -85,9 +90,10 @@ public struct MemoFeature : Sendable{
             case .foundationModels:
                 let text = state.memo.text
                 return .run { send in
-                    if #available(iOS 26.0, *) {
+                    if #available(iOS 26.0, macOS 26.0, *) {
                         do{
-                            let result = try await foundationModelsRepository.respond(userInput: text)
+                            let repo = FoundationModelRepository()
+                            let result = try await repo.respond(userInput: text)
                             await send(.success(result))
                         }catch{
                             print("⚠️Foundation Modelsの解析に失敗: \(error)")
@@ -96,6 +102,7 @@ public struct MemoFeature : Sendable{
                         
                     } else {
                         // Fallback on earlier versions
+                        await send(.gemini)
                     }
                 }
                 
@@ -185,9 +192,17 @@ public struct MemoFeature : Sendable{
                 case .closePopup:
                     state.isShowPopup = false
                     return .none
+                    
+                case .showSubscription:
+                    state.isShowSubscription = true
+                    state.subscription = SubscriptionFeature.State()
+                    return .none
+                    
+                case .presentSubscription:
+                    return .none
               
             case .switchAi:
-         if #available(iOS 26.0, *) {
+         if #available(iOS 26.0, macOS 26.0, *) {
              return .run { send in
                  await send(.foundationModels)
              }
@@ -203,6 +218,9 @@ public struct MemoFeature : Sendable{
         }
         .ifLet(\.$add, action: \.presentAddMemo){
             AddMemoFeature()
+        }
+        .ifLet(\.$subscription, action: \.presentSubscription){
+            SubscriptionFeature()
         }
         
     }

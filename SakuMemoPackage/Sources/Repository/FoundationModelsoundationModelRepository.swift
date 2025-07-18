@@ -29,9 +29,9 @@ enum FoundationModelRepositoryError: Error, LocalizedError {
     }
 }
 
+@available(iOS 26.0, macOS 26.0, *)
 public struct FoundationModelRepository : Sendable{
     public init() {}
-    @available(iOS 26.0, *)
 
     public func respond(userInput: String) async throws -> MemoAnalysisResult {
         let model = SystemLanguageModel.default
@@ -58,7 +58,7 @@ public struct FoundationModelRepository : Sendable{
     }
 }
 
-@available(iOS 26.0, *)
+@available(iOS 26.0, macOS 26.0, *)
 @Generable
 struct MemoResponse {
     @Guide(.range(0.0...1.0))
@@ -68,12 +68,14 @@ struct MemoResponse {
     
     
 }
+@available(iOS 26.0, macOS 26.0, *)
 public struct FoundationModelsRepositoryKey:DependencyKey {
    
     public static let liveValue = FoundationModelRepository()
     
 }
 
+@available(iOS 26.0, macOS 26.0, *)
 public extension DependencyValues {
  
     var foundationModelsRepository: FoundationModelRepository {

@@ -23,6 +23,10 @@ public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
         self.container = container
     }
     
+    @MainActor var context: ModelContext {
+        container.mainContext
+    }
+    
     
     
     public func fetchMemos() async throws -> [MemoSendable] {
@@ -188,7 +192,24 @@ final class SwiftDataRepositoryMock: SwiftDataRepositoryProtocol {
 
 func createModelContainer() -> ModelContainer {
     do {
-        return try ModelContainer(for: Memo.self)
+        let schema = Schema([
+            Memo.self,
+            UserSubscription.self
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+        
+        // 永続化履歴の問題を解決するためにリセット
+        Task { @MainActor in
+            do {
+                let context = container.mainContext
+                try context.save()
+            } catch {
+                print("初期化エラー: \(error)")
+            }
+        }
+        
+        return container
     } catch {
         fatalError("ModelContainerの生成に失敗しました: \(error)")
     }
@@ -221,6 +242,11 @@ public enum SwiftDataRepositoryKey: DependencyKey {
 public extension DependencyValues {
     var swiftDataRepository: SwiftDataRepositoryProtocol {
         get { self[SwiftDataRepositoryKey.self] }
+        set { self[SwiftDataRepositoryKey.self] = newValue }
+    }
+    
+    var database: SwiftDataRepository {
+        get { self[SwiftDataRepositoryKey.self] as! SwiftDataRepository }
         set { self[SwiftDataRepositoryKey.self] = newValue }
     }
 }
