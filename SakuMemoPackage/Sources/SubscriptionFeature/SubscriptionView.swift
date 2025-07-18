@@ -91,7 +91,7 @@ public struct SubscriptionView: View {
                 }
             }
             .padding()
-            .background(Color.gray)
+            .background(Color.gray.opacity(0.1))
             .cornerRadius(12)
         }
         .padding()
@@ -139,7 +139,7 @@ public struct SubscriptionView: View {
                 }
             }
             .padding()
-            .background(Color.gray)
+            .background(Color.gray.opacity(0.1))
             .cornerRadius(12)
         }
         .padding()

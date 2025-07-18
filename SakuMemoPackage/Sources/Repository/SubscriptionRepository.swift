@@ -4,7 +4,7 @@ import Dependencies
 import RepositoryProtocol
 import SharedModel
 
-final class SubscriptionRepository: SubscriptionRepositoryProtocol, @unchecked Sendable {
+struct SubscriptionRepository: SubscriptionRepositoryProtocol, Sendable {
     @Dependency(\.database) private var database
     
     func getUserSubscriptionData() async throws -> UserSubscriptionData {

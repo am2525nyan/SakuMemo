@@ -4,24 +4,16 @@ import Dependencies
 import RepositoryProtocol
 import SharedModel
 
-final class StoreKitRepository: StoreKitRepositoryProtocol, @unchecked Sendable {
+final class StoreKitRepository: StoreKitRepositoryProtocol, Sendable {
     private let productIds = ["sakumemo_premium_monthly", "sakumemo_premium_yearly"]
-    private var transactionUpdateTask: Task<Void, Never>?
+    private let transactionUpdateTask: Task<Void, Never>
     
     init() {
-        startTransactionUpdateListener()
-    }
-    
-    deinit {
-        transactionUpdateTask?.cancel()
-    }
-    
-    private func startTransactionUpdateListener() {
         transactionUpdateTask = Task {
             for await result in StoreKit.Transaction.updates {
                 switch result {
                 case .verified(let transaction):
-                    await handleVerifiedTransaction(transaction)
+                    await Self.handleVerifiedTransaction(transaction)
                 case .unverified:
                     print("Unverified transaction received")
                 }
@@ -29,12 +21,17 @@ final class StoreKitRepository: StoreKitRepositoryProtocol, @unchecked Sendable 
         }
     }
     
+    deinit {
+        transactionUpdateTask.cancel()
+    }
+    
     @MainActor
-    private func handleVerifiedTransaction(_ transaction: StoreKit.Transaction) async {
+    private static func handleVerifiedTransaction(_ transaction: StoreKit.Transaction) async {
         // トランザクションを完了
         await transaction.finish()
         
         // 必要に応じて購入状態を更新
+        let productIds = ["sakumemo_premium_monthly", "sakumemo_premium_yearly"]
         if productIds.contains(transaction.productID) {
             print("Premium subscription transaction verified: \(transaction.productID)")
         }

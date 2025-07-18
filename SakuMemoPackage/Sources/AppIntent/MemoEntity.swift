@@ -52,8 +52,12 @@ struct AddMemoIntent: AppIntent {
         
         // 簡単なバージョン - とりあえずメモを作成
         let memo = Memo(text: content)
-        let memoSendable = MemoSendable(
-            id: memo.id,
+        
+        // SwiftDataRepositoryを直接取得
+        let container = try ModelContainer(for: Memo.self, UserSubscription.self)
+        let context = container.mainContext
+        
+        let newMemo = Memo(
             text: memo.text,
             category: memo.category,
             priorityValue: memo.priorityValue,
@@ -62,15 +66,8 @@ struct AddMemoIntent: AppIntent {
             date: memo.date
         )
         
-        
-        if let result = await geminiRepository.gemini(for: content) {
-            memoSendable.category = result.category
-            memoSendable.priorityValue = result.importance
-            try await swiftDataRepository.addMemo(newMemo: memoSendable)
-
-        }
-        
-   
+        context.insert(newMemo)
+        try context.save()
         
         return .result( dialog: IntentDialog("メモを追加しました！"))
     }
