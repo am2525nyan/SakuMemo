@@ -112,6 +112,20 @@ public struct UserSubscriptionData: Sendable {
     public var remainingFreeMemos: Int {
         return isSubscribed ? -1 : max(0, UserSubscription.freeUserDailyLimit - dailyMemoCount)
     }
+    
+    public func toUserSubscription() -> UserSubscription {
+        let subscription = UserSubscription()
+        subscription.id = self.id
+        subscription.isSubscribed = self.isSubscribed
+        subscription.subscriptionStartDate = self.subscriptionStartDate
+        subscription.subscriptionEndDate = self.subscriptionEndDate
+        subscription.productId = self.productId
+        subscription.dailyMemoCount = self.dailyMemoCount
+        subscription.lastResetDate = self.lastResetDate
+        subscription.createdAt = self.createdAt
+        subscription.updatedAt = self.updatedAt
+        return subscription
+    }
 }
 
 public enum SubscriptionError: Error, LocalizedError {

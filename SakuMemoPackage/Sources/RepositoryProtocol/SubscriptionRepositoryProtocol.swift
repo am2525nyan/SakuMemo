@@ -7,6 +7,7 @@ public protocol SubscriptionRepositoryProtocol: Sendable {
     func canAddMemo() async throws -> Bool
     func incrementMemoCount() async throws
     func getRemainingFreeMemos() async throws -> Int
+    func updateSubscriptionStatus(isSubscribed: Bool) async throws
 }
 
 public protocol StoreKitRepositoryProtocol: Sendable {

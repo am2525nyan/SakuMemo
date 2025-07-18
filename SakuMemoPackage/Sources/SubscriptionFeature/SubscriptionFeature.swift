@@ -90,7 +90,14 @@ public struct SubscriptionFeature: Sendable {
             case .purchaseCompleted:
                 state.isLoading = false
                 return .run { send in
-                    // Store subscription update and check status
+                    // StoreKitで課金状態を確認
+                    let isSubscribed = try await storeKitRepository.checkSubscriptionStatus()
+                    print("💰 課金完了: isSubscribed = \(isSubscribed)")
+                    
+                    // ローカルデータベースのサブスクリプション状態を更新
+                    try await subscriptionRepository.updateSubscriptionStatus(isSubscribed: isSubscribed)
+                    
+                    // 状態を更新
                     await send(.checkSubscriptionStatus)
                 }
                 

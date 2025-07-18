@@ -144,10 +144,22 @@ public struct AddMemoFeature: Sendable{
                 
             case .checkSubscriptionStatus:
                 return .run { send in
+                    // まずStoreKitで最新の課金状態を確認
+                    @Dependency(\.storeKitRepository) var storeKitRepository
+                    let storeKitSubscribed = try await storeKitRepository.checkSubscriptionStatus()
+                    
+                    // ローカルデータベースと同期
                     let subscriptionData = try await subscriptionRepository.getUserSubscriptionData()
+                    if subscriptionData.isSubscribed != storeKitSubscribed {
+                        print("🔄 課金状態の同期: \(subscriptionData.isSubscribed) -> \(storeKitSubscribed)")
+                        try await subscriptionRepository.updateSubscriptionStatus(isSubscribed: storeKitSubscribed)
+                    }
+                    
+                    // 最新の状態を取得
+                    let updatedSubscriptionData = try await subscriptionRepository.getUserSubscriptionData()
                     let remainingMemos = try await subscriptionRepository.getRemainingFreeMemos()
                     await send(.subscriptionStatusUpdated(
-                        isSubscribed: subscriptionData.isSubscribed,
+                        isSubscribed: updatedSubscriptionData.isSubscribed,
                         remainingMemos: remainingMemos
                     ))
                 }

@@ -76,6 +76,23 @@ final class SubscriptionRepository: SubscriptionRepositoryProtocol, @unchecked S
         let subscriptionData = try await getUserSubscriptionData()
         return subscriptionData.remainingFreeMemos
     }
+    
+    func updateSubscriptionStatus(isSubscribed: Bool) async throws {
+        try await MainActor.run {
+            let context = database.context
+            let descriptor = FetchDescriptor<UserSubscription>()
+            let subscriptions = try context.fetch(descriptor)
+            
+            if let subscription = subscriptions.first {
+                print("🔄 サブスクリプション状態更新: \(subscription.isSubscribed) -> \(isSubscribed)")
+                subscription.updateSubscriptionStatus(isSubscribed: isSubscribed, productId: "premium")
+                try context.save()
+                print("✅ サブスクリプション状態更新完了")
+            } else {
+                print("❌ UserSubscriptionが見つかりません")
+            }
+        }
+    }
 }
 
 public struct SubscriptionRepositoryKey: DependencyKey {
