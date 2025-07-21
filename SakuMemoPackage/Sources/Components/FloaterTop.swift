@@ -5,8 +5,8 @@
 //  Created by saki on 2025/05/16.
 //
 
-import SwiftUI
 import SharedModel
+import SwiftUI
 
 public struct FloaterTop: View {
     public init() {}
@@ -15,15 +15,14 @@ public struct FloaterTop: View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.mainColor)
-                .frame(maxWidth: .infinity,maxHeight: 60)
-                
-            HStack{
+                .frame(maxWidth: .infinity, maxHeight: 60)
+
+            HStack {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(.white)
                     .font(.system(size: 24))
-                
 
-                VStack{
+                VStack {
                     Text("登録完了！")
                         .foregroundColor(.white)
                         .bold()
@@ -33,17 +32,12 @@ public struct FloaterTop: View {
                         .foregroundColor(.white)
                 }
                 .padding()
-               
             }
-            .padding(.horizontal,10)
-           
-          
+            .padding(.horizontal, 10)
         }
-        
+
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 16)
-       
-       
     }
 }
 

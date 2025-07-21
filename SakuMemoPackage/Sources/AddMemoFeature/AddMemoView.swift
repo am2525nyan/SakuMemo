@@ -5,42 +5,41 @@
 //  Created by saki on 2025/05/03.
 //
 
-import SwiftUI
 import ComposableArchitecture
-import Utils
 import SharedModel
+import SwiftUI
+import Utils
 
 public struct AddMemoView: View {
     public init(store: StoreOf<AddMemoFeature>) {
         self.store = store
     }
+
     @Bindable var store: StoreOf<AddMemoFeature>
     @FocusState private var isFocused: Bool
-   public var body: some View {
-        VStack{
-            HStack{
+    public var body: some View {
+        VStack {
+            HStack {
                 Spacer()
-                Button{
+                Button {
                     store.send(.showTextField)
-                    
-                }label: {
+                } label: {
                     Image(systemName: "text.justifyright")
                 }
                 .padding(.leading, 20)
                 .disabled(store.memoList.isEmpty)
-                
-                Button{
+
+                Button {
                     store.send(.save)
-                }label: {
+                } label: {
                     Image(systemName: "paperplane.fill")
                 }
                 .disabled(store.text.isEmpty && !store.isSending || !store.isTextField)
                 .padding(.leading, 20)
-                
             }
-            .padding(.bottom,20)
-            if store.isTextField{
-                TextField("メモを入力",text: $store.text,axis: .vertical)
+            .padding(.bottom, 20)
+            if store.isTextField {
+                TextField("メモを入力", text: $store.text, axis: .vertical)
                     .textFieldStyle(.customTextField(isFocused: _isFocused))
                     .lineLimit(5...300)
                     .focused($isFocused)
@@ -48,48 +47,41 @@ public struct AddMemoView: View {
                     .frame(minHeight: 100)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            
-            if !store.isTextField || !store.memoList.isEmpty{
-                List{
-                    
+
+            if !store.isTextField || !store.memoList.isEmpty {
+                List {
                     ForEach(store.memoList, id: \.self) { memo in
-                        HStack{
+                        HStack {
                             Text(memo)
                             Spacer()
-                            Button{
+                            Button {
                                 store.send(.addMemo(memo))
-                                
-                            }label: {
+                            } label: {
                                 Image(systemName: "plus")
                                     .foregroundStyle(Color.mainColor)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
-                        .swipeActions(content: {
-                            Button(role: .destructive) {
-                                
-                                store.send(.addMemo(memo))
-                                
-                            }label: {
-                                Image(systemName: "plus")
-                                    .foregroundStyle(Color.mainColor)
+                        .swipeActions(
+                            content: {
+                                Button(role: .destructive) {
+                                    store.send(.addMemo(memo))
+                                } label: {
+                                    Image(systemName: "plus")
+                                        .foregroundStyle(Color.mainColor)
+                                }
+                                .tint(Color.mainColor)
                             }
-                            .tint(Color.mainColor)
-                            
-                        })
+                        )
                         .padding(.horizontal, 20)
-                        
-                        
                     }
-                    
                 }
                 .listStyle(.plain)
-                
             }
-            
         }
-        .padding(.top,20)
+        .padding(.top, 20)
         .padding(.horizontal, 20)
+        .dismissKeyboardOnTap()
         .onAppear {
             store.send(.checkSubscriptionStatus)
         }
@@ -115,16 +107,16 @@ public struct AddMemoView: View {
 
 #Preview {
     AddMemoView(store: .init(initialState: AddMemoFeature.State(
-//        memoList: [
-//            "シュー生地を作る",
-//            "カスタードクリームを作る",
-//            "生クリームを泡立てる",
-//            "シュー生地を焼く",
-//            "カスタードクリームを冷ます",
-//            "シュー生地にクリームを詰める",
-//            "粉砂糖をかける",
-//            "冷蔵庫で冷やす"
-//        ]
+        //        memoList: [
+        //            "シュー生地を作る",
+        //            "カスタードクリームを作る",
+        //            "生クリームを泡立てる",
+        //            "シュー生地を焼く",
+        //            "カスタードクリームを冷ます",
+        //            "シュー生地にクリームを詰める",
+        //            "粉砂糖をかける",
+        //            "冷蔵庫で冷やす"
+        //        ]
     ), reducer: {
         AddMemoFeature()
     }))

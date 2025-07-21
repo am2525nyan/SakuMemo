@@ -1,0 +1,155 @@
+# 無効にするルール
+disabled_rules:
+    #ファイルにあまりにも多くの行があってはならない。(ファイル内の処理を別ファイルに分割するなどした方が良い)
+    - file_length
+    #配列とDictionaryの末尾のカンマは付けるべきではない。
+    - trailing_comma
+    #行の末尾にスペースがあってはいけない。
+    - trailing_whitespace
+    #関数本体の長さを制限。
+    - function_body_length
+    #型が多くあってはいけない。
+    - type_body_length
+    #1行の長さが多くあってはいけない。
+    - line_length
+    #関数の定義時、パラメータが複数行にまたがっている場合は垂直方向に揃える。
+    - vertical_parameter_alignment
+    # 複数のクロージャーの場合でも、trailing closureを利用したいため
+    - multiple_closures_with_trailing_closure
+    # enumの引数を省略したいため
+    - empty_enum_arguments
+    - identifier_name
+    # defaultルール以外にopt-inから採用するルール
+    ######
+
+# defaultルール以外にopt-inから採用するルール
+opt_in_rules:
+  - array_init
+  - balanced_xctest_lifecycle
+  - closure_end_indentation
+  - closure_spacing
+  - collection_alignment
+  - comma_inheritance
+  - conditional_returns_on_newline
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - contains_over_first_not_nil
+  - contains_over_range_nil_comparison
+  - convenience_type
+  - discarded_notification_center_observer
+  - discouraged_assert
+  - discouraged_none_name
+  - discouraged_object_literal
+  - discouraged_optional_boolean
+  - empty_collection_literal
+  - empty_count
+  - empty_string
+  - empty_xctest_method
+  - enum_case_associated_values_count
+  - expiring_todo
+  - explicit_enum_raw_value
+  - explicit_init
+  - extension_access_modifier
+  - fallthrough
+  - fatal_error_message
+  - file_header
+  - file_name
+  - file_name_no_space
+  - final_test_case
+  - first_where
+  - flatmap_over_map_reduce
+  - force_unwrapping
+  - function_default_parameter_at_end
+  - ibinspectable_in_extension
+  - identical_operands
+  - implicit_return
+  - implicitly_unwrapped_optional
+  - joined_default_parameter
+  - last_where
+  - legacy_multiple
+  - legacy_objc_type
+  - let_var_whitespace
+  - literal_expression_end_indentation
+  - local_doc_comment
+  - modifier_order
+  - multiline_arguments
+  - multiline_arguments_brackets
+  - multiline_function_chains
+  - multiline_literal_brackets
+  - multiline_parameters
+  - multiline_parameters_brackets
+  - nimble_operator
+  - non_overridable_class_declaration
+  - nslocalizedstring_key
+  - nslocalizedstring_require_bundle
+  - object_literal
+  - operator_usage_whitespace
+  - optional_enum_case_matching
+  - overridden_super_call
+  - override_in_extension
+  - pattern_matching_keywords
+  - period_spacing
+  - prefer_nimble
+  - prefer_self_in_static_references
+  - prefer_self_type_over_type_of_self
+  - prefer_zero_over_explicit_init
+  - private_action
+  - private_outlet
+  - private_subject
+  - prohibited_interface_builder
+  - prohibited_super_call
+  - quick_discouraged_call
+  - quick_discouraged_focused_test
+  - quick_discouraged_pending_test
+  - raw_value_for_camel_cased_codable_enum
+  - reduce_into
+  - redundant_nil_coalescing
+  - redundant_self_in_closure
+  - redundant_type_annotation
+  - required_enum_case
+  - return_value_from_void_function
+  - self_binding
+  - shorthand_argument
+  - single_test_class
+  - sorted_first_last
+  - sorted_imports
+  - static_operator
+  - strict_fileprivate
+  - strong_iboutlet
+  - switch_case_on_newline
+  - test_case_accessibility
+  - unavailable_function
+  - unhandled_throwing_task
+  - unowned_variable_capture
+  - untyped_error_in_catch
+  - vertical_parameter_alignment_on_call
+  - vertical_whitespace_between_cases
+  - vertical_whitespace_closing_braces
+  - vertical_whitespace_opening_braces
+  - weak_delegate
+  - xct_specific_matcher
+  - yoda_condition
+
+
+# Lintを適用させる対象を指定
+included:
+    - SakuMemo/
+    - SakuMemoPackage/Sources/
+
+# Lint対象から除外するパス
+excluded:
+    - Package.swift
+    - Package.resolved
+    - .build/
+    - Packages/
+    - SakuMemoPackage/Package.swift
+    - SakuMemoPackage/.build/
+    - "**/checkouts/**"
+
+
+type_name:
+    excluded:
+    # クラス名はキャメルケースにする
+      - lowerCamelClass
+
+

@@ -5,37 +5,34 @@
 //  Created by saki on 2025/04/22.
 //
 
-import Foundation
 import ComposableArchitecture
-import SwiftData
+import Foundation
 import RepositoryProtocol
 import SharedModel
-
+import SwiftData
 
 @DependencyClient
 
 public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
-    
     private let container: ModelContainer
-    
+
     // コンストラクタで `ModelContainer` を渡す
     public init(container: ModelContainer) {
         self.container = container
     }
-    
-    @MainActor var context: ModelContext {
+
+    @MainActor public var context: ModelContext {
         container.mainContext
     }
-    
-    
-    
+
     public func fetchMemos() async throws -> [MemoSendable] {
-        return try await MainActor.run {
+        try await MainActor.run {
             let context = container.mainContext
             return try context.fetch(FetchDescriptor<Memo>())
                 .map { memo in
                     MemoSendable(
-                        id: memo.id, text: memo.text,
+                        id: memo.id,
+                        text: memo.text,
                         category: memo.category,
                         priorityValue: memo.priorityValue,
                         isArchived: memo.isArchived,
@@ -45,8 +42,7 @@ public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
                 }
         }
     }
-    
-    
+
     public func addMemo(newMemo: MemoSendable) async throws {
         try await MainActor.run {
             let memo = Memo(
@@ -62,19 +58,18 @@ public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
             try context.save()
         }
     }
-    
-    
+
     public func deleteAllMemos() async throws {
         await MainActor.run {
             do {
                 let fetchDescriptor = FetchDescriptor<Memo>()
                 let context = container.mainContext
                 let allMemos = try context.fetch(fetchDescriptor)
-                
+
                 for memo in allMemos {
                     context.delete(memo)
                 }
-                
+
                 try context.save()
                 print("全件削除完了！")
             } catch {
@@ -82,113 +77,106 @@ public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
             }
         }
     }
-    
+
     public func deleteMemo(memo: MemoSendable) async throws {
         try await MainActor.run {
             let context = container.mainContext
-            
+
             // 外部値としてキャプチャ
             let targetId = memo.id
-            
+
             // その値を使って Predicate を定義
             let descriptor = FetchDescriptor<Memo>(
                 predicate: #Predicate { $0.id == targetId }
             )
-            
+
             let results = try context.fetch(descriptor)
-            
+
             for target in results {
                 context.delete(target)
             }
-            
+
             try context.save()
         }
     }
-    
-    
+
     public func archiveMemos() async throws {
         try await MainActor.run {
             let context = container.mainContext
             let now = Date()
             let memos = try context.fetch(FetchDescriptor<Memo>())
-            
-            for memo in memos {
-                if !memo.isArchived {
-                    let createdAt = memo.createdAt
-                    let date = memo.date
-                    let daysSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0
-                    
-                    if daysSinceCreation >= 7 {
+
+            for memo in memos where !memo.isArchived {
+                let createdAt = memo.createdAt
+                let date = memo.date
+                let daysSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0
+
+                let archiveDays = 7
+                if daysSinceCreation >= archiveDays {
+                    memo.isArchived = true
+                }
+                if let date {
+                    let daysSinceDate = Calendar.current.dateComponents([.day], from: date, to: now).day ?? 0
+                    if daysSinceDate >= 0 {
                         memo.isArchived = true
-                    }
-                    if let date {
-                        let daysSinceDate = Calendar.current.dateComponents([.day], from: date, to: now).day ?? 0
-                        if daysSinceDate >= 0 {
-                            memo.isArchived = true
-                        }
                     }
                 }
             }
-            
+
             try context.save()
         }
     }
-    
-    public func automaticPriorityValues() async throws{
+
+    public func automaticPriorityValues() async throws {
         try await MainActor.run {
             let context = container.mainContext
             let now = Date()
             let memos = try context.fetch(FetchDescriptor<Memo>())
-            
+
             for memo in memos {
                 let createdAt = memo.createdAt
                 let dateSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0
-                
-                if dateSinceCreation >= 3 {
-                    memo.priorityValue = memo.priorityValue - 0.4
-                    
+                let sinceDays = 3
+                if dateSinceCreation >= sinceDays {
+                    let decreasePriorityValue = 0.4
+                    memo.priorityValue -= decreasePriorityValue
                 }
-                
             }
             try context.save()
         }
     }
-    
 }
 
-
 final class SwiftDataRepositoryMock: SwiftDataRepositoryProtocol {
+    @MainActor var context: ModelContext {
+        fatalError("Mock context not implemented")
+    }
+
     func automaticPriorityValues() async throws {
         print("優先度変更")
     }
-    
-    
-    public func archiveMemos() async throws {
+
+    func archiveMemos() async throws {
         print("アーカイブ")
     }
-    
-    public func deleteMemo(memo: MemoSendable) async throws{
+
+    func deleteMemo(memo: MemoSendable) async throws {
         print("削除")
     }
-    
-    
-    public func deleteAllMemos() async throws {
+
+    func deleteAllMemos() async throws {
         print("全件削除完了！")
     }
-    
-    public func fetchMemos() async throws -> [MemoSendable] {
-        return [
-            
+
+    func fetchMemos() async throws -> [MemoSendable] {
+        [
         ]
     }
-    
-    public func addMemo(newMemo: MemoSendable) async throws {
+
+    func addMemo(newMemo: MemoSendable) async throws {
         print("📝 プレビュー: メモ追加 \(newMemo.text)")
     }
-    
 }
-
-
 
 func createModelContainer() -> ModelContainer {
     do {
@@ -198,7 +186,7 @@ func createModelContainer() -> ModelContainer {
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
-        
+
         // 永続化履歴の問題を解決するためにリセット
         Task { @MainActor in
             do {
@@ -208,31 +196,28 @@ func createModelContainer() -> ModelContainer {
                 print("初期化エラー: \(error)")
             }
         }
-        
+
         return container
     } catch {
         fatalError("ModelContainerの生成に失敗しました: \(error)")
     }
 }
-let liveModelContainer: ModelContainer = {
-    return createModelContainer()
-}()
 
-let testModelContainer: ModelContainer = {
-    return createModelContainer()
-}()
+let liveModelContainer: ModelContainer = createModelContainer()
+
+let testModelContainer: ModelContainer = createModelContainer()
 
 public enum SwiftDataRepositoryKey: DependencyKey {
     public static let liveValue: SwiftDataRepositoryProtocol = {
         let container = createModelContainer()
         return SwiftDataRepository(container: container)
     }()
-    
+
     public static let previewValue: SwiftDataRepositoryProtocol = {
         let container = createModelContainer()
         return SwiftDataRepository(container: container)
     }()
-    
+
     public static let testValue: SwiftDataRepositoryProtocol = {
         let container = createModelContainer()
         return SwiftDataRepository(container: container)
@@ -244,9 +229,9 @@ public extension DependencyValues {
         get { self[SwiftDataRepositoryKey.self] }
         set { self[SwiftDataRepositoryKey.self] = newValue }
     }
-    
-    var database: SwiftDataRepository {
-        get { self[SwiftDataRepositoryKey.self] as! SwiftDataRepository }
+
+    var database: SwiftDataRepositoryProtocol {
+        get { self[SwiftDataRepositoryKey.self] }
         set { self[SwiftDataRepositoryKey.self] = newValue }
     }
 }

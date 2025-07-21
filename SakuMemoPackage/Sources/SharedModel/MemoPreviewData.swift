@@ -5,15 +5,14 @@
 //  Created by saki on 2025/05/21.
 //
 
-import SwiftUI
 import SwiftData
-
+import SwiftUI
 
 public struct MemoPreviewData: PreviewModifier {
     public init() {}
     public static func makeSharedContext() async throws -> ModelContainer {
         let container = try ModelContainer(for: Memo.self)
-        
+
         // データがすでにあるか確認
         let existing = try container.mainContext.fetch(FetchDescriptor<Memo>())
         if existing.isEmpty {
@@ -22,15 +21,15 @@ public struct MemoPreviewData: PreviewModifier {
                 container.mainContext.insert(memo)
             }
         }
-        
+
         return container
     }
-    
+
     public func body(content: Content, context: ModelContainer) -> some View {
         content.modelContainer(context)
     }
 }
- 
-extension PreviewTrait where T == Preview.ViewTraits {
-    @MainActor public static var sampleMemos: Self = .modifier(MemoPreviewData())
+
+public extension PreviewTrait where T == Preview.ViewTraits {
+    @MainActor static var sampleMemos: Self = .modifier(MemoPreviewData())
 }

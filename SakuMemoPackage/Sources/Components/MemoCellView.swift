@@ -5,40 +5,40 @@
 //  Created by saki on 2025/04/19.
 //
 
-import SwiftUI
 import SharedModel
+import SwiftUI
+
 public struct MemoCellView: View {
     @State var memo: Memo
     public var body: some View {
         HStack {
-          
             Menu {
-                Button("🔥"){
+                Button("🔥") {
                     memo.priorityValue = 1
                 }
-                Button("⛅️"){
+                Button("⛅️") {
                     memo.priorityValue = 0.5
                 }
-                
-                Button("🧊"){
+
+                Button("🧊") {
                     memo.priorityValue = 0
                 }
             }
             label: {
                 Text(memo.priority.emoji)
             }
-            
+
             Text(memo.text)
             Spacer()
             Menu {
-                Button("todo"){
+                Button("todo") {
                     memo.category = "todo"
                 }
-                Button("買い物"){
+                Button("買い物") {
                     memo.category = "買い物"
                 }
-                
-                Button("やりたいこと"){
+
+                Button("やりたいこと") {
                     memo.category = "やりたいこと"
                 }
             }
@@ -47,7 +47,7 @@ public struct MemoCellView: View {
                     .foregroundColor(.gray)
             }
         }
-        
+
         .padding(.horizontal, 20)
         .opacity(memo.priority.opacity(for: memo.priority))
     }

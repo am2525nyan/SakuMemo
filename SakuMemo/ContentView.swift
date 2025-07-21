@@ -5,22 +5,22 @@
 //  Created by saki on 2025/04/18.
 //
 
-import SwiftUI
-import ComposableArchitecture
 import AppFeature
+import ComposableArchitecture
+import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        AppView(store:
-                .init(
-                    initialState:
-                        AppFeature.State(),
-                    reducer: {
-                        AppFeature()
-                    }
-                )
+        AppView(
+            store:
+            .init(
+                initialState:
+                AppFeature.State(),
+                reducer: {
+                    AppFeature()
+                }
+            )
         )
-
     }
 }
 

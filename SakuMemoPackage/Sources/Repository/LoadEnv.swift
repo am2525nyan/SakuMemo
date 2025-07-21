@@ -1,5 +1,5 @@
 //
-//  loadEnv.swift
+//  LoadEnv.swift
 //  SakuMemo
 //
 //  Created by saki on 2025/04/22.
@@ -8,7 +8,7 @@
 import Foundation
 
 enum LoadEnvError: Error {
-    case FileNotFound
+    case fileNotFound
 }
 
 public struct LoadEnv: Sendable {
@@ -16,7 +16,7 @@ public struct LoadEnv: Sendable {
         guard let envPath = Bundle.main.path(forResource: ".env", ofType: nil),
               let envData = FileManager.default.contents(atPath: envPath),
               let envString = String(data: envData, encoding: .utf8) else {
-            throw LoadEnvError.FileNotFound
+            throw LoadEnvError.fileNotFound
         }
         envString
             .split(whereSeparator: { ["\n", "\r"].contains($0) })
@@ -27,11 +27,13 @@ public struct LoadEnv: Sendable {
                     .map(String.init)
                 setenv(parts[0], parts[1], 1)
             }
-
     }
 
-  public func value(_ key: String, _ default: String? = nil) -> String? {
-        guard let value = getenv(key) else { return nil }
+    public func value(_ key: String, _ default: String? = nil) -> String? {
+        guard let value = getenv(key)
+        else {
+            return nil
+        }
         return String(validatingCString: value)
     }
 }

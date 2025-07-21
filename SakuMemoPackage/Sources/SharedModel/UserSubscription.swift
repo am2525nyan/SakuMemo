@@ -1,3 +1,9 @@
+//
+//  UserSubscription.swift
+//  SakuMemo
+//
+//  Created by saki on 2025/07/15.
+//
 import Foundation
 import SwiftData
 
@@ -12,7 +18,7 @@ public final class UserSubscription {
     public var lastResetDate: Date
     public var createdAt: Date
     public var updatedAt: Date
-    
+
     public init(
         id: UUID = UUID(),
         isSubscribed: Bool = false,
@@ -36,28 +42,28 @@ public final class UserSubscription {
     }
 }
 
-extension UserSubscription {
-    public static let freeUserDailyLimit = 3
-    
-    public var canAddMemo: Bool {
+public extension UserSubscription {
+    static let freeUserDailyLimit = 3
+
+    var canAddMemo: Bool {
         resetDailyCountIfNeeded()
         return isSubscribed || dailyMemoCount < Self.freeUserDailyLimit
     }
-    
-    public var remainingFreeMemos: Int {
+
+    var remainingFreeMemos: Int {
         resetDailyCountIfNeeded()
         return isSubscribed ? -1 : max(0, Self.freeUserDailyLimit - dailyMemoCount)
     }
-    
-    public func incrementMemoCount() {
+
+    func incrementMemoCount() {
         resetDailyCountIfNeeded()
         let oldCount = dailyMemoCount
         dailyMemoCount += 1
         updatedAt = Date()
         print("📝 UserSubscription.incrementMemoCount: \(oldCount) -> \(dailyMemoCount)")
     }
-    
-    public func resetDailyCountIfNeeded() {
+
+    func resetDailyCountIfNeeded() {
         let today = Calendar.current.startOfDay(for: Date())
         if lastResetDate < today {
             print("🔄 日次リセット実行: \(dailyMemoCount) -> 0")
@@ -66,18 +72,18 @@ extension UserSubscription {
             updatedAt = Date()
         }
     }
-    
-    public func updateSubscriptionStatus(isSubscribed: Bool, productId: String? = nil) {
+
+    func updateSubscriptionStatus(isSubscribed: Bool, productId: String? = nil) {
         self.isSubscribed = isSubscribed
         self.productId = productId
-        
+
         if isSubscribed {
             subscriptionStartDate = Date()
             subscriptionEndDate = nil
         } else {
             subscriptionEndDate = Date()
         }
-        
+
         updatedAt = Date()
     }
 }
@@ -92,7 +98,7 @@ public struct UserSubscriptionData: Sendable {
     public let lastResetDate: Date
     public let createdAt: Date
     public let updatedAt: Date
-    
+
     public init(from subscription: UserSubscription) {
         self.id = subscription.id
         self.isSubscribed = subscription.isSubscribed
@@ -104,15 +110,15 @@ public struct UserSubscriptionData: Sendable {
         self.createdAt = subscription.createdAt
         self.updatedAt = subscription.updatedAt
     }
-    
+
     public var canAddMemo: Bool {
-        return isSubscribed || dailyMemoCount < UserSubscription.freeUserDailyLimit
+        isSubscribed || dailyMemoCount < UserSubscription.freeUserDailyLimit
     }
-    
+
     public var remainingFreeMemos: Int {
-        return isSubscribed ? -1 : max(0, UserSubscription.freeUserDailyLimit - dailyMemoCount)
+        isSubscribed ? -1 : max(0, UserSubscription.freeUserDailyLimit - dailyMemoCount)
     }
-    
+
     public func toUserSubscription() -> UserSubscription {
         let subscription = UserSubscription()
         subscription.id = self.id
@@ -132,13 +138,15 @@ public enum SubscriptionError: Error, LocalizedError {
     case dailyLimitExceeded
     case subscriptionRequired
     case unknown
-    
+
     public var errorDescription: String? {
         switch self {
         case .dailyLimitExceeded:
             return "1日の無料メモ作成上限（3回）に達しました"
+
         case .subscriptionRequired:
             return "この機能を使用するには課金が必要です"
+
         case .unknown:
             return "不明なエラーが発生しました"
         }

@@ -1,42 +1,43 @@
-import Foundation
-import StoreKit
 import Dependencies
+import Foundation
 import RepositoryProtocol
 import SharedModel
+import StoreKit
 
 final class StoreKitRepository: StoreKitRepositoryProtocol, Sendable {
     private let productIds = ["sakumemo_premium_monthly", "sakumemo_premium_yearly"]
     private let transactionUpdateTask: Task<Void, Never>
-    
+
     init() {
         transactionUpdateTask = Task {
             for await result in StoreKit.Transaction.updates {
                 switch result {
-                case .verified(let transaction):
+                case let .verified(transaction):
                     await Self.handleVerifiedTransaction(transaction)
+
                 case .unverified:
                     print("Unverified transaction received")
                 }
             }
         }
     }
-    
+
     deinit {
         transactionUpdateTask.cancel()
     }
-    
+
     @MainActor
     private static func handleVerifiedTransaction(_ transaction: StoreKit.Transaction) async {
         // トランザクションを完了
         await transaction.finish()
-        
+
         // 必要に応じて購入状態を更新
         let productIds = ["sakumemo_premium_monthly", "sakumemo_premium_yearly"]
         if productIds.contains(transaction.productID) {
             print("Premium subscription transaction verified: \(transaction.productID)")
         }
     }
-    
+
     func loadProducts() async throws -> [StoreProduct] {
         let products = try await Product.products(for: productIds)
         return products.map { product in
@@ -49,43 +50,48 @@ final class StoreKitRepository: StoreKitRepositoryProtocol, Sendable {
             )
         }
     }
-    
+
     func purchaseProduct(_ product: StoreProduct) async throws -> PurchaseResult {
         guard let storeProduct = try await Product.products(for: [product.id]).first else {
             throw StoreError.productNotFound
         }
-        
+
         let result = try await storeProduct.purchase()
-        
+
         switch result {
-        case .success(let verification):
+        case let .success(verification):
             switch verification {
-            case .verified(let transaction):
+            case let .verified(transaction):
                 await transaction.finish()
                 return .success
+
             case .unverified:
                 throw StoreError.verificationFailed
             }
+
         case .userCancelled:
             return .cancelled
+
         case .pending:
             return .pending
+
         @unknown default:
             return .failed(StoreError.unknown)
         }
     }
-    
+
     func restorePurchases() async throws {
         try await AppStore.sync()
     }
-    
+
     func checkSubscriptionStatus() async throws -> Bool {
         for await result in StoreKit.Transaction.currentEntitlements {
             switch result {
-            case .verified(let transaction):
+            case let .verified(transaction):
                 if productIds.contains(transaction.productID) {
                     return true
                 }
+
             case .unverified:
                 continue
             }
@@ -109,13 +115,15 @@ enum StoreError: Error, LocalizedError {
     case productNotFound
     case verificationFailed
     case unknown
-    
+
     var errorDescription: String? {
         switch self {
         case .productNotFound:
             return "商品が見つかりません"
+
         case .verificationFailed:
             return "購入の検証に失敗しました"
+
         case .unknown:
             return "不明なエラーが発生しました"
         }
