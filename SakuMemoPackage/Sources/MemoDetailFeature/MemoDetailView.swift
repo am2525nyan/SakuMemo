@@ -85,6 +85,7 @@ public struct MemoDetailView: View {
             }
         }
         .padding(.horizontal, 20)
+        .dismissKeyboardOnTap()
         .onAppear {
             store.send(.onAppear)
         }

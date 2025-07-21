@@ -41,7 +41,7 @@ let package = Package(
         ),
         .target(
             name: "MemoDetailFeature",
-            dependencies: [.composableArchitecture, "SharedModel", "Repository"]
+            dependencies: [.composableArchitecture, "SharedModel", "Repository","Utils"]
         ),
         .target(
             name: "MemoFeature",

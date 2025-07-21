@@ -9,6 +9,7 @@ import ArchiveFeature
 import ComposableArchitecture
 import MemoFeature
 import SwiftUI
+import Utils
 
 public struct AppView: View {
     public init(store: StoreOf<AppFeature>) {
@@ -31,6 +32,7 @@ public struct AppView: View {
                     Text("アーカイブ")
                 }
         }
+        .dismissKeyboardOnTap()
     }
 }
 

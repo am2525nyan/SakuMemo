@@ -81,6 +81,7 @@ public struct AddMemoView: View {
         }
         .padding(.top, 20)
         .padding(.horizontal, 20)
+        .dismissKeyboardOnTap()
         .onAppear {
             store.send(.checkSubscriptionStatus)
         }
