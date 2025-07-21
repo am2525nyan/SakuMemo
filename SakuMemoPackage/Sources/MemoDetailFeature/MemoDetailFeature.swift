@@ -46,18 +46,18 @@ public struct MemoDetailFeature: Sendable {
             case .setNotification:
                 let date = state.memo.date
                 if let date = date {
-                    print("通知を設定しました！")
+                    print("3段階リマインド通知を設定しました！")
                     let text = state.memo.text
                     let id = state.memo.id.uuidString
                     return .run { _ in
-                        try await notificationManager.sendNotification(title: "忘れてませんか？", body: text, date: date, id: id)
+                        try await notificationManager.scheduleReminderNotifications(for: text, targetDate: date, memoId: id)
                     }
                 }
                 return .none
 
             case .removeNotification:
                 let id = state.memo.id.uuidString
-                notificationManager.removeNotification(id: id)
+                notificationManager.removeReminderNotifications(for: id)
                 return .none
             }
         }

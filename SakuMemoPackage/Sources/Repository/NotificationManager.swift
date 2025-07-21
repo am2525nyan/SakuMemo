@@ -63,6 +63,80 @@ public final class NotificationManager: Sendable {
         let center = UNUserNotificationCenter.current()
         center.removePendingNotificationRequests(withIdentifiers: [id])
     }
+
+    // 3段階リマインド通知を設定
+    public func scheduleReminderNotifications(for memoText: String, targetDate: Date, memoId: String) async throws {
+        let calendar = Calendar.current
+        let timeZone = TimeZone.current
+
+        // 既存の通知を削除
+        removeReminderNotifications(for: memoId)
+
+        // 1. 3日前の通知
+        if let threeDaysBefore = calendar.date(byAdding: .day, value: -3, to: targetDate),
+           threeDaysBefore > Date() {
+            let morningComponents = calendar.dateComponents(in: timeZone, from: threeDaysBefore)
+            var threeDaysComponents = DateComponents()
+            threeDaysComponents.year = morningComponents.year
+            threeDaysComponents.month = morningComponents.month
+            threeDaysComponents.day = morningComponents.day
+            threeDaysComponents.hour = 9 // 朝9時
+            threeDaysComponents.minute = 0
+
+            let content = UNMutableNotificationContent()
+            content.title = "リマインド"
+            content.body = "\(memoText) - 3日後です"
+            content.sound = UNNotificationSound.default
+
+            let trigger = UNCalendarNotificationTrigger(dateMatching: threeDaysComponents, repeats: false)
+            let request = UNNotificationRequest(identifier: "\(memoId)_3days", content: content, trigger: trigger)
+
+            try await UNUserNotificationCenter.current().add(request)
+        }
+
+        // 2. 当日の通知（設定時刻）
+        let todayComponents = calendar.dateComponents(in: timeZone, from: targetDate)
+        let todayContent = UNMutableNotificationContent()
+        todayContent.title = "今日です！忘れてませんか？"
+        todayContent.body = memoText
+        todayContent.sound = UNNotificationSound.default
+
+        let todayTrigger = UNCalendarNotificationTrigger(dateMatching: todayComponents, repeats: false)
+        let todayRequest = UNNotificationRequest(identifier: "\(memoId)_today", content: todayContent, trigger: todayTrigger)
+
+        try await UNUserNotificationCenter.current().add(todayRequest)
+
+        // 3. 翌日の通知
+        if let nextDay = calendar.date(byAdding: .day, value: 1, to: targetDate) {
+            let nextDayComponents = calendar.dateComponents(in: timeZone, from: nextDay)
+            var tomorrowComponents = DateComponents()
+            tomorrowComponents.year = nextDayComponents.year
+            tomorrowComponents.month = nextDayComponents.month
+            tomorrowComponents.day = nextDayComponents.day
+            tomorrowComponents.hour = 10 // 朝10時
+            tomorrowComponents.minute = 0
+
+            let tomorrowContent = UNMutableNotificationContent()
+            tomorrowContent.title = "忘れてませんか？"
+            tomorrowContent.body = "昨日のやつ: \(memoText)"
+            tomorrowContent.sound = UNNotificationSound.default
+
+            let tomorrowTrigger = UNCalendarNotificationTrigger(dateMatching: tomorrowComponents, repeats: false)
+            let tomorrowRequest = UNNotificationRequest(identifier: "\(memoId)_tomorrow", content: tomorrowContent, trigger: tomorrowTrigger)
+
+            try await UNUserNotificationCenter.current().add(tomorrowRequest)
+        }
+    }
+
+    // 特定メモのリマインド通知を削除
+    public func removeReminderNotifications(for memoId: String) {
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [
+            "\(memoId)_3days",
+            "\(memoId)_today",
+            "\(memoId)_tomorrow"
+        ])
+    }
 }
 
 public struct NotificationManagerKey: DependencyKey {
