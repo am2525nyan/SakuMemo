@@ -5,11 +5,11 @@
 //  Created by saki on 2025/04/30.
 //
 
+import Combine
 import ComposableArchitecture
 import Foundation
 import Repository
 import SharedModel
-import Combine
 
 @Reducer
 public struct MemoDetailFeature: Sendable {
@@ -44,21 +44,23 @@ public struct MemoDetailFeature: Sendable {
                 state.priorityValue = state.memo.priorityValue
                 return .none
 
-            case .binding(\.$memo.date):
-                // 日付が変更された時はデバウンス処理を開始
-                let newDate = state.memo.date
-                state.pendingDateUpdate = newDate
-                return .run { send in
-                    // 1.5秒間待機してから実行
-                    try await Task.sleep(for: .seconds(1.5))
-                    await send(.executeDebouncedNotificationUpdate)
+            case let .binding(action):
+                switch action {
+                case \.memo.date:
+                    // 日付が変更された時はデバウンス処理を開始
+                    let newDate = state.memo.date
+                    state.pendingDateUpdate = newDate
+                    return .run { send in
+                        // 1.5秒間待機してから実行
+                        try await Task.sleep(for: .seconds(1.5))
+                        await send(.executeDebouncedNotificationUpdate)
+                    }
+                    .cancellable(id: "dateUpdateDebounce")
+                default:
+                    return .none
                 }
-                .cancellable(id: "dateUpdateDebounce")
-                
-            case .binding:
-                return .none
 
-            case .debouncedDateChanged(let date):
+            case let .debouncedDateChanged(date):
                 state.pendingDateUpdate = date
                 return .run { send in
                     // 1.5秒間待機してから実行
@@ -66,7 +68,7 @@ public struct MemoDetailFeature: Sendable {
                     await send(.executeDebouncedNotificationUpdate)
                 }
                 .cancellable(id: "dateUpdateDebounce")
-                
+
             case .executeDebouncedNotificationUpdate:
                 // 最新の日付変更が反映されているかチェック
                 let currentDate = state.memo.date
@@ -74,7 +76,7 @@ public struct MemoDetailFeature: Sendable {
                     // 既存通知を削除
                     let id = state.memo.id.uuidString
                     notificationManager.removeReminderNotifications(for: id)
-                    
+
                     // 新しい日付で通知設定
                     if let date = currentDate {
                         print("3段階リマインド通知を設定しました！")

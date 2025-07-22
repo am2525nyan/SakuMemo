@@ -45,11 +45,7 @@ public final class NotificationManager: Sendable {
                 print("AI通知メッセージ生成に失敗しました")
                 return getDefaultMessage(stage: stage, memoText: memoText)
             }
-        } catch {
-            print("AI通知メッセージ生成エラー: \(error)")
-            // フォールバック：固定メッセージを使用
-            return getDefaultMessage(stage: stage, memoText: memoText)
-        }
+        } 
     }
 
     // 段階別プロンプト作成
