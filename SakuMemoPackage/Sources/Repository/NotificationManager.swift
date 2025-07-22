@@ -45,7 +45,7 @@ public final class NotificationManager: Sendable {
                 print("AI通知メッセージ生成に失敗しました")
                 return getDefaultMessage(stage: stage, memoText: memoText)
             }
-        } 
+        }
     }
 
     // 段階別プロンプト作成
@@ -62,6 +62,7 @@ public final class NotificationManager: Sendable {
             「そろそろですね！|3日後に「\(memoText)」の予定ですよ〜」
             「準備はいかが？|もうすぐですね！準備だけでもしておきませんか？」
             """
+
         case .today:
             return """
             メモ「\(memoText)」の当日リマインダー通知を作成して。
@@ -73,6 +74,7 @@ public final class NotificationManager: Sendable {
             「今日ですよ！|「\(memoText)」忘れてませんよね？」
             「その時がきました|今日こそ！「\(memoText)」やりましょう！」
             """
+
         case .nextDay:
             return """
             メモ「\(memoText)」の期限翌日リマインダー通知を作成して。
@@ -92,8 +94,10 @@ public final class NotificationManager: Sendable {
         switch stage {
         case .threeDaysBefore:
             return "そろそろですね！"
+
         case .today:
             return "今日ですよ！"
+
         case .nextDay:
             return "忘れちゃいました？"
         }
@@ -104,8 +108,10 @@ public final class NotificationManager: Sendable {
         switch stage {
         case .threeDaysBefore:
             return (title: "そろそろですね！", body: "\(memoText) - 3日後です")
+
         case .today:
             return (title: "今日ですよ！", body: "\(memoText)")
+
         case .nextDay:
             return (title: "忘れちゃいました？", body: "昨日のやつ: \(memoText)")
         }

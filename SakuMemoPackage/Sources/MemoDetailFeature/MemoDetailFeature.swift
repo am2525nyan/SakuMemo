@@ -56,6 +56,7 @@ public struct MemoDetailFeature: Sendable {
                         await send(.executeDebouncedNotificationUpdate)
                     }
                     .cancellable(id: "dateUpdateDebounce")
+
                 default:
                     return .none
                 }
