@@ -89,10 +89,6 @@ public struct MemoDetailView: View {
         .onAppear {
             store.send(.onAppear)
         }
-        .onChange(of: store.memo.date) {
-            store.send(.removeNotification)
-            store.send(.setNotification)
-        }
     }
 }
 
