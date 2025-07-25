@@ -45,7 +45,7 @@ public final class NotificationManager: Sendable {
                 print("AI通知メッセージ生成に失敗しました")
                 return getDefaultMessage(stage: stage, memoText: memoText)
             }
-        }catch {
+        } catch {
             return getDefaultMessage(stage: stage, memoText: memoText)
         }
     }
