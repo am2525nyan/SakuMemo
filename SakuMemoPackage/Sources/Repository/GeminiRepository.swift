@@ -162,6 +162,61 @@ public struct GeminiRepository: GeminiRepositoryProtocol {
         }
         return nil
     }
+
+    public func generateNotificationMessage(memoText: String, stage: String) async -> NotificationMessage? {
+        let prompt = """
+        メモ「\(memoText)」の\(stage)リマインダー通知を作成してください。
+        Duolingoのような親しみやすいトーンで、日本語で作成してください。
+
+        以下のフォーマットに沿って、JSONで出力してください。**前後に説明文は不要です**：
+        {
+          "title": "通知のタイトル",
+          "body": "通知のメッセージ本文"
+        }
+        """
+
+        let url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+
+        // Sendableプロトコルに準拠するため、複雑なパラメータはプリミティブ型で構築
+        let params: Parameters = [
+            "contents": [
+                [
+                    "parts": [
+                        ["text": prompt]
+                    ]
+                ]
+            ]
+        ]
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json"
+        ]
+
+        do {
+            let data = try await AF.request(
+                "\(url)?key=\(env.value("APIKEY") ?? "")",
+                method: .post,
+                parameters: params,
+                encoding: JSONEncoding.default,
+                headers: headers
+            )
+            .serializingDecodable(GeminiResponse.self).value
+
+            if let text = data.candidates.first?.content.parts.first?.text {
+                return parseNotificationMessage(from: text)
+            }
+        } catch {
+            print("🚨 通知メッセージ生成エラー:", error)
+        }
+        return nil
+    }
+
+    func parseNotificationMessage(from jsonString: String) -> NotificationMessage? {
+        print("通知メッセージJSON: \(jsonString)")
+        guard let data = jsonString.data(using: .utf8) else {
+            return nil
+        }
+        return try? JSONDecoder().decode(NotificationMessage.self, from: data)
+    }
 }
 
 public struct GeminiRepositoryKey: DependencyKey {
