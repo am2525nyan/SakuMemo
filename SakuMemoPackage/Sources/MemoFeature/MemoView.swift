@@ -145,7 +145,7 @@ public struct MemoView: View {
                     Button(action: {
                         showAddMemo()
                     }) {
-                         Image(systemName: "plus")
+                        Image(systemName: "plus")
                             .font(.system(size: 20))
                             .frame(width: 30, height: 30)
                             .padding()
