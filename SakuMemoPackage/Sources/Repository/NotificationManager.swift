@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import Foundation
+import RepositoryProtocol
 import UserNotifications
 
 public final class NotificationManager: Sendable {
@@ -21,73 +22,34 @@ public final class NotificationManager: Sendable {
         case nextDay
     }
 
-    // AI生成通知メッセージを取得
+    // AI生成通知メッセージを取得（ResponseSchema使用）
     private func generateNotificationMessage(memoText: String, stage: NotificationStage) async -> (title: String, body: String) {
-        do {
-            let prompt = createPromptForStage(stage: stage, memoText: memoText)
+        let stageText = getStageText(stage: stage)
 
-            // GeminiRepositoryのインスタンスを作成
-            let geminiRepository = GeminiRepository()
+        // GeminiRepositoryのインスタンスを作成
+        let geminiRepository = GeminiRepository()
 
-            // geminiTextメソッドを使用（[String]?を返す）
-            if let textArray = await geminiRepository.geminiText(for: prompt),
-               let firstResult = textArray.first {
-                // レスポンスをパース（タイトル|ボディ形式を期待）
-                let parts = firstResult.split(separator: "|").map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
-                if parts.count >= 2 {
-                    return (title: parts[0], body: parts[1])
-                } else {
-                    // パースに失敗した場合はレスポンス全体をボディにして、デフォルトタイトルを使用
-                    return (title: getDefaultTitle(stage: stage), body: firstResult)
-                }
-            } else {
-                // AI生成に失敗した場合
-                print("AI通知メッセージ生成に失敗しました")
-                return getDefaultMessage(stage: stage, memoText: memoText)
-            }
-        } catch {
+        // 新しいResponseSchemaメソッドを使用
+        if let notificationMessage = await geminiRepository.generateNotificationMessage(memoText: memoText, stage: stageText) {
+            return (title: notificationMessage.title, body: notificationMessage.body)
+        } else {
+            // AI生成に失敗した場合はデフォルトメッセージを使用
+            print("AI通知メッセージ生成に失敗しました")
             return getDefaultMessage(stage: stage, memoText: memoText)
         }
     }
 
-    // 段階別プロンプト作成
-    private func createPromptForStage(stage: NotificationStage, memoText: String) -> String {
+    // ステージをテキストに変換
+    private func getStageText(stage: NotificationStage) -> String {
         switch stage {
         case .threeDaysBefore:
-            return """
-            メモ「\(memoText)」の3日前リマインダー通知を作成して。
-            Duolingoのような親しみやすく軽いトーンで、日本語で。
-            準備や心構えを促すような内容で。
-            「タイトル|メッセージ本文」の形式で返して。
-
-            例: 
-            「そろそろですね！|3日後に「\(memoText)」の予定ですよ〜」
-            「準備はいかが？|もうすぐですね！準備だけでもしておきませんか？」
-            """
+            return "3日前"
 
         case .today:
-            return """
-            メモ「\(memoText)」の当日リマインダー通知を作成して。
-            Duolingoのような親しみやすいけど少し緊迫感のあるトーンで、日本語で。
-            今日が期限であることを伝える内容で。
-            「タイトル|メッセージ本文」の形式で返して。
-
-            例:
-            「今日ですよ！|「\(memoText)」忘れてませんよね？」
-            「その時がきました|今日こそ！「\(memoText)」やりましょう！」
-            """
+            return "当日"
 
         case .nextDay:
-            return """
-            メモ「\(memoText)」の期限翌日リマインダー通知を作成して。
-            Duolingoのような少し皮肉めいてるけど応援的なトーンで、日本語で。
-            昨日が期限だったことを優しく指摘しつつ、まだ間に合うことを伝える内容で。
-            「タイトル|メッセージ本文」の形式で返して。
-
-            例:
-            「あれ...？|昨日が「\(memoText)」の期限でしたけど...でも大丈夫！」
-            「忘れちゃいました？|「\(memoText)」昨日の予定でしたよね。今からでも！」
-            """
+            return "翌日"
         }
     }
 
