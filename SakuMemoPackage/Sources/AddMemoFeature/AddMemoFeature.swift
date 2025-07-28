@@ -58,7 +58,7 @@ public struct AddMemoFeature: Sendable {
             switch action {
             case .save:
                 state.isSending = true
-                let text = state.text
+
                 return .run { send in
                     let canAdd = try await subscriptionRepository.canAddMemo()
                     print("🎯 AddMemoFeature.save: canAdd = \(canAdd)")
@@ -241,12 +241,7 @@ public struct AddMemoFeature: Sendable {
             case .switchAiTasks:
                 if #available(iOS 26.0, macOS 26.0, *) {
                     return .run { send in
-                        do {
-                            await send(.foundationModelsExtractTasks)
-                        } catch {
-                            print("⚠️ Foundation Modelsのタスク抽出に失敗: \(error)")
-                            await send(.geminiExtractTasks)
-                        }
+                        await send(.foundationModelsExtractTasks)
                     }
                 } else {
                     return .run { send in
