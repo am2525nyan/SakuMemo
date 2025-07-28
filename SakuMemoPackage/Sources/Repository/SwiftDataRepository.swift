@@ -100,7 +100,7 @@ public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
         }
     }
 
-    public func archiveMemos() async throws {
+    public func automaticPriorityValues() async throws {
         try await MainActor.run {
             let context = container.mainContext
             let now = Date()
@@ -108,38 +108,17 @@ public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
 
             for memo in memos where !memo.isArchived {
                 let createdAt = memo.createdAt
-                let date = memo.date
-                let daysSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0
-
-                let archiveDays = 7
-                if daysSinceCreation >= archiveDays {
-                    memo.isArchived = true
-                }
-                if let date {
-                    let daysSinceDate = Calendar.current.dateComponents([.day], from: date, to: now).day ?? 0
-                    if daysSinceDate >= 0 {
-                        memo.isArchived = true
-                    }
-                }
-            }
-
-            try context.save()
-        }
-    }
-
-    public func automaticPriorityValues() async throws {
-        try await MainActor.run {
-            let context = container.mainContext
-            let now = Date()
-            let memos = try context.fetch(FetchDescriptor<Memo>())
-
-            for memo in memos {
-                let createdAt = memo.createdAt
                 let dateSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0
                 let sinceDays = 3
                 if dateSinceCreation >= sinceDays {
-                    let decreasePriorityValue = 0.4
+                    let decreasePriorityValue = 0.2
                     memo.priorityValue -= decreasePriorityValue
+
+                    // 重要度が0以下かつ作成から7日以上経過したらアーカイブ
+                    let archiveThresholdDays = 7
+                    if memo.priorityValue <= 0 && dateSinceCreation >= archiveThresholdDays {
+                        memo.isArchived = true
+                    }
                 }
             }
             try context.save()
