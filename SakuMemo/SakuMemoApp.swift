@@ -5,6 +5,8 @@
 //  Created by saki on 2025/04/18.
 //
 
+import FirebaseAppCheck
+import FirebaseCore
 import Repository
 import SharedModel
 import StoreKit
@@ -15,6 +17,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     private var transactionUpdateTask: Task<Void, Never>?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        let providerFactory = SakuMemoAppCheckProviderFactory()
+        AppCheck.setAppCheckProviderFactory(providerFactory)
+        FirebaseApp.configure()
+
         NotificationManager.shared.requestPermission()
 
         UNUserNotificationCenter.current().delegate = self
@@ -47,6 +53,18 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
     deinit {
         transactionUpdateTask?.cancel()
+    }
+}
+
+class SakuMemoAppCheckProviderFactory: NSObject, AppCheckProviderFactory {
+    func createProvider(with app: FirebaseApp) -> AppCheckProvider? {
+        #if DEBUG
+            // 開発環境ではDebugプロバイダーを使用
+            return AppCheckDebugProvider(app: app)
+        #else
+            // 本番環境ではApp Attestationを使用
+            return AppAttestProvider(app: app)
+        #endif
     }
 }
 

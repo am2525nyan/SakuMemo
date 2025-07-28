@@ -7,82 +7,61 @@
 
 import Alamofire
 import ComposableArchitecture
+import FirebaseAI
+import FirebaseAppCheck
 import Foundation
 import RepositoryProtocol
 import SharedModel
 
 public struct GeminiRepository: GeminiRepositoryProtocol {
-    let env: LoadEnv
-
-    init() {
-        do {
-            self.env = try LoadEnv()
-        } catch {
-            print("🚨 Failed to load .env file: \(error)")
-            fatalError("Environment configuration is required but could not be loaded.")
-        }
-    }
+    let ai = FirebaseAI.firebaseAI(backend: .googleAI())
 
     public func gemini(for content: String) async -> MemoAnalysisResult? {
         let prompt = """
         「\(content)」を重要度に応じて0.0~1.0まで数字分けします。下記例を参考に判断してください：
 
-        【緊急・重要（0.8-1.0）】
-        課題やる = 1.0, 会議準備 = 0.9, りんご買う = 0.9, 薬を飲む = 0.8
+                   【緊急・重要・すぐにやること（0.8-1.0）】
+                   課題やる = 1.0, 会議準備 = 0.9, りんご買う = 0.9, 薬を飲む = 0.8, ゴミを捨てる = 0.8, 掃除機をかける = 0.8
 
-        【重要だが緊急でない（0.5-0.7）】  
-        appleについて調べる = 0.7, 本を読む = 0.6, ゴミを捨てる = 0.6, 運動する = 0.5
+                   【重要だが緊急でない（0.5-0.7）】  
+                   appleについて調べる = 0.7, 本を読む = 0.6,  運動する = 0.5
 
-        【願望・希望（0.1-0.4）】
-        メモアプリ作りたい = 0.2, appleについて調べたい = 0.3, ゴミを捨てたい = 0.4, 旅行したい = 0.2
+                   【願望・希望（0.1-0.4）】
+                   メモアプリ作りたい = 0.2, appleについて調べたい = 0.3, ゴミを捨てたい = 0.4, 旅行したい = 0.2
 
-        【低優先度（0.0-0.2）】
-        寝たい = 0.1, テレビ見たい = 0.1, なんとなく散歩 = 0.1
+                   【低優先度（0.0-0.2）】
+                   寝たい = 0.1, テレビ見たい = 0.1, なんとなく散歩 = 0.1
 
-        語尾の「たい」「したい」は願望なので低めに設定してください。
+                   語尾の「たい」「したい」は願望なので低めに設定してください。
         また「\(content)」をジャンル分けもしてください。「買い物」「todo」「やりたいこと」のどれかに割り振ってください。
 
-        以下のフォーマットに沿って、一つだけ出力してください。**前後に説明文は不要です**：
-
-        {
-          "importance": 0.9,
-          "category": "買い物"
-        }
         """
-
-        let url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-        let params: Parameters = [
-            "contents": [
-                [
-                    "parts": [
-                        ["text": prompt]
-                    ]
-                ]
+        let jsonSchema = Schema.object(
+            properties: [
+                "importance": .double(description: "タスクの重要度 (0.0-1.0)"),
+                "category": .enumeration(
+                    values: ["買い物", "todo", "やりたいこと"],
+                    description: "メモのカテゴリ"
+                )
             ]
-        ]
-        let headers: HTTPHeaders = [
-            "Content-Type": "application/json"
-        ]
-
-        do {
-            let data = try await AF.request(
-                "\(url)?key=\(env.value("APIKEY") ?? "")",
-                method: .post,
-                parameters: params,
-                encoding: JSONEncoding.default,
-                headers: headers
+        )
+        let model = ai.generativeModel(
+            modelName: "gemini-2.5-flash",
+            generationConfig: GenerationConfig(
+                responseMIMEType: "application/json",
+                responseSchema: jsonSchema
             )
-            .serializingDecodable(GeminiResponse.self).value
-            if let text = data.candidates.first?.content.parts.first?.text {
-                if let result = parseAnalysisResult(from: text) {
-                    return result
-                }
-            } else {
-                print("失敗！")
+        )
+        do {
+            let response = try await model.generateContent(prompt)
+
+            if let text = response.text {
+                return parseAnalysisResult(from: text)
             }
         } catch {
-            print("🚨 エラー:", error)
+            print("🚨 FirebaseAI エラー:", error)
         }
+
         return nil
     }
 
@@ -130,48 +109,48 @@ public struct GeminiRepository: GeminiRepositoryProtocol {
         例　明日友達が家に来てご飯を作るから、部屋の掃除をしてから、買い物に行く
         → 部屋の掃除機をかける、キッチンをきれいにする、買い物リストを作る、買い物に行く
         のようにタスクを抽出してください。
-        そして、以下のフォーマットに沿って、一つだけ出力してください。**前後に説明文は不要です**：
-        [部屋の掃除機をかける,キッチンをきれいにする,買い物リストを作る,買い物に行く]
         """
 
-        let url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-        let params: Parameters = [
-            "contents": [
-                [
-                    "parts": [
-                        ["text": prompt]
-                    ]
-                ]
-            ]
-        ]
-        let headers: HTTPHeaders = [
-            "Content-Type": "application/json"
-        ]
-
         do {
-            let data = try await AF.request(
-                "\(url)?key=\(env.value("APIKEY") ?? "")",
-                method: .post,
-                parameters: params,
-                encoding: JSONEncoding.default,
-                headers: headers
+            let jsonSchema = Schema.object(
+                properties: [
+                    "tasks": .array(
+                        items: .string(description: "抽出されたタスクのリスト"),
+                        description: "タスクの配列"
+                    )
+                ]
             )
-            .serializingDecodable(GeminiResponse.self).value
-            if let text = data.candidates.first?.content.parts.first?.text {
-                print(text)
-                let textArray =
-                    text
-                        .split(separator: ",")
-                        .map { substring in
-                            let cleaned = substring
-                                .replacingOccurrences(of: "[", with: "")
-                                .replacingOccurrences(of: "]", with: "")
-                            return String(cleaned).trimmingCharacters(in: .whitespacesAndNewlines)
-                        }
-                return textArray
+            let model = ai.generativeModel(
+                modelName: "gemini-2.5-flash",
+                generationConfig: GenerationConfig(
+                    responseMIMEType: "application/json",
+                    responseSchema: jsonSchema
+                )
+            )
+
+            let response = try await model.generateContent(prompt)
+
+            if let text = response.text {
+                return parseTaskArray(from: text)
             }
         } catch {
-            print("🚨 エラー:", error)
+            print("🚨 FirebaseAI タスク抽出エラー:", error)
+        }
+        return nil
+    }
+
+    func parseTaskArray(from jsonString: String) -> [String]? {
+        print("タスク抽出JSON: \(jsonString)")
+        guard let data = jsonString.data(using: .utf8) else {
+            return nil
+        }
+
+        struct TaskResponse: Codable {
+            let tasks: [String]
+        }
+
+        if let taskResponse = try? JSONDecoder().decode(TaskResponse.self, from: data) {
+            return taskResponse.tasks
         }
         return nil
     }
@@ -180,45 +159,28 @@ public struct GeminiRepository: GeminiRepositoryProtocol {
         let prompt = """
         メモ「\(memoText)」の\(stage)リマインダー通知を作成してください。
         Duolingoのような親しみやすいトーンで、日本語で作成してください。
-
-        以下のフォーマットに沿って、JSONで出力してください。**前後に説明文は不要です**：
-        {
-          "title": "通知のタイトル",
-          "body": "通知のメッセージ本文"
-        }
         """
-
-        let url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-
-        // Sendableプロトコルに準拠するため、複雑なパラメータはプリミティブ型で構築
-        let params: Parameters = [
-            "contents": [
-                [
-                    "parts": [
-                        ["text": prompt]
-                    ]
-                ]
+        let jsonSchema = Schema.object(
+            properties: [
+                "title": .string(description: "通知のタイトル"),
+                "body": .string(description: "通知のメッセージ本文")
             ]
-        ]
-        let headers: HTTPHeaders = [
-            "Content-Type": "application/json"
-        ]
-
-        do {
-            let data = try await AF.request(
-                "\(url)?key=\(env.value("APIKEY") ?? "")",
-                method: .post,
-                parameters: params,
-                encoding: JSONEncoding.default,
-                headers: headers
+        )
+        let model = ai.generativeModel(
+            modelName: "gemini-2.5-flash",
+            generationConfig: GenerationConfig(
+                responseMIMEType: "application/json",
+                responseSchema: jsonSchema
             )
-            .serializingDecodable(GeminiResponse.self).value
+        )
+        do {
+            let response = try await model.generateContent(prompt)
 
-            if let text = data.candidates.first?.content.parts.first?.text {
+            if let text = response.text {
                 return parseNotificationMessage(from: text)
             }
         } catch {
-            print("🚨 通知メッセージ生成エラー:", error)
+            print("🚨 FirebaseAI 通知メッセージ生成エラー:", error)
         }
         return nil
     }

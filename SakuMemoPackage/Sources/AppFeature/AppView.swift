@@ -25,14 +25,15 @@ public struct AppView: View {
                     Image(systemName: "house.fill")
                     Text("ホーム")
                 }
+                .dismissKeyboardOnTap()
 
             ArchiveMemoView(store: store.scope(state: \.archive, action: \.archive))
                 .tabItem {
                     Image(systemName: "archivebox.fill")
                     Text("アーカイブ")
                 }
+                .dismissKeyboardOnTap()
         }
-        .dismissKeyboardOnTap()
     }
 }
 

@@ -64,3 +64,4 @@ fastlane/test_output
 .env
 .claude/
 xcschememanagement.plist
+GoogleService-Info.plist
