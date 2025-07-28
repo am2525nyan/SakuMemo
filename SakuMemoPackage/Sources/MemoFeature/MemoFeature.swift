@@ -168,8 +168,9 @@ public struct MemoFeature: Sendable {
                 return .run { _ in
                     do {
                         try await swiftDataRepository.archiveMemos()
+                        try await swiftDataRepository.automaticPriorityValues()
                     } catch {
-                        print("アーカイブ失敗")
+                        print("自動処理失敗")
                     }
                 }
 
