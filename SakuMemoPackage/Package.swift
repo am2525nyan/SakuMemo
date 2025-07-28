@@ -54,7 +54,7 @@ let package = Package(
         ),
         .target(
             name: "Repository",
-            dependencies: [.composableArchitecture, .alamofire, .firebaseAI, "SharedModel", "RepositoryProtocol"]
+            dependencies: [.composableArchitecture, .alamofire, .firebaseAI, .FirebaseAppCheck, "SharedModel", "RepositoryProtocol"]
         ),
         .target(
             name: "SharedModel"
@@ -74,6 +74,7 @@ extension Target.Dependency {
     static var alamofire: Self { .product(name: "Alamofire", package: "Alamofire") }
     static var popupView: Self { .product(name: "PopupView", package: "PopupView") }
     static var firebaseAI: Self { .product(name: "FirebaseAI", package: "firebase-ios-sdk") }
+    static var FirebaseAppCheck: Self { .product(name: "FirebaseAppCheck", package: "firebase-ios-sdk") }
 }
 
 for target in package.targets {
