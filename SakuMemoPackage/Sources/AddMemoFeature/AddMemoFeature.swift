@@ -31,17 +31,22 @@ public struct AddMemoFeature: Sendable {
     public enum Action: BindableAction {
         case binding(BindingAction<State>)
         case save
-        case geminiSuccess([String])
-        case geminiFailure
+        case success([String])
+        case failure
         case showTextField
         case addMemo(String)
         case gemini
-        case geminiError
-        case geminiSuccessText(MemoAnalysisResult)
+        case error
+        case successText(MemoAnalysisResult)
         case checkSubscriptionStatus
         case subscriptionStatusUpdated(isSubscribed: Bool, remainingMemos: Int)
         case showLimitAlert
         case dismissLimitAlert
+        case foundationModels
+        case foundationModelsExtractTasks
+        case geminiExtractTasks
+        case switchAi
+        case switchAiTasks
     }
 
     @Dependency(\.geminiRepository) var geminiRepository
@@ -62,11 +67,7 @@ public struct AddMemoFeature: Sendable {
                         try await subscriptionRepository.incrementMemoCount()
                         print("✅ incrementMemoCount 完了")
                         await send(.checkSubscriptionStatus)
-                        if let answer = await geminiRepository.geminiText(for: text) {
-                            await send(.geminiSuccess(answer))
-                        } else {
-                            await send(.geminiFailure)
-                        }
+                        await send(.switchAiTasks)
                     } else {
                         print("❌ 制限に達しました - アラートを表示")
                         await send(.showLimitAlert)
@@ -76,14 +77,14 @@ public struct AddMemoFeature: Sendable {
             case .binding:
                 return .none
 
-            case let .geminiSuccess(result):
+            case let .success(result):
                 state.isSending = false
                 state.isTextField = false
                 state.memoList = result
 
                 return .none
 
-            case .geminiFailure:
+            case .failure:
                 state.isSending = false
                 state.isTextField = false
 
@@ -100,23 +101,21 @@ public struct AddMemoFeature: Sendable {
                     value == text
                 })
                 return .run { send in
-                    // プラスボタンでメモを追加する際は制限チェックもカウント増加も行わない
-                    // 単純にGemini解析のみ実行
-                    await send(.gemini)
+                    await send(.switchAi)
                 }
 
             case .gemini:
                 let text = state.memo.text
                 return .run { send in
                     if let result = await geminiRepository.gemini(for: text) {
-                        await send(.geminiSuccessText(result))
+                        await send(.successText(result))
                     } else {
                         print("⚠️ Geminiの解析に失敗")
-                        await send(.geminiError)
+                        await send(.error)
                     }
                 }
 
-            case let .geminiSuccessText(result):
+            case let .successText(result):
                 state.memo.priorityValue = result.importance
                 state.memo.category = result.category
                 let memo = state.memo
@@ -133,7 +132,7 @@ public struct AddMemoFeature: Sendable {
                     try await swiftDataRepository.addMemo(newMemo: newMemo)
                 }
 
-            case .geminiError:
+            case .error:
                 let memo = state.memo
                 state.text = ""
                 let delete = MemoSendable(
@@ -183,6 +182,77 @@ public struct AddMemoFeature: Sendable {
             case .dismissLimitAlert:
                 state.showLimitAlert = false
                 return .none
+
+            case .foundationModels:
+                let text = state.memo.text
+                return .run { send in
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        do {
+                            let repo = FoundationModelRepository()
+                            let result = try await repo.respond(userInput: text)
+                            await send(.successText(result))
+                        } catch {
+                            print("⚠️Foundation Modelsの解析に失敗: \(error)")
+                            await send(.gemini)
+                        }
+                    } else {
+                        await send(.gemini)
+                    }
+                }
+
+            case .foundationModelsExtractTasks:
+                let text = state.memo.text
+                return .run { send in
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        do {
+                            let repo = FoundationModelRepository()
+                            let result = try await repo.extractTasks(for: text)
+                            await send(.success(result))
+                        } catch {
+                            print("⚠️Foundation Modelsの解析に失敗: \(error)")
+                            await send(.gemini)
+                        }
+                    } else {
+                        await send(.gemini)
+                    }
+                }
+
+            case .geminiExtractTasks:
+                let text = state.text
+                return .run { send in
+                    if let answer = await geminiRepository.geminiText(for: text) {
+                        await send(.success(answer))
+                    } else {
+                        await send(.failure)
+                    }
+                }
+
+            case .switchAi:
+                if #available(iOS 26.0, macOS 26.0, *) {
+                    return .run { send in
+                        await send(.foundationModels)
+                    }
+                } else {
+                    return .run { send in
+                        await send(.gemini)
+                    }
+                }
+
+            case .switchAiTasks:
+                if #available(iOS 26.0, macOS 26.0, *) {
+                    return .run { send in
+                        do {
+                            await send(.foundationModelsExtractTasks)
+                        } catch {
+                            print("⚠️ Foundation Modelsのタスク抽出に失敗: \(error)")
+                            await send(.geminiExtractTasks)
+                        }
+                    }
+                } else {
+                    return .run { send in
+                        await send(.geminiExtractTasks)
+                    }
+                }
             }
         }
     }
