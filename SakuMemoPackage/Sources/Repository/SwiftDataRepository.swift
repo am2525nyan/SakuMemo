@@ -114,8 +114,9 @@ public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
                     let decreasePriorityValue = 0.2
                     memo.priorityValue -= decreasePriorityValue
 
-                    // 重要度が0以下になったらアーカイブ
-                    if memo.priorityValue <= 0 {
+                    // 重要度が0以下かつ作成から7日以上経過したらアーカイブ
+                    let archiveThresholdDays = 7
+                    if memo.priorityValue <= 0 && dateSinceCreation >= archiveThresholdDays {
                         memo.isArchived = true
                     }
                 }
