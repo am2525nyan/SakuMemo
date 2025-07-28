@@ -5,6 +5,7 @@
 //  Created by saki on 2025/04/18.
 //
 
+import FirebaseCore
 import Repository
 import SharedModel
 import StoreKit
@@ -15,6 +16,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     private var transactionUpdateTask: Task<Void, Never>?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Firebase初期化
+        FirebaseApp.configure()
+
         NotificationManager.shared.requestPermission()
 
         UNUserNotificationCenter.current().delegate = self

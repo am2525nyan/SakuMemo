@@ -16,7 +16,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.19.1"),
         .package(url: "https://github.com/Alamofire/Alamofire.git", exact: "5.10.2"),
-        .package(url: "https://github.com/exyte/PopupView", exact: "4.1.7")
+        .package(url: "https://github.com/exyte/PopupView", exact: "4.1.7"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.0.0"),
     ],
     targets: [
         .target(
@@ -53,7 +54,7 @@ let package = Package(
         ),
         .target(
             name: "Repository",
-            dependencies: [.composableArchitecture, .alamofire, "SharedModel", "RepositoryProtocol"]
+            dependencies: [.composableArchitecture, .alamofire, .firebaseAI, "SharedModel", "RepositoryProtocol"]
         ),
         .target(
             name: "SharedModel"
@@ -72,6 +73,7 @@ extension Target.Dependency {
     static var composableArchitecture: Self { .product(name: "ComposableArchitecture", package: "swift-composable-architecture") }
     static var alamofire: Self { .product(name: "Alamofire", package: "Alamofire") }
     static var popupView: Self { .product(name: "PopupView", package: "PopupView") }
+    static var firebaseAI: Self { .product(name: "FirebaseAI", package: "firebase-ios-sdk") }
 }
 
 for target in package.targets {

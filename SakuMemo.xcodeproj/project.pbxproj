@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 720E90A32DB24A140072F07F /* ComposableArchitecture */; };
+		72D6EA4A2E3775F1007CD0F6 /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 72D6EA492E3775F1007CD0F6 /* FirebaseAI */; };
+		72D6EA4C2E3775F1007CD0F6 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 72D6EA4B2E3775F1007CD0F6 /* FirebaseAppCheck */; };
 		72F72A752E26430200703E8E /* SakuMemoPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */; };
 		72F72A892E26432D00703E8E /* .env in Resources */ = {isa = PBXBuildFile; fileRef = 72F72A882E26432D00703E8E /* .env */; };
 		72FEE5A22DF84B0500005059 /* AppKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 72FEE5A12DF84B0500005059 /* AppKitNavigation */; };
@@ -53,6 +55,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72D6EA4C2E3775F1007CD0F6 /* FirebaseAppCheck in Frameworks */,
+				72D6EA4A2E3775F1007CD0F6 /* FirebaseAI in Frameworks */,
 				72F72A752E26430200703E8E /* SakuMemoPackage in Frameworks */,
 				72FEE5A42DF84B0500005059 /* SwiftNavigation in Frameworks */,
 				720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */,
@@ -120,6 +124,8 @@
 				72FEE5A32DF84B0500005059 /* SwiftNavigation */,
 				72FEE5A52DF84B0500005059 /* SwiftUINavigation */,
 				72FEE5A72DF84B0500005059 /* UIKitNavigation */,
+				72D6EA492E3775F1007CD0F6 /* FirebaseAI */,
+				72D6EA4B2E3775F1007CD0F6 /* FirebaseAppCheck */,
 			);
 			productName = SakuMemo;
 			productReference = 720E90912DB2495F0072F07F /* SakuMemo.app */;
@@ -153,6 +159,7 @@
 			packageReferences = (
 				720E90A22DB24A140072F07F /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				72FEE5A02DF84B0500005059 /* XCRemoteSwiftPackageReference "swift-navigation" */,
+				72D6EA482E3775F1007CD0F6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 720E90922DB2495F0072F07F /* Products */;
@@ -558,6 +565,14 @@
 				minimumVersion = 1.19.1;
 			};
 		};
+		72D6EA482E3775F1007CD0F6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
 		72FEE5A02DF84B0500005059 /* XCRemoteSwiftPackageReference "swift-navigation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-navigation";
@@ -577,6 +592,16 @@
 		729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SakuMemoPackage;
+		};
+		72D6EA492E3775F1007CD0F6 /* FirebaseAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 72D6EA482E3775F1007CD0F6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAI;
+		};
+		72D6EA4B2E3775F1007CD0F6 /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 72D6EA482E3775F1007CD0F6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
 		};
 		72FEE5A12DF84B0500005059 /* AppKitNavigation */ = {
 			isa = XCSwiftPackageProductDependency;

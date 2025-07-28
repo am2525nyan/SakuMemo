@@ -7,6 +7,7 @@
 
 import Alamofire
 import ComposableArchitecture
+import FirebaseAI
 import Foundation
 import RepositoryProtocol
 import SharedModel
