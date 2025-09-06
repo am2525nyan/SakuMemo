@@ -23,6 +23,7 @@ public struct CustomTextFieldStyle: TextFieldStyle {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(isFocused ? Color.mainColor : .gray, lineWidth: 1)
             )
+            .fixedSize(horizontal: false, vertical: true) // 縦方向の制約を改善
     }
 }
 

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 public struct KeyboardDismissModifier: ViewModifier {
     public func body(content: Content) -> some View {
@@ -10,7 +11,17 @@ public struct KeyboardDismissModifier: ViewModifier {
     }
 
     private func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        // Main Actorで安全に実行
+        Task { @MainActor in
+            // より安全なキーボード非表示方法
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                window.endEditing(true)
+            } else {
+                // フォールバック
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
+        }
     }
 }
 

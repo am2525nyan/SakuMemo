@@ -46,6 +46,8 @@ public struct AddMemoView: View {
                     .padding(.top, 20)
                     .frame(minHeight: 100)
                     .fixedSize(horizontal: false, vertical: true)
+                    .keyboardType(.default)
+                    .submitLabel(.done)
             }
 
             if !store.isTextField || !store.memoList.isEmpty {
@@ -85,7 +87,11 @@ public struct AddMemoView: View {
         .onAppear {
             store.send(.checkSubscriptionStatus)
         }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            // キーボード用の動的スペース
+            Color.clear
+                .frame(height: 0)
+        }
         .alert("使用制限に達しました", isPresented: $store.showLimitAlert) {
             Button("OK") {
                 store.send(.dismissLimitAlert)
