@@ -8,12 +8,14 @@
 import AddMemoFeature
 import Components
 import ComposableArchitecture
+import GoogleMobileAds
 import MemoDetailFeature
 import PopupView
 import SharedModel
 import SubscriptionFeature
 import SwiftData
 import SwiftUI
+import Utils
 
 public struct MemoView: View {
     public init(store: StoreOf<MemoFeature>) {
@@ -66,6 +68,12 @@ public struct MemoView: View {
                         trailingText: "削除",
                         leadingText: "アーカイブ"
                     )
+                    let adSize = currentOrientationAnchoredAdaptiveBanner(width: 375)
+                    BannerViewContainer(adSize)
+                        .frame(width: adSize.size.width, height: adSize.size.height)
+                        .onAppear() {
+                            print(adSize)
+                        }
                 }
                 .onAppear {
                     store.send(.onAppear)

@@ -46,7 +46,7 @@ let package = Package(
         ),
         .target(
             name: "MemoFeature",
-            dependencies: [.composableArchitecture, .popupView, "AddMemoFeature", "SharedModel", "Repository", "Components", "MemoDetailFeature", "SubscriptionFeature"]
+            dependencies: [.composableArchitecture, .popupView, "AddMemoFeature", "SharedModel", "Repository", "Components", "MemoDetailFeature", "SubscriptionFeature", "Utils"]
         ),
         .target(
             name: "RepositoryProtocol",

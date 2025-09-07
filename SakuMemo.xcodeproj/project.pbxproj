@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 720E90A32DB24A140072F07F /* ComposableArchitecture */; };
+		7246A4722E6C5F080063FF32 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 7246A4712E6C5F080063FF32 /* GoogleMobileAds */; };
 		72D6EA4A2E3775F1007CD0F6 /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 72D6EA492E3775F1007CD0F6 /* FirebaseAI */; };
 		72D6EA4C2E3775F1007CD0F6 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 72D6EA4B2E3775F1007CD0F6 /* FirebaseAppCheck */; };
 		72F72A752E26430200703E8E /* SakuMemoPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */; };
@@ -56,6 +57,7 @@
 				72D6EA4C2E3775F1007CD0F6 /* FirebaseAppCheck in Frameworks */,
 				72D6EA4A2E3775F1007CD0F6 /* FirebaseAI in Frameworks */,
 				72F72A752E26430200703E8E /* SakuMemoPackage in Frameworks */,
+				7246A4722E6C5F080063FF32 /* GoogleMobileAds in Frameworks */,
 				72FEE5A42DF84B0500005059 /* SwiftNavigation in Frameworks */,
 				720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */,
 				72FEE5A82DF84B0500005059 /* UIKitNavigation in Frameworks */,
@@ -123,6 +125,7 @@
 				72FEE5A72DF84B0500005059 /* UIKitNavigation */,
 				72D6EA492E3775F1007CD0F6 /* FirebaseAI */,
 				72D6EA4B2E3775F1007CD0F6 /* FirebaseAppCheck */,
+				7246A4712E6C5F080063FF32 /* GoogleMobileAds */,
 			);
 			productName = SakuMemo;
 			productReference = 720E90912DB2495F0072F07F /* SakuMemo.app */;
@@ -157,6 +160,7 @@
 				720E90A22DB24A140072F07F /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				72FEE5A02DF84B0500005059 /* XCRemoteSwiftPackageReference "swift-navigation" */,
 				72D6EA482E3775F1007CD0F6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				7246A4702E6C5F080063FF32 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 720E90922DB2495F0072F07F /* Products */;
@@ -561,6 +565,14 @@
 				minimumVersion = 1.19.1;
 			};
 		};
+		7246A4702E6C5F080063FF32 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.10.0;
+			};
+		};
 		72D6EA482E3775F1007CD0F6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -584,6 +596,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 720E90A22DB24A140072F07F /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
+		};
+		7246A4712E6C5F080063FF32 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7246A4702E6C5F080063FF32 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 		729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */ = {
 			isa = XCSwiftPackageProductDependency;
