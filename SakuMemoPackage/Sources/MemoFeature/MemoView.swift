@@ -71,9 +71,6 @@ public struct MemoView: View {
                     let adSize = currentOrientationAnchoredAdaptiveBanner(width: 375)
                     BannerViewContainer(adSize)
                         .frame(width: adSize.size.width, height: adSize.size.height)
-                        .onAppear() {
-                            print(adSize)
-                        }
                 }
                 .onAppear {
                     store.send(.onAppear)
@@ -99,7 +96,7 @@ public struct MemoView: View {
                 FloatingButton(showAddMemo: {
                     store.send(.showAddMemo)
                 })
-                .padding(.bottom, 20)
+                .padding(.bottom, 60)
                 .padding(.trailing, 20)
             }
 
