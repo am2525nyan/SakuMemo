@@ -11,6 +11,7 @@ import SwiftUI
 
 public struct BannerViewContainer: UIViewRepresentable {
     public typealias UIViewType = BannerView
+
     let adSize: AdSize
 
     public init(_ adSize: AdSize) {
