@@ -29,7 +29,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         NotificationManager.shared.requestPermission()
 
         UNUserNotificationCenter.current().delegate = self
-        print(ASIdentifierManager().advertisingIdentifier)
+
         // StoreKitトランザクション更新の監視を開始
         startTransactionUpdateListener()
 
