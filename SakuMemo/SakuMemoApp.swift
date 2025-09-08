@@ -5,8 +5,10 @@
 //  Created by saki on 2025/04/18.
 //
 
+import AdSupport
 import FirebaseAppCheck
 import FirebaseCore
+import GoogleMobileAds
 import Repository
 import SharedModel
 import StoreKit
@@ -20,6 +22,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         let providerFactory = SakuMemoAppCheckProviderFactory()
         AppCheck.setAppCheckProviderFactory(providerFactory)
         FirebaseApp.configure()
+
+        MobileAds.shared.start()
+        MobileAds.shared.requestConfiguration.testDeviceIdentifiers = ["3cb82a328b7b6c6a873368eeeffa4aa8"]
 
         NotificationManager.shared.requestPermission()
 
