@@ -89,7 +89,7 @@ public struct FoundationModelRepository: FoundationModelRepositoryProtocol {
 }
 
 @available(iOS 26.0, macOS 26.0, *)
-@Generable
+@Generable(description: "タスク")
 struct MemoResponse {
     @Guide(description: "タスクの重要度", .range(0.0...1.0))
     let importance: Double
