@@ -26,7 +26,7 @@ let package = Package(
         ),
         .target(
             name: "AppFeature",
-            dependencies: [.composableArchitecture, "MemoFeature", "ArchiveFeature"]
+            dependencies: [.composableArchitecture, "MemoFeature", "ArchiveFeature", "SettingsFeature"]
         ),
         .target(
             name: "AppIntent",
@@ -66,6 +66,10 @@ let package = Package(
         .target(
             name: "Utils",
             dependencies: ["SharedModel"]
+        ),
+        .target(
+            name: "SettingsFeature",
+            dependencies: [.composableArchitecture]
         )
     ]
 )

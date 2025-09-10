@@ -10,6 +10,7 @@ import ComposableArchitecture
 import MemoFeature
 import SwiftUI
 import Utils
+import SettingsFeature
 
 public struct AppView: View {
     public init(store: StoreOf<AppFeature>) {
@@ -33,9 +34,16 @@ public struct AppView: View {
                     Text("アーカイブ")
                 }
                 .dismissKeyboardOnTap()
+
+            SettingsView(store: store.scope(state: \.settings, action: \.settings))
+                .tabItem {
+                    Image(systemName: "gearshape.fill")
+                    Text("設定")
+                }
         }
     }
 }
+t
 
 #Preview {
     AppView(
