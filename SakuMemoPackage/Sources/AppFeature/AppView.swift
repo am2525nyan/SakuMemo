@@ -42,8 +42,7 @@ public struct AppView: View {
                 }
         }
     }
-}
-t
+}t
 
 #Preview {
     AppView(
