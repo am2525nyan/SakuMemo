@@ -9,6 +9,7 @@ import ArchiveFeature
 import ComposableArchitecture
 import Foundation
 import MemoFeature
+import SettingsFeature
 
 @Reducer
 public struct AppFeature {
@@ -53,4 +54,4 @@ public struct AppFeature {
     }
 }
 
-import SettingsFeature
+
