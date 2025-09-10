@@ -8,8 +8,6 @@
 import ComposableArchitecture
 import SwiftUI
 
-import TipKit
-
 public struct SettingsView: View {
     public init(store: StoreOf<SettingsFeature>) {
         self.store = store

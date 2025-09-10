@@ -14,7 +14,6 @@ import SharedModel
 import StoreKit
 import SwiftData
 import SwiftUI
-import TipKit
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     private var transactionUpdateTask: Task<Void, Never>?
@@ -83,10 +82,5 @@ struct SakuMemoApp: App {
             ContentView()
                 .modelContainer(for: [Memo.self, UserSubscription.self])
         }
-    }
-
-    init() {
-        Tips.showAllTipsForTesting()
-        try? Tips.configure()
     }
 }
