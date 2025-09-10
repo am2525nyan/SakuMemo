@@ -43,7 +43,6 @@ public struct AppView: View {
         }
     }
 }
-t
 
 #Preview {
     AppView(
