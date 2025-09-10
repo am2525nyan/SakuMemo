@@ -101,29 +101,32 @@ public struct SwiftDataRepository: SwiftDataRepositoryProtocol {
     }
 
     public func automaticPriorityValues() async throws {
-    try await MainActor.run {
-        let context = container.mainContext
-        let now = Date()
-        let memos = try context.fetch(FetchDescriptor<Memo>())
+        try await MainActor.run {
+            let context = container.mainContext
+            let now = Date()
+            let memos = try context.fetch(FetchDescriptor<Memo>())
 
-        for memo in memos where !memo.isArchived {
-            let createdAt = memo.createdAt
-            let dateSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0
-            let sinceDays = 3
-            if dateSinceCreation >= sinceDays {
-                let decreasePriorityValue = 0.2
-                memo.priorityValue -= decreasePriorityValue
+            // UserDefaultsから設定値を取得
+            let priorityDecreaseStartDays = UserDefaults.standard.object(forKey: "priorityDecreaseStartDays") as? Int ?? 3
+            let priorityDecreaseValue = UserDefaults.standard.object(forKey: "priorityDecreaseValue") as? Double ?? 0.2
+            let autoArchiveDays = UserDefaults.standard.object(forKey: "autoArchiveDays") as? Int ?? 7
 
-                // 重要度が0以下かつ作成から7日以上経過したら自動アーカイブ
-                let archiveThresholdDays = 7
-                if memo.priorityValue <= 0, dateSinceCreation >= archiveThresholdDays {
-                    memo.isArchived = true
+            for memo in memos where !memo.isArchived {
+                let createdAt = memo.createdAt
+                let dateSinceCreation = Calendar.current.dateComponents([.day], from: createdAt, to: now).day ?? 0
+
+                if dateSinceCreation >= priorityDecreaseStartDays {
+                    memo.priorityValue -= priorityDecreaseValue
+
+                    // 重要度が0以下かつ設定された日数以上経過したら自動アーカイブ
+                    if memo.priorityValue <= 0, dateSinceCreation >= autoArchiveDays {
+                        memo.isArchived = true
+                    }
                 }
             }
+            try context.save()
         }
-        try context.save()
     }
-}
 }
 
 final class SwiftDataRepositoryMock: SwiftDataRepositoryProtocol {

@@ -19,11 +19,13 @@ public struct AppFeature {
 
         var memo = MemoFeature.State()
         var archive = ArchiveMemoFeature.State()
+        var settings = SettingsFeature.State()
     }
 
     public enum Action {
         case memo(MemoFeature.Action)
         case archive(ArchiveMemoFeature.Action)
+        case settings(SettingsFeature.Action)
     }
 
     public var body: some ReducerOf<Self> {
@@ -33,6 +35,9 @@ public struct AppFeature {
         Scope(state: \.archive, action: \.archive) {
             ArchiveMemoFeature()
         }
+        Scope(state: \.settings, action: \.settings) {
+            SettingsFeature()
+        }
         Reduce { _, action in
             switch action {
             case .memo:
@@ -40,7 +45,12 @@ public struct AppFeature {
 
             case .archive:
                 return .none
+
+            case .settings:
+                return .none
             }
         }
     }
 }
+
+import SettingsFeature
