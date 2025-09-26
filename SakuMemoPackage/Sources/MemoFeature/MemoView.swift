@@ -27,6 +27,19 @@ public struct MemoView: View {
     @Environment(\.scenePhase) var scenePhase
     @Query(filter: #Predicate<Memo> { $0.isArchived == false }, sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
     @Query(filter: #Predicate<Memo> { $0.isArchived == true }, sort: \Memo.createdAt, order: .reverse) var archiveMemos: [Memo]
+    @Query(filter: #Predicate<Memo> { $0.isArchived == false && $0.date != nil }, sort: \Memo.date) var memosWithDate: [Memo]
+
+    var dueSoonMemos: [Memo] {
+        memosWithDate.filter { memo in
+            guard let date = memo.date else {
+                return false
+            }
+            let now = Date()
+            let calendar = Calendar.current
+            let daysUntilDue = calendar.dateComponents([.day], from: now, to: date).day ?? 0
+            return daysUntilDue <= 3 && daysUntilDue >= 0
+        }
+    }
 
     public var body: some View {
         NavigationView {
@@ -54,6 +67,7 @@ public struct MemoView: View {
                         )
                         .frame(width: 150, height: 100)
                     }
+
                     ListComponent(
                         memos: .constant(memos),
                         tapAction: { memo in
@@ -66,7 +80,11 @@ public struct MemoView: View {
                             store.send(.archive(memo))
                         },
                         trailingText: "削除",
-                        leadingText: "アーカイブ"
+                        leadingText: "アーカイブ",
+                        dueSoonMemos: dueSoonMemos,
+                        showDetailMemo: { memo in
+                            store.send(.showDetail(memo))
+                        }
                     )
                     let adSize = currentOrientationAnchoredAdaptiveBanner(width: 375)
                     BannerViewContainer(adSize)
@@ -139,28 +157,28 @@ public struct MemoView: View {
                 }
         }
     }
+}
 
-    struct FloatingButton: View {
-        var showAddMemo: () -> Void
-        var body: some View {
-            VStack {
+struct FloatingButton: View {
+    var showAddMemo: () -> Void
+    var body: some View {
+        VStack {
+            Spacer()
+            HStack {
                 Spacer()
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        showAddMemo()
-                    }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 20))
-                            .frame(width: 30, height: 30)
-                            .padding()
-                            .background(Color.mainColor)
-                            .foregroundColor(.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 5)
-                    }
-                    .padding()
+                Button(action: {
+                    showAddMemo()
+                }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 20))
+                        .frame(width: 30, height: 30)
+                        .padding()
+                        .background(Color.mainColor)
+                        .foregroundColor(.white)
+                        .clipShape(Circle())
+                        .shadow(radius: 5)
                 }
+                .padding()
             }
         }
     }
@@ -196,6 +214,13 @@ struct MemoCountCard: View {
         }
         .frame(width: 150, height: 100)
         .padding(.trailing, 20)
+    }
+}
+
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 
