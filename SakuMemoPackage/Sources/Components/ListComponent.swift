@@ -92,11 +92,7 @@ struct DueSoonMemoRow: View {
     let onTap: (Memo) -> Void
 
     private var daysText: String {
-        guard let date = memo.date else {
-            return ""
-        }
-        let calendar = Calendar.current
-        let daysUntilDue = calendar.dateComponents([.day], from: Date(), to: date).day ?? 0
+        let daysUntilDue = memo.daysUntilDue ?? 0
 
         if daysUntilDue == 0 {
             return "今日"
