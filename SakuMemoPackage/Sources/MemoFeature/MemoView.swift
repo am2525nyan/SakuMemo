@@ -44,80 +44,13 @@ public struct MemoView: View {
     public var body: some View {
         NavigationView {
             ZStack {
-                VStack {
-                    AddMemoComponent(
-                        tapped: {
-                            store.send(.addMemo)
-                        },
-                        text: $store.text,
-                        isFocused: _isFocused
-                    )
-                    HStack {
-                        MemoCountCard(
-                            label: "残りのメモ",
-                            count: memos.count,
-                            backgroundColor: Color.mainColor
-                        )
-                        .frame(width: 150, height: 100)
-                        .padding(.trailing, 20)
-                        MemoCountCard(
-                            label: "アーカイブ数",
-                            count: archiveMemos.count,
-                            backgroundColor: Color.customPinkColor
-                        )
-                        .frame(width: 150, height: 100)
-                    }
-
-                    ListComponent(
-                        memos: .constant(memos),
-                        tapAction: { memo in
-                            store.send(.showDetail(memo))
-                        },
-                        swipeTrailingAction: { memo in
-                            store.send(.deleteMemo(memo))
-                        },
-                        swipeLeadingAction: { memo in
-                            store.send(.archive(memo))
-                        },
-                        trailingText: "削除",
-                        leadingText: "アーカイブ",
-                        dueSoonMemos: dueSoonMemos,
-                        showDetailMemo: { memo in
-                            store.send(.showDetail(memo))
-                        }
-                    )
-                    let adSize = currentOrientationAnchoredAdaptiveBanner(width: 375)
-                    BannerViewContainer(adSize)
-                        .frame(width: adSize.size.width, height: adSize.size.height)
-                }
-                .onAppear {
-                    store.send(.onAppear)
-                }
-                .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)) { detail in
-                    MemoDetailView(store: detail)
-                        .presentationDetents([.height(250)])
-                        .presentationDragIndicator(.visible)
-                        .presentationBackground(Material.thick)
-                }
-                .sheet(item: $store.scope(state: \.add, action: \.presentAddMemo)) { add in
-                    AddMemoView(store: add)
-                        .presentationDetents([.height(250)])
-                        .presentationDragIndicator(.visible)
-                        .presentationBackground(Material.thick)
-                }
-                .sheet(item: $store.scope(state: \.subscription, action: \.presentSubscription)) { subscription in
-                    SubscriptionView(store: subscription)
-                        .presentationDetents([.medium, .large])
-                        .presentationDragIndicator(.visible)
-                        .presentationBackground(Material.thick)
-                }
+                mainContentView
                 FloatingButton(showAddMemo: {
                     store.send(.showAddMemo)
                 })
                 .padding(.bottom, 60)
                 .padding(.trailing, 20)
             }
-
             .popup(isPresented: $store.isShowPopup) {
                 FloaterTop()
             }
@@ -135,92 +68,181 @@ public struct MemoView: View {
             #endif
                 .toolbar {
                     ToolbarItem(placement: .primaryAction) {
-                        Button(action: {
-                            store.send(.showSubscription)
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "crown.fill")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.yellow)
-                                Text("Pro")
-                                    .font(.system(size: 14, weight: .bold))
-                                    .foregroundColor(.orange)
-                            }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color.yellow.opacity(0.2))
-                            )
-                        }
+                        proButton
                     }
                 }
         }
     }
-}
 
-struct FloatingButton: View {
-    var showAddMemo: () -> Void
-    var body: some View {
+    private var mainContentView: some View {
         VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                Button(action: {
-                    showAddMemo()
-                }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 20))
-                        .frame(width: 30, height: 30)
-                        .padding()
-                        .background(Color.mainColor)
-                        .foregroundColor(.white)
-                        .clipShape(Circle())
-                        .shadow(radius: 5)
-                }
-                .padding()
-            }
+            addMemoComponent
+            memoCountCards
+            memoScrollView
+            bannerAdView
+        }
+        .onAppear {
+            store.send(.onAppear)
+        }
+        .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)) { detail in
+            MemoDetailView(store: detail)
+                .presentationDetents([.height(250)])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(Material.thick)
+        }
+        .sheet(item: $store.scope(state: \.add, action: \.presentAddMemo)) { add in
+            AddMemoView(store: add)
+                .presentationDetents([.height(250)])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(Material.thick)
+        }
+        .sheet(item: $store.scope(state: \.subscription, action: \.presentSubscription)) { subscription in
+            SubscriptionView(store: subscription)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(Material.thick)
         }
     }
-}
 
-struct MemoCountCard: View {
-    let label: String
-    let count: Int
-    let backgroundColor: Color
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(backgroundColor)
+    private var addMemoComponent: some View {
+        AddMemoComponent(
+            tapped: {
+                store.send(.addMemo)
+            },
+            text: $store.text,
+            isFocused: _isFocused
+        )
+    }
 
-            VStack(alignment: .center) {
-                Text(label)
-                    .padding(.top, 10)
-                    .foregroundColor(.white)
+    private var memoCountCards: some View {
+        HStack {
+            MemoCountCard(
+                label: "残りのメモ",
+                count: memos.count,
+                backgroundColor: Color.mainColor
+            )
+            .frame(width: 150, height: 100)
+            .padding(.trailing, 20)
+            MemoCountCard(
+                label: "アーカイブ数",
+                count: archiveMemos.count,
+                backgroundColor: Color.customPinkColor
+            )
+            .frame(width: 150, height: 100)
+        }
+    }
+
+    private var memoScrollView: some View {
+        ListComponent(
+            memos: .constant(memos),
+            tapAction: { memo in
+                store.send(.showDetail(memo))
+            },
+            swipeTrailingAction: { memo in
+                store.send(.deleteMemo(memo))
+            },
+            swipeLeadingAction: { memo in
+                store.send(.archive(memo))
+            },
+            trailingText: "削除",
+            leadingText: "アーカイブ",
+            dueSoonMemos: dueSoonMemos,
+            showDetailMemo: { memo in
+                store.send(.showDetail(memo))
+            }
+        )
+    }
+
+    private var bannerAdView: some View {
+        let adSize = currentOrientationAnchoredAdaptiveBanner(width: 375)
+        return BannerViewContainer(adSize)
+            .frame(width: adSize.size.width, height: adSize.size.height)
+    }
+
+    private var proButton: some View {
+        Button(action: {
+            store.send(.showSubscription)
+        }) {
+            HStack(spacing: 4) {
+                Image(systemName: "crown.fill")
+                    .font(.system(size: 16))
+                    .foregroundColor(.yellow)
+                Text("Pro")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.orange)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.yellow.opacity(0.2))
+            )
+        }
+    }
+
+    struct FloatingButton: View {
+        var showAddMemo: () -> Void
+        var body: some View {
+            VStack {
                 Spacer()
                 HStack {
                     Spacer()
-                    Text(String(count))
-                        .font(.system(size: 40))
-                        .bold()
-                        .foregroundColor(.white)
-                        .padding(.bottom, 10)
-                        .offset(x: -5)
-                    Text("こ")
-                        .foregroundColor(.white)
+                    Button(action: {
+                        showAddMemo()
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 20))
+                            .frame(width: 30, height: 30)
+                            .padding()
+                            .background(Color.mainColor)
+                            .foregroundColor(.white)
+                            .clipShape(Circle())
+                            .shadow(radius: 5)
+                    }
+                    .padding()
                 }
-                .padding(.trailing, 10)
             }
         }
-        .frame(width: 150, height: 100)
-        .padding(.trailing, 20)
     }
-}
 
-struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static let defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
+    struct MemoCountCard: View {
+        let label: String
+        let count: Int
+        let backgroundColor: Color
+        var body: some View {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(backgroundColor)
+
+                VStack(alignment: .center) {
+                    Text(label)
+                        .padding(.top, 10)
+                        .foregroundColor(.white)
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Text(String(count))
+                            .font(.system(size: 40))
+                            .bold()
+                            .foregroundColor(.white)
+                            .padding(.bottom, 10)
+                            .offset(x: -5)
+                        Text("こ")
+                            .foregroundColor(.white)
+                    }
+                    .padding(.trailing, 10)
+                }
+            }
+            .frame(width: 150, height: 100)
+            .padding(.trailing, 20)
+        }
+    }
+
+    struct ScrollOffsetPreferenceKey: PreferenceKey {
+        static let defaultValue: CGFloat = 0
+        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+            value = nextValue()
+        }
     }
 }
 
