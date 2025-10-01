@@ -101,6 +101,29 @@ public final class Memo: Identifiable {
             )
         ]
     }
+
+    // MARK: - Due Date Helper Methods
+
+    public var isDueSoon: Bool {
+        guard let daysUntilDue = self.daysUntilDue else {
+            return false
+        }
+        return daysUntilDue <= 3 && daysUntilDue >= 0 // 3日以内で期限未過ぎ
+    }
+
+    public var isOverdue: Bool {
+        guard let date = date else {
+            return false
+        }
+        return date < Date()
+    }
+
+    public var daysUntilDue: Int? {
+        guard let date = date else {
+            return nil
+        }
+        return Calendar.current.dateComponents([.day], from: Date(), to: date).day
+    }
 }
 
 public extension MemoPriority {

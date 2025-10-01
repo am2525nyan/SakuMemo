@@ -10,6 +10,11 @@ import SwiftUI
 
 public struct MemoCellView: View {
     @State var memo: Memo
+
+    public init(memo: Memo) {
+        self.memo = memo
+    }
+
     public var body: some View {
         HStack {
             Menu {
