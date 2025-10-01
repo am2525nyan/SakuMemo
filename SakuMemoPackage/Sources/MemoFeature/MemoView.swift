@@ -30,15 +30,7 @@ public struct MemoView: View {
     @Query(filter: #Predicate<Memo> { $0.isArchived == false && $0.date != nil }, sort: \Memo.date) var memosWithDate: [Memo]
 
     var dueSoonMemos: [Memo] {
-        memosWithDate.filter { memo in
-            guard let date = memo.date else {
-                return false
-            }
-            let now = Date()
-            let calendar = Calendar.current
-            let daysUntilDue = calendar.dateComponents([.day], from: now, to: date).day ?? 0
-            return daysUntilDue <= 3 && daysUntilDue >= 0
-        }
+        memosWithDate.filter { $0.isDueSoon }
     }
 
     public var body: some View {
