@@ -105,12 +105,9 @@ public final class Memo: Identifiable {
     // MARK: - Due Date Helper Methods
 
     public var isDueSoon: Bool {
-        guard let date = date else {
+        guard let daysUntilDue = self.daysUntilDue else {
             return false
         }
-        let now = Date()
-        let calendar = Calendar.current
-        let daysUntilDue = calendar.dateComponents([.day], from: now, to: date).day ?? 0
         return daysUntilDue <= 3 && daysUntilDue >= 0 // 3日以内で期限未過ぎ
     }
 
