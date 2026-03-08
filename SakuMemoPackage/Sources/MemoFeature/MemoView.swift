@@ -8,7 +8,6 @@
 import AddMemoFeature
 import Components
 import ComposableArchitecture
-import GoogleMobileAds
 import MemoDetailFeature
 import PopupView
 import SharedModel
@@ -67,11 +66,14 @@ public struct MemoView: View {
     }
 
     private var mainContentView: some View {
-        VStack {
-            addMemoComponent
-            memoCountCards
-            memoScrollView
-            bannerAdView
+        ZStack {
+            VStack {
+                VStack {
+                    addMemoComponent
+                    memoCountCards
+                    memoScrollView
+                }
+            }
         }
         .onAppear {
             store.send(.onAppear)
@@ -143,12 +145,6 @@ public struct MemoView: View {
                 store.send(.showDetail(memo))
             }
         )
-    }
-
-    private var bannerAdView: some View {
-        let adSize = currentOrientationAnchoredAdaptiveBanner(width: 375)
-        return BannerViewContainer(adSize)
-            .frame(width: adSize.size.width, height: adSize.size.height)
     }
 
     private var proButton: some View {

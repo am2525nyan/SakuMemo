@@ -7,6 +7,7 @@
 
 import ArchiveFeature
 import ComposableArchitecture
+import GoogleMobileAds
 import MemoFeature
 import SettingsFeature
 import SwiftUI
@@ -20,27 +21,71 @@ public struct AppView: View {
     public let store: StoreOf<AppFeature>
 
     public var body: some View {
-        TabView {
-            MemoView(store: store.scope(state: \.memo, action: \.memo))
+        if #available(iOS 26.0, *) {
+            TabView {
+                VStack {
+                    MemoView(store: store.scope(state: \.memo, action: \.memo))
+                    bannerAdView
+                }
                 .tabItem {
                     Image(systemName: "house.fill")
                     Text("ホーム")
                 }
                 .dismissKeyboardOnTap()
 
-            ArchiveMemoView(store: store.scope(state: \.archive, action: \.archive))
+                VStack {
+                    ArchiveMemoView(store: store.scope(state: \.archive, action: \.archive))
+                    bannerAdView
+                }
                 .tabItem {
                     Image(systemName: "archivebox.fill")
                     Text("アーカイブ")
                 }
                 .dismissKeyboardOnTap()
 
-            SettingsView(store: store.scope(state: \.settings, action: \.settings))
-                .tabItem {
-                    Image(systemName: "gearshape.fill")
-                    Text("設定")
+                SettingsView(store: store.scope(state: \.settings, action: \.settings))
+                    .tabItem {
+                        Image(systemName: "gearshape.fill")
+                        Text("設定")
+                    }
+            }
+            .tabBarMinimizeBehavior(.onScrollDown)
+
+        } else {
+            TabView {
+                VStack {
+                    MemoView(store: store.scope(state: \.memo, action: \.memo))
+                    bannerAdView
                 }
+                .tabItem {
+                    Image(systemName: "house.fill")
+                    Text("ホーム")
+                }
+                .dismissKeyboardOnTap()
+
+                VStack {
+                    ArchiveMemoView(store: store.scope(state: \.archive, action: \.archive))
+                    bannerAdView
+                }
+                .tabItem {
+                    Image(systemName: "archivebox.fill")
+                    Text("アーカイブ")
+                }
+                .dismissKeyboardOnTap()
+
+                SettingsView(store: store.scope(state: \.settings, action: \.settings))
+                    .tabItem {
+                        Image(systemName: "gearshape.fill")
+                        Text("設定")
+                    }
+            }
         }
+    }
+
+    private var bannerAdView: some View {
+        let adSize = currentOrientationAnchoredAdaptiveBanner(width: 375)
+        return BannerViewContainer(adSize)
+            .frame(width: adSize.size.width, height: adSize.size.height)
     }
 }
 
