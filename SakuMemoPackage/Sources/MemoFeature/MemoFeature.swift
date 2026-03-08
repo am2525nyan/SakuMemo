@@ -11,8 +11,7 @@ import Foundation
 import MemoDetailFeature
 import Repository
 import SharedModel
-import SubscriptionFeature
-import SwiftUI
+import SubscriptionFeature  
 
 @Reducer
 public struct MemoFeature: Sendable {
