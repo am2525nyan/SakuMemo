@@ -10,12 +10,13 @@ import SharedModel
 import SwiftUI
 import Utils
 
+@ViewAction(for: MemoDetailFeature.self)
 public struct MemoDetailView: View {
     public init(store: StoreOf<MemoDetailFeature>) {
         self.store = store
     }
 
-    @Bindable var store: StoreOf<MemoDetailFeature>
+    @Bindable public var store: StoreOf<MemoDetailFeature>
     @FocusState var isFocused: Bool
     public var body: some View {
         VStack {
@@ -87,7 +88,7 @@ public struct MemoDetailView: View {
         .padding(.horizontal, 20)
         .dismissKeyboardOnTap()
         .onAppear {
-            store.send(.onAppear)
+            send(.onAppear)
         }
     }
 }

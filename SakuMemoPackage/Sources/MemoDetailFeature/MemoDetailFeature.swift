@@ -25,13 +25,18 @@ public struct MemoDetailFeature: Sendable {
         public var pendingDateUpdate: Date?
     }
 
-    public enum Action: BindableAction {
+    public enum Action: BindableAction, ViewAction {
         case binding(BindingAction<State>)
-        case onAppear
+        case view(View)
+
         case setNotification
         case removeNotification
         case debouncedDateChanged(Date?)
         case executeDebouncedNotificationUpdate
+
+        public enum View {
+            case onAppear
+        }
     }
 
     @Dependency(\.notificationManager) var notificationManager
@@ -39,7 +44,7 @@ public struct MemoDetailFeature: Sendable {
         BindingReducer()
         Reduce { state, action in
             switch action {
-            case .onAppear:
+            case .view(.onAppear):
                 state.priorityValue = state.memo.priorityValue
                 return .none
 

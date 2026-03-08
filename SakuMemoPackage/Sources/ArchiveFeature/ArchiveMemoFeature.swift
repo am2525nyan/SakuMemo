@@ -22,15 +22,19 @@ public struct ArchiveMemoFeature: Sendable {
         var text: String = ""
     }
 
-    public enum Action: BindableAction {
+    public enum Action: BindableAction, ViewAction {
         case binding(BindingAction<State>)
-        case addMemo
+        case view(View)
         case gemini
         case geminiSuccess(MemoAnalysisResult)
         case geminiError
-        case deleteMemo(Memo)
         case deleteAllMemos
-        case archiveMain(Memo)
+
+        public enum View {
+            case addMemo
+            case deleteMemo(Memo)
+            case archiveMain(Memo)
+        }
     }
 
     @Dependency(\.swiftDataRepository) var swiftDataRepository
@@ -40,7 +44,7 @@ public struct ArchiveMemoFeature: Sendable {
         BindingReducer()
         Reduce { state, action in
             switch action {
-            case .addMemo:
+            case .view(.addMemo):
                 let memo = Memo(text: state.text)
                 state.memo = memo
                 state.text = ""
@@ -102,7 +106,7 @@ public struct ArchiveMemoFeature: Sendable {
                     try await swiftDataRepository.addMemo(newMemo: newMemo)
                 }
 
-            case let .deleteMemo(memo):
+            case let .view(.deleteMemo(memo)):
                 let deleteMemo = MemoSendable(
                     id: memo.id,
                     text: memo.text,
@@ -116,7 +120,7 @@ public struct ArchiveMemoFeature: Sendable {
                     try await swiftDataRepository.deleteMemo(memo: deleteMemo)
                 }
 
-            case let .archiveMain(memo):
+            case let .view(.archiveMain(memo)):
                 memo.isArchived = false
                 memo.date = nil
                 return .none

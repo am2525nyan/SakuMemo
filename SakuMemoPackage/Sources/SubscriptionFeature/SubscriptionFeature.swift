@@ -28,18 +28,23 @@ public struct SubscriptionFeature: Sendable {
         var subscription: UserSubscriptionData?
     }
 
-    public enum Action: BindableAction {
+    public enum Action: BindableAction, ViewAction {
         case binding(BindingAction<State>)
+        case view(View)
+
         case loadProducts
         case productsLoaded([StoreProduct])
-        case purchaseProduct(StoreProduct)
         case purchaseCompleted
         case purchaseFailed(String)
-        case restorePurchases
         case checkSubscriptionStatus
         case subscriptionStatusUpdated(UserSubscriptionData)
-        case dismissError
-        case onAppear
+
+        public enum View {
+            case onAppear
+            case dismissError
+            case purchaseProduct(StoreProduct)
+            case restorePurchases
+        }
     }
 
     @Dependency(\.subscriptionRepository) var subscriptionRepository
@@ -52,7 +57,7 @@ public struct SubscriptionFeature: Sendable {
             case .binding:
                 return .none
 
-            case .onAppear:
+            case .view(.onAppear):
                 return .run { send in
                     await send(.checkSubscriptionStatus)
                     await send(.loadProducts)
@@ -74,7 +79,7 @@ public struct SubscriptionFeature: Sendable {
                 state.products = products
                 return .none
 
-            case let .purchaseProduct(product):
+            case let .view(.purchaseProduct(product)):
                 state.isLoading = true
                 return .run { send in
                     do {
@@ -117,7 +122,7 @@ public struct SubscriptionFeature: Sendable {
                 state.showError = true
                 return .none
 
-            case .restorePurchases:
+            case .view(.restorePurchases):
                 state.isLoading = true
                 return .run { send in
                     do {
@@ -143,7 +148,7 @@ public struct SubscriptionFeature: Sendable {
                 state.isLoading = false
                 return .none
 
-            case .dismissError:
+            case .view(.dismissError):
                 state.showError = false
                 state.errorMessage = nil
                 return .none
