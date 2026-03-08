@@ -83,9 +83,11 @@ public struct AppView: View {
     }
 
     private var bannerAdView: some View {
-        let adSize = currentOrientationAnchoredAdaptiveBanner(width: 375)
-        return BannerViewContainer(adSize)
-            .frame(width: adSize.size.width, height: adSize.size.height)
+        GeometryReader { geometry in
+            let adSize = currentOrientationAnchoredAdaptiveBanner(width: geometry.size.width)
+            BannerViewContainer(adSize)
+                .frame(width: adSize.size.width, height: adSize.size.height)
+        }
     }
 }
 
