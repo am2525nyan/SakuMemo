@@ -10,6 +10,7 @@ import SharedModel
 import SwiftUI
 import Utils
 
+@ViewAction(for: MemoDetailFeature.self)
 public struct MemoDetailView: View {
     public init(store: StoreOf<MemoDetailFeature>) {
         self.store = store
@@ -87,7 +88,7 @@ public struct MemoDetailView: View {
         .padding(.horizontal, 20)
         .dismissKeyboardOnTap()
         .onAppear {
-            store.send(.onAppear)
+          send(.onAppear)
         }
     }
 }
