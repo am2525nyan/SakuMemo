@@ -13,34 +13,38 @@ import SharedModel
 @Reducer
 public struct ArchiveMemoFeature: Sendable {
     public init() {}
-
+    
     @ObservableState
     public struct State {
         public init() {}
-
+        
         var memo = Memo(text: "")
         var text: String = ""
     }
-
-    public enum Action: BindableAction {
+    
+    public enum Action: BindableAction,ViewAction {
         case binding(BindingAction<State>)
-        case addMemo
+        case view(View)
         case gemini
         case geminiSuccess(MemoAnalysisResult)
         case geminiError
-        case deleteMemo(Memo)
         case deleteAllMemos
-        case archiveMain(Memo)
+        
+        public enum View{
+            case addMemo
+            case deleteMemo(Memo)
+            case archiveMain(Memo)
+        }
     }
-
+    
     @Dependency(\.swiftDataRepository) var swiftDataRepository
     @Dependency(\.geminiRepository) var geminiRepository
-
+    
     public var body: some ReducerOf<Self> {
         BindingReducer()
         Reduce { state, action in
             switch action {
-            case .addMemo:
+            case .view(.addMemo):
                 let memo = Memo(text: state.text)
                 state.memo = memo
                 state.text = ""
@@ -49,7 +53,7 @@ public struct ArchiveMemoFeature: Sendable {
                         await send(.gemini)
                     }
                 }
-
+                
             case .gemini:
                 let text = state.memo.text
                 return .run { send in
@@ -60,7 +64,7 @@ public struct ArchiveMemoFeature: Sendable {
                         await send(.geminiError)
                     }
                 }
-
+                
             case let .geminiSuccess(result):
                 state.memo.priorityValue = result.importance
                 state.memo.category = result.category
@@ -77,15 +81,15 @@ public struct ArchiveMemoFeature: Sendable {
                 return .run { _ in
                     try await swiftDataRepository.addMemo(newMemo: newMemo)
                 }
-
+                
             case .deleteAllMemos:
                 return .run { _ in
                     try await swiftDataRepository.deleteAllMemos()
                 }
-
+                
             case .binding:
                 return .none
-
+                
             case .geminiError:
                 let memo = state.memo
                 state.text = ""
@@ -101,8 +105,8 @@ public struct ArchiveMemoFeature: Sendable {
                 return .run { _ in
                     try await swiftDataRepository.addMemo(newMemo: newMemo)
                 }
-
-            case let .deleteMemo(memo):
+                
+            case .view(let .deleteMemo(memo)):
                 let deleteMemo = MemoSendable(
                     id: memo.id,
                     text: memo.text,
@@ -115,8 +119,8 @@ public struct ArchiveMemoFeature: Sendable {
                 return .run { _ in
                     try await swiftDataRepository.deleteMemo(memo: deleteMemo)
                 }
-
-            case let .archiveMain(memo):
+                
+            case .view( let .archiveMain(memo)):
                 memo.isArchived = false
                 memo.date = nil
                 return .none

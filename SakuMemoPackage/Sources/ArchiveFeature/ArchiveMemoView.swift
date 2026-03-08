@@ -11,11 +11,12 @@ import SharedModel
 import SwiftData
 import SwiftUI
 
+@ViewAction(for: ArchiveMemoFeature.self)
 public struct ArchiveMemoView: View {
     public init(store: StoreOf<ArchiveMemoFeature>) {
         self.store = store
     }
-
+    
     @Bindable var store: StoreOf<ArchiveMemoFeature>
     @Environment(\.scenePhase) var scenePhase
     @Query(filter: #Predicate<Memo> { $0.isArchived == true }, sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
@@ -24,7 +25,7 @@ public struct ArchiveMemoView: View {
         VStack {
             AddMemoComponent(
                 tapped: {
-                    store.send(.addMemo)
+                    send(.addMemo)
                 },
                 text: $store.text,
                 isFocused: _isFocused
@@ -34,10 +35,10 @@ public struct ArchiveMemoView: View {
                 tapAction: { _ in
                 },
                 swipeTrailingAction: { memo in
-                    store.send(.deleteMemo(memo))
+                    send(.deleteMemo(memo))
                 },
                 swipeLeadingAction: { memo in
-                    store.send(.archiveMain(memo))
+                    send(.archiveMain(memo))
                 },
                 trailingText: "削除",
                 leadingText: "戻す"
@@ -49,12 +50,12 @@ public struct ArchiveMemoView: View {
 #Preview {
     ArchiveMemoView(
         store:
-        .init(
-            initialState:
-            ArchiveMemoFeature.State(),
-            reducer: {
-                ArchiveMemoFeature()
-            }
-        )
+                .init(
+                    initialState:
+                        ArchiveMemoFeature.State(),
+                    reducer: {
+                        ArchiveMemoFeature()
+                    }
+                )
     )
 }
