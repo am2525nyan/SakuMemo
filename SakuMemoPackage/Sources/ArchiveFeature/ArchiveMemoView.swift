@@ -16,8 +16,8 @@ public struct ArchiveMemoView: View {
     public init(store: StoreOf<ArchiveMemoFeature>) {
         self.store = store
     }
-    
-    @Bindable var store: StoreOf<ArchiveMemoFeature>
+
+    @Bindable public var store: StoreOf<ArchiveMemoFeature>
     @Environment(\.scenePhase) var scenePhase
     @Query(filter: #Predicate<Memo> { $0.isArchived == true }, sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
     @FocusState var isFocused: Bool
@@ -50,12 +50,12 @@ public struct ArchiveMemoView: View {
 #Preview {
     ArchiveMemoView(
         store:
-                .init(
-                    initialState:
-                        ArchiveMemoFeature.State(),
-                    reducer: {
-                        ArchiveMemoFeature()
-                    }
-                )
+        .init(
+            initialState:
+            ArchiveMemoFeature.State(),
+            reducer: {
+                ArchiveMemoFeature()
+            }
+        )
     )
 }

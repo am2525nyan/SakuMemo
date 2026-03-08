@@ -1,16 +1,14 @@
 import ComposableArchitecture
 import SharedModel
 import SwiftUI
-#if canImport(UIKit)
-    import UIKit
-#endif
 
+@ViewAction(for: SubscriptionFeature.self)
 public struct SubscriptionView: View {
     public init(store: StoreOf<SubscriptionFeature>) {
         self.store = store
     }
 
-    @Bindable var store: StoreOf<SubscriptionFeature>
+    @Bindable public var store: StoreOf<SubscriptionFeature>
 
     public var body: some View {
         NavigationView {
@@ -37,17 +35,17 @@ public struct SubscriptionView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("復元") {
-                        store.send(.restorePurchases)
+                        send(.restorePurchases)
                     }
                     .disabled(store.isLoading)
                 }
             }
             .onAppear {
-                store.send(.onAppear)
+                send(.onAppear)
             }
             .alert("エラー", isPresented: $store.showError) {
                 Button("OK") {
-                    store.send(.dismissError)
+                    send(.dismissError)
                 }
             } message: {
                 Text(store.errorMessage ?? "不明なエラーが発生しました")
@@ -154,7 +152,7 @@ public struct SubscriptionView: View {
 
             ForEach(store.products) { product in
                 Button(action: {
-                    store.send(.purchaseProduct(product))
+                    send(.purchaseProduct(product))
                 }) {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
