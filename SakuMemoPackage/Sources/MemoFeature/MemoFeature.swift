@@ -12,6 +12,7 @@ import MemoDetailFeature
 import Repository
 import SharedModel
 import SubscriptionFeature
+import SwiftUI
 
 @Reducer
 public struct MemoFeature: Sendable {
@@ -33,26 +34,31 @@ public struct MemoFeature: Sendable {
         var isShowSubscription: Bool = false
     }
 
-    public enum Action: BindableAction {
+    public enum Action: BindableAction, ViewAction {
         case binding(BindingAction<State>)
-        case addMemo
+        case view(View)
         case gemini
         case success(MemoAnalysisResult)
         case error
-        case deleteMemo(Memo)
         case deleteAllMemos
-        case archive(Memo)
-        case onAppear
-        case presentMemoDetail(PresentationAction<MemoDetailFeature.Action>)
-        case presentAddMemo(PresentationAction<AddMemoFeature.Action>)
-        case presentSubscription(PresentationAction<SubscriptionFeature.Action>)
-        case showDetail(Memo)
-        case showAddMemo
-        case showSubscription
+
         case showPopup
         case closePopup
         case foundationModels
         case switchAi
+
+        case presentMemoDetail(PresentationAction<MemoDetailFeature.Action>)
+        case presentAddMemo(PresentationAction<AddMemoFeature.Action>)
+        case presentSubscription(PresentationAction<SubscriptionFeature.Action>)
+        public enum View {
+            case onAppear
+            case addMemo
+            case deleteMemo(Memo)
+            case archive(Memo)
+            case showDetail(Memo)
+            case showAddMemo
+            case showSubscription
+        }
     }
 
     @Dependency(\.swiftDataRepository) var swiftDataRepository
@@ -65,7 +71,39 @@ public struct MemoFeature: Sendable {
 
         Reduce { state, action in
             switch action {
-            case .addMemo:
+            case .view(.onAppear):
+                return .run { _ in
+                    do {
+                        try await swiftDataRepository.automaticPriorityValues()
+                    } catch {
+                        print("自動処理失敗")
+                    }
+                }
+
+            case let .view(.deleteMemo(memo)):
+                let new = MemoSendable(
+                    id: memo.id,
+                    text: memo.text,
+                    category: memo.category,
+                    priorityValue: memo.priorityValue,
+                    isArchived: memo.isArchived,
+                    createdAt: memo.createdAt,
+                    date: memo.date
+                )
+                return .run { _ in
+                    try await swiftDataRepository.deleteMemo(memo: new)
+                }
+
+            case let .view(.archive(memo)):
+                memo.isArchived = true
+                return .none
+
+            case let .view(.showDetail(memo)):
+                state.isShowDetails = true
+                state.detail = MemoDetailFeature.State(memo: memo)
+                return .none
+
+            case .view(.addMemo):
                 let memo = Memo(text: state.text)
                 state.memo = memo
                 state.text = ""
@@ -146,47 +184,7 @@ public struct MemoFeature: Sendable {
                     try await swiftDataRepository.addMemo(newMemo: new)
                 }
 
-            case let .deleteMemo(memo):
-                let new = MemoSendable(
-                    id: memo.id,
-                    text: memo.text,
-                    category: memo.category,
-                    priorityValue: memo.priorityValue,
-                    isArchived: memo.isArchived,
-                    createdAt: memo.createdAt,
-                    date: memo.date
-                )
-                return .run { _ in
-                    try await swiftDataRepository.deleteMemo(memo: new)
-                }
-
-            case let .archive(memo):
-                memo.isArchived = true
-                return .none
-
-            case .onAppear:
-                return .run { _ in
-                    do {
-                        try await swiftDataRepository.automaticPriorityValues()
-                    } catch {
-                        print("自動処理失敗")
-                    }
-                }
-
-            case .presentMemoDetail:
-                return .none
-
-            case let .showDetail(memo):
-                state.isShowDetails = true
-
-                state.detail = MemoDetailFeature.State(memo: memo)
-
-                return .none
-
-            case .presentAddMemo:
-                return .none
-
-            case .showAddMemo:
+            case .view(.showAddMemo):
                 state.isShowAdd = true
                 state.add = AddMemoFeature.State()
                 return .none
@@ -202,12 +200,9 @@ public struct MemoFeature: Sendable {
                 state.isShowPopup = false
                 return .none
 
-            case .showSubscription:
+            case .view(.showSubscription):
                 state.isShowSubscription = true
                 state.subscription = SubscriptionFeature.State()
-                return .none
-
-            case .presentSubscription:
                 return .none
 
             case .switchAi:
@@ -220,6 +215,15 @@ public struct MemoFeature: Sendable {
                         await send(.gemini)
                     }
                 }
+
+            case .presentMemoDetail:
+                return .none
+
+            case .presentAddMemo:
+                return .none
+
+            case .presentSubscription:
+                return .none
             }
         }
         .ifLet(\.$detail, action: \.presentMemoDetail) {

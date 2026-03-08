@@ -16,12 +16,13 @@ import SwiftData
 import SwiftUI
 import Utils
 
+@ViewAction(for: MemoFeature.self)
 public struct MemoView: View {
     public init(store: StoreOf<MemoFeature>) {
         self.store = store
     }
 
-    @Bindable var store: StoreOf<MemoFeature>
+    @Bindable public var store: StoreOf<MemoFeature>
     @FocusState var isFocused: Bool
     @Environment(\.scenePhase) var scenePhase
     @Query(filter: #Predicate<Memo> { $0.isArchived == false }, sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
@@ -37,11 +38,12 @@ public struct MemoView: View {
             ZStack {
                 mainContentView
                 FloatingButton(showAddMemo: {
-                    store.send(.showAddMemo)
+                    send(.showAddMemo)
                 })
                 .padding(.bottom, 60)
                 .padding(.trailing, 20)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .popup(isPresented: $store.isShowPopup) {
                 FloaterTop()
             }
@@ -72,7 +74,7 @@ public struct MemoView: View {
             memoScrollView
         }
         .onAppear {
-            store.send(.onAppear)
+            send(.onAppear)
         }
         .sheet(item: $store.scope(state: \.detail, action: \.presentMemoDetail)) { detail in
             MemoDetailView(store: detail)
@@ -97,7 +99,7 @@ public struct MemoView: View {
     private var addMemoComponent: some View {
         AddMemoComponent(
             tapped: {
-                store.send(.addMemo)
+                send(.addMemo)
             },
             text: $store.text,
             isFocused: _isFocused
@@ -126,26 +128,26 @@ public struct MemoView: View {
         ListComponent(
             memos: .constant(memos),
             tapAction: { memo in
-                store.send(.showDetail(memo))
+                send(.showDetail(memo))
             },
             swipeTrailingAction: { memo in
-                store.send(.deleteMemo(memo))
+                send(.deleteMemo(memo))
             },
             swipeLeadingAction: { memo in
-                store.send(.archive(memo))
+                send(.archive(memo))
             },
             trailingText: "削除",
             leadingText: "アーカイブ",
             dueSoonMemos: dueSoonMemos,
             showDetailMemo: { memo in
-                store.send(.showDetail(memo))
+                send(.showDetail(memo))
             }
         )
     }
 
     private var proButton: some View {
         Button(action: {
-            store.send(.showSubscription)
+            send(.showSubscription)
         }) {
             HStack(spacing: 4) {
                 Image(systemName: "crown.fill")
