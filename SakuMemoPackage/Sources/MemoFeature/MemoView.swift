@@ -66,14 +66,10 @@ public struct MemoView: View {
     }
 
     private var mainContentView: some View {
-        ZStack {
-            VStack {
-                VStack {
-                    addMemoComponent
-                    memoCountCards
-                    memoScrollView
-                }
-            }
+        VStack {
+            addMemoComponent
+            memoCountCards
+            memoScrollView
         }
         .onAppear {
             store.send(.onAppear)
