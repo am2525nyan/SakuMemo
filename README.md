@@ -94,10 +94,6 @@ SakuMemoPackage/Sources/
 - **AppIntents** - Siriショートカット
 - **FoundationModels** (iOS 26+) - Apple Intelligence
 
-## 開発環境
-
-- Swift 6.1+
-- Xcode 16+
 
 ## TODO
 
