@@ -95,16 +95,6 @@ public struct MemoView: View {
         }
     }
 
-    private var addMemoComponent: some View {
-        AddMemoComponent(
-            tapped: {
-                send(.addMemo)
-            },
-            text: $store.text,
-            isFocused: _isFocused
-        )
-    }
-
     private var memoCountCards: some View {
         HStack {
             MemoCountCard(

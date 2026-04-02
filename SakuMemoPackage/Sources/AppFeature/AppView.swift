@@ -8,8 +8,6 @@
 import ArchiveFeature
 import ComposableArchitecture
 
-import Components
-
 // import GoogleMobileAds
 import MemoFeature
 import SettingsFeature
@@ -50,7 +48,7 @@ public struct AppView: View {
                 Label("新規メモ", systemImage: "square.and.pencil")
             }
         }
-        .modifier(IOS26Modifiers(text: $text))
+        .modifier(TabViewBottomAccessoryModifier(text: $text, store: store))
         .onChange(of: selectedTab) { _, newValue in
             if newValue == 3 {
                 selectedTab = 0
@@ -66,8 +64,9 @@ public struct AppView: View {
 //    }
 }
 
-private struct IOS26Modifiers: ViewModifier {
+private struct TabViewBottomAccessoryModifier: ViewModifier {
     @Binding var text: String
+    let store: StoreOf<AppFeature>
 
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
@@ -76,7 +75,9 @@ private struct IOS26Modifiers: ViewModifier {
                 .tabViewBottomAccessory {
                     HStack {
                         TextField("メモを入力", text: $text)
-                        Button(action: {}, label: {
+                        Button(action: {
+                            store.send(.memo(.view(.addMemo)))
+                        }, label: {
                             ZStack {
                                 Image(systemName: "paperplane.fill")
                                     .resizable()
