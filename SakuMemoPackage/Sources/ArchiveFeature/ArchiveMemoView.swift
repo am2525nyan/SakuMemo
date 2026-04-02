@@ -23,13 +23,6 @@ public struct ArchiveMemoView: View {
     @FocusState var isFocused: Bool
     public var body: some View {
         VStack {
-            AddMemoComponent(
-                tapped: {
-                    send(.addMemo)
-                },
-                text: $store.text,
-                isFocused: _isFocused
-            )
             ListComponent(
                 memos: .constant(memos),
                 tapAction: { _ in
