@@ -8,10 +8,21 @@
 
 /* Begin PBXBuildFile section */
 		720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 720E90A32DB24A140072F07F /* ComposableArchitecture */; };
+		72443F802F7E6D0A004836EA /* AddMemoFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F7F2F7E6D0A004836EA /* AddMemoFeature */; };
+		72443F822F7E6D0A004836EA /* AppFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F812F7E6D0A004836EA /* AppFeature */; };
+		72443F842F7E6D0A004836EA /* ArchiveFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F832F7E6D0A004836EA /* ArchiveFeature */; };
+		72443F862F7E6D0A004836EA /* Components in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F852F7E6D0A004836EA /* Components */; };
+		72443F882F7E6D0A004836EA /* MemoDetailFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F872F7E6D0A004836EA /* MemoDetailFeature */; };
+		72443F8A2F7E6D0A004836EA /* MemoFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F892F7E6D0A004836EA /* MemoFeature */; };
+		72443F8C2F7E6D0A004836EA /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F8B2F7E6D0A004836EA /* Repository */; };
+		72443F8E2F7E6D0A004836EA /* RepositoryProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F8D2F7E6D0A004836EA /* RepositoryProtocol */; };
+		72443F902F7E6D0A004836EA /* SettingsFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F8F2F7E6D0A004836EA /* SettingsFeature */; };
+		72443F922F7E6D0A004836EA /* SharedModel in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F912F7E6D0A004836EA /* SharedModel */; };
+		72443F942F7E6D0A004836EA /* SubscriptionFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F932F7E6D0A004836EA /* SubscriptionFeature */; };
+		72443F962F7E6D0A004836EA /* Utils in Frameworks */ = {isa = PBXBuildFile; productRef = 72443F952F7E6D0A004836EA /* Utils */; };
 		7246A4722E6C5F080063FF32 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 7246A4712E6C5F080063FF32 /* GoogleMobileAds */; };
 		72D6EA4A2E3775F1007CD0F6 /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 72D6EA492E3775F1007CD0F6 /* FirebaseAI */; };
 		72D6EA4C2E3775F1007CD0F6 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 72D6EA4B2E3775F1007CD0F6 /* FirebaseAppCheck */; };
-		72F72A752E26430200703E8E /* SakuMemoPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */; };
 		72FEE5A22DF84B0500005059 /* AppKitNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 72FEE5A12DF84B0500005059 /* AppKitNavigation */; };
 		72FEE5A42DF84B0500005059 /* SwiftNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 72FEE5A32DF84B0500005059 /* SwiftNavigation */; };
 		72FEE5A62DF84B0500005059 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 72FEE5A52DF84B0500005059 /* SwiftUINavigation */; };
@@ -56,12 +67,23 @@
 			files = (
 				72D6EA4C2E3775F1007CD0F6 /* FirebaseAppCheck in Frameworks */,
 				72D6EA4A2E3775F1007CD0F6 /* FirebaseAI in Frameworks */,
-				72F72A752E26430200703E8E /* SakuMemoPackage in Frameworks */,
+				72443F962F7E6D0A004836EA /* Utils in Frameworks */,
+				72443F942F7E6D0A004836EA /* SubscriptionFeature in Frameworks */,
+				72443F8C2F7E6D0A004836EA /* Repository in Frameworks */,
 				7246A4722E6C5F080063FF32 /* GoogleMobileAds in Frameworks */,
+				72443F8E2F7E6D0A004836EA /* RepositoryProtocol in Frameworks */,
+				72443F802F7E6D0A004836EA /* AddMemoFeature in Frameworks */,
+				72443F902F7E6D0A004836EA /* SettingsFeature in Frameworks */,
+				72443F842F7E6D0A004836EA /* ArchiveFeature in Frameworks */,
 				72FEE5A42DF84B0500005059 /* SwiftNavigation in Frameworks */,
 				720E90A42DB24A140072F07F /* ComposableArchitecture in Frameworks */,
 				72FEE5A82DF84B0500005059 /* UIKitNavigation in Frameworks */,
+				72443F862F7E6D0A004836EA /* Components in Frameworks */,
+				72443F8A2F7E6D0A004836EA /* MemoFeature in Frameworks */,
+				72443F922F7E6D0A004836EA /* SharedModel in Frameworks */,
+				72443F822F7E6D0A004836EA /* AppFeature in Frameworks */,
 				72FEE5A62DF84B0500005059 /* SwiftUINavigation in Frameworks */,
+				72443F882F7E6D0A004836EA /* MemoDetailFeature in Frameworks */,
 				72FEE5A22DF84B0500005059 /* AppKitNavigation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -118,7 +140,6 @@
 			name = SakuMemo;
 			packageProductDependencies = (
 				720E90A32DB24A140072F07F /* ComposableArchitecture */,
-				729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */,
 				72FEE5A12DF84B0500005059 /* AppKitNavigation */,
 				72FEE5A32DF84B0500005059 /* SwiftNavigation */,
 				72FEE5A52DF84B0500005059 /* SwiftUINavigation */,
@@ -126,6 +147,18 @@
 				72D6EA492E3775F1007CD0F6 /* FirebaseAI */,
 				72D6EA4B2E3775F1007CD0F6 /* FirebaseAppCheck */,
 				7246A4712E6C5F080063FF32 /* GoogleMobileAds */,
+				72443F7F2F7E6D0A004836EA /* AddMemoFeature */,
+				72443F812F7E6D0A004836EA /* AppFeature */,
+				72443F832F7E6D0A004836EA /* ArchiveFeature */,
+				72443F852F7E6D0A004836EA /* Components */,
+				72443F872F7E6D0A004836EA /* MemoDetailFeature */,
+				72443F892F7E6D0A004836EA /* MemoFeature */,
+				72443F8B2F7E6D0A004836EA /* Repository */,
+				72443F8D2F7E6D0A004836EA /* RepositoryProtocol */,
+				72443F8F2F7E6D0A004836EA /* SettingsFeature */,
+				72443F912F7E6D0A004836EA /* SharedModel */,
+				72443F932F7E6D0A004836EA /* SubscriptionFeature */,
+				72443F952F7E6D0A004836EA /* Utils */,
 			);
 			productName = SakuMemo;
 			productReference = 720E90912DB2495F0072F07F /* SakuMemo.app */;
@@ -597,14 +630,58 @@
 			package = 720E90A22DB24A140072F07F /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
 		};
+		72443F7F2F7E6D0A004836EA /* AddMemoFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AddMemoFeature;
+		};
+		72443F812F7E6D0A004836EA /* AppFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppFeature;
+		};
+		72443F832F7E6D0A004836EA /* ArchiveFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ArchiveFeature;
+		};
+		72443F852F7E6D0A004836EA /* Components */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Components;
+		};
+		72443F872F7E6D0A004836EA /* MemoDetailFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MemoDetailFeature;
+		};
+		72443F892F7E6D0A004836EA /* MemoFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MemoFeature;
+		};
+		72443F8B2F7E6D0A004836EA /* Repository */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Repository;
+		};
+		72443F8D2F7E6D0A004836EA /* RepositoryProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RepositoryProtocol;
+		};
+		72443F8F2F7E6D0A004836EA /* SettingsFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SettingsFeature;
+		};
+		72443F912F7E6D0A004836EA /* SharedModel */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SharedModel;
+		};
+		72443F932F7E6D0A004836EA /* SubscriptionFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SubscriptionFeature;
+		};
+		72443F952F7E6D0A004836EA /* Utils */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Utils;
+		};
 		7246A4712E6C5F080063FF32 /* GoogleMobileAds */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 7246A4702E6C5F080063FF32 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
 			productName = GoogleMobileAds;
-		};
-		729E53F62DD75E7E0026BFB9 /* SakuMemoPackage */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SakuMemoPackage;
 		};
 		72D6EA492E3775F1007CD0F6 /* FirebaseAI */ = {
 			isa = XCSwiftPackageProductDependency;
