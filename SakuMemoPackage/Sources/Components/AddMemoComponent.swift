@@ -23,7 +23,7 @@ public struct AddMemoComponent: View {
         HStack {
             VStack {
                 TextField("メモを入力", text: $text)
-                    .textFieldStyle(CustomTextFieldStyle(isFocused: _isFocused))
+                    // .textFieldStyle(CustomTextFieldStyle(isFocused: _isFocused))
                     .focused($isFocused)
             }
             Button(action: {

@@ -14,7 +14,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.19.1"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.25.4"),
         .package(url: "https://github.com/Alamofire/Alamofire.git", exact: "5.10.2"),
         .package(url: "https://github.com/exyte/PopupView", exact: "4.1.7"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk", exact: "12.0.0"),
