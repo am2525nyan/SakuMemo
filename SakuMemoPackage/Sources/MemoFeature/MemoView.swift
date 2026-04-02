@@ -69,8 +69,7 @@ public struct MemoView: View {
 
     private var mainContentView: some View {
         VStack {
-            addMemoComponent
-            memoCountCards
+                       memoCountCards
             memoScrollView
         }
         .onAppear {
