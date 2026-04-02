@@ -8,18 +8,9 @@
 import SwiftUI
 
 public extension Color {
-    static let mainColor: Color = {
-      
-        return Color("MainColor", bundle: .module)
-    }()
+    static let mainColor: Color = .init("MainColor", bundle: .module)
 
-    static let customPinkColor: Color = {
-      
-        return Color("CustomPink", bundle: .module)
-    }()
+    static let customPinkColor: Color = .init("CustomPink", bundle: .module)
 
-    static let customTextColor: Color = {
-     
-        return Color("TextColor", bundle: .module)
-    }()
+    static let customTextColor: Color = .init("TextColor", bundle: .module)
 }

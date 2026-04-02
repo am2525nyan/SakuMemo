@@ -37,11 +37,11 @@ public struct MemoView: View {
         NavigationView {
             ZStack {
                 mainContentView
-                FloatingButton(showAddMemo: {
-                    send(.showAddMemo)
-                })
-                .padding(.bottom, 60)
-                .padding(.trailing, 20)
+//                FloatingButton(showAddMemo: {
+//                    send(.showAddMemo)
+//                })
+                    .padding(.bottom, 60)
+                    .padding(.trailing, 20)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .popup(isPresented: $store.isShowPopup) {
@@ -69,7 +69,7 @@ public struct MemoView: View {
 
     private var mainContentView: some View {
         VStack {
-                       memoCountCards
+            memoCountCards
             memoScrollView
         }
         .onAppear {
