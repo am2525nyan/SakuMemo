@@ -21,32 +21,25 @@ public struct MemoView: View {
     public init(store: StoreOf<MemoFeature>) {
         self.store = store
     }
-
+    
     @Bindable public var store: StoreOf<MemoFeature>
     @FocusState var isFocused: Bool
     @Environment(\.scenePhase) var scenePhase
     @Query(filter: #Predicate<Memo> { $0.isArchived == false }, sort: \Memo.createdAt, order: .reverse) var memos: [Memo]
     @Query(filter: #Predicate<Memo> { $0.isArchived == true }, sort: \Memo.createdAt, order: .reverse) var archiveMemos: [Memo]
     @Query(filter: #Predicate<Memo> { $0.isArchived == false && $0.date != nil }, sort: \Memo.date) var memosWithDate: [Memo]
-
+    
     var dueSoonMemos: [Memo] {
         memosWithDate.filter { $0.isDueSoon }
     }
-
+    
     public var body: some View {
         NavigationView {
-            ZStack {
-                mainContentView
-//                FloatingButton(showAddMemo: {
-//                    send(.showAddMemo)
-//                })
-                    .padding(.bottom, 60)
-                    .padding(.trailing, 20)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .popup(isPresented: $store.isShowPopup) {
-                FloaterTop()
-            }
+            mainContentView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .popup(isPresented: $store.isShowPopup) {
+                    FloaterTop()
+                }
             customize: {
                 $0
                     .type(.floater())
@@ -56,17 +49,17 @@ public struct MemoView: View {
                     .disappearTo(.topSlide)
             }
             .navigationTitle("SakuMemo")
-            #if os(iOS)
-                .navigationBarTitleDisplayMode(.inline)
-            #endif
-                .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        proButton
-                    }
+#if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+#endif
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    proButton
                 }
+            }
         }
     }
-
+    
     private var mainContentView: some View {
         VStack {
             memoCountCards
@@ -94,7 +87,7 @@ public struct MemoView: View {
                 .presentationBackground(Material.thick)
         }
     }
-
+    
     private var memoCountCards: some View {
         HStack {
             MemoCountCard(
@@ -112,7 +105,7 @@ public struct MemoView: View {
             .frame(width: 150, height: 100)
         }
     }
-
+    
     private var memoScrollView: some View {
         ListComponent(
             memos: .constant(memos),
@@ -133,7 +126,7 @@ public struct MemoView: View {
             }
         )
     }
-
+    
     private var proButton: some View {
         Button(action: {
             send(.showSubscription)
@@ -154,7 +147,7 @@ public struct MemoView: View {
             )
         }
     }
-
+    
     struct FloatingButton: View {
         var showAddMemo: () -> Void
         var body: some View {
@@ -179,7 +172,7 @@ public struct MemoView: View {
             }
         }
     }
-
+    
     struct MemoCountCard: View {
         let label: String
         let count: Int
@@ -188,7 +181,7 @@ public struct MemoView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(backgroundColor)
-
+                
                 VStack(alignment: .center) {
                     Text(label)
                         .padding(.top, 10)
@@ -212,7 +205,7 @@ public struct MemoView: View {
             .padding(.trailing, 20)
         }
     }
-
+    
     struct ScrollOffsetPreferenceKey: PreferenceKey {
         static let defaultValue: CGFloat = 0
         static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
@@ -224,12 +217,12 @@ public struct MemoView: View {
 #Preview(traits: .sampleMemos) {
     MemoView(
         store:
-        .init(
-            initialState: MemoFeature.State(
-            ),
-            reducer: {
-                MemoFeature()
-            }
-        )
+                .init(
+                    initialState: MemoFeature.State(
+                    ),
+                    reducer: {
+                        MemoFeature()
+                    }
+                )
     )
 }
