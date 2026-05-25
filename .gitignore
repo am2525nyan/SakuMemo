@@ -62,7 +62,13 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 
 .env
-.claude/
+.claude/*
+!.claude/skills/
+!.claude/skills/**
+.agents/*
+!.agents/skills/
+!.agents/skills/**
+.codex/
 .serena/
 xcschememanagement.plist
 GoogleService-Info.plist
